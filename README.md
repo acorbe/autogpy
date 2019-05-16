@@ -32,14 +32,16 @@ figure.jupyter_show_pdflatex() # only in jupyter
 ```
 
 
-will generate the following figure
+will generate the following figure (also appearing in jupyter)
 
 <img src="example_fig.jpeg" alt="example figure" width="500px" >
 
 
-and, most importantly, the following source and data in `test_figure`
+**Most importantly**, the following source and data will be created in the folder `test_figure` 
 
 ```bash
+$ ls test_figure
+
 Makefile
 sync_me.sh
 test1__0__.dat
@@ -52,7 +54,8 @@ test1__.tikz_compile.sh
 test1__.tikz.gnu
 ```
 
-With `make` one can obtain jpg, epslatex, and tikz/pgfplot version of the figure. The data has been formatted automatically.
+With `make` one can obtain jpg, epslatex, and tikz/pgfplot versions of the figure.
+Notice that the input data has been formatted automatically.
 
 Inspecting `test1__.pdflatex.gnu`, responsible of the epslatex version of the figure, one gets:
 ```gnuplot
