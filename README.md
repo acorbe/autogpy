@@ -34,7 +34,8 @@ figure.jupyter_show_pdflatex() # only in jupyter
 
 will generate the following figure
 
-![example_fig.jpeg](example_fig.jpeg | width=100 )
+<img src="example_fig.jpeg" alt="example figure" width="100px" >
+
 
 and, most importantly, the following source and data in `test_figure`
 
