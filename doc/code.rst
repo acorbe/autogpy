@@ -1,0 +1,2 @@
+.. automodule:: autogpy.AutogpyFigure
+   :members:

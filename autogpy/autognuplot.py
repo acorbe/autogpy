@@ -5,15 +5,10 @@ import os
 import numpy as np
 from collections import OrderedDict
 
-import autognuplot_terms
+from . import autognuplot_terms
 
 class AutoGnuplotFigure(object):
-
-    def __init__(self
-                 , folder_name
-                 , file_identifier
-                 , verbose = False):
-        """Creates an AutoGnuplotFigure object. Wraps one gnuplot figure
+    """Creates an AutoGnuplotFigure object. Wraps one gnuplot figure
 
         Arguments:
         folder_name -- target location for the figure scripts and data
@@ -36,7 +31,13 @@ class AutoGnuplotFigure(object):
             , "linewidth" : "2"
         }
 
-        """
+    """
+
+    def __init__(self
+                 , folder_name
+                 , file_identifier
+                 , verbose = False):
+        
         
 
         self.verbose = verbose

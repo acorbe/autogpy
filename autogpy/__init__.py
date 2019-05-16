@@ -1,2 +1,2 @@
-from autognuplot import AutoGnuplotFigure
+from .autognuplot import AutoGnuplotFigure
 AutogpyFigure = AutoGnuplotFigure
