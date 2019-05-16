@@ -2,6 +2,17 @@
 Automatic generation of gnuplot figures (including script and data) from python
 
 
+**Which problem does it solve?**
+
+In the scientific community, [gnuplot](http://www.gnuplot.info/) is a gold standard for high-quality plots. It used across generations of scientists.  
+Python is quickly becoming a tool of choice for data analytics. Although python comes with several options for plotting, often gnuplot is preferred in production.
+
+`autogpy` eliminates annoying duplication of code/data between pyton analyses and gnuplot figure production.  
+Using a syntax close to gnuplot, automatically generates gnuplot scripts and dumps suitably the data. 
+
+
+
+
 ## In a nutshell
 
 ### Installation
