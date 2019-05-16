@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup
 
 with open("README.md", "r") as fh:
         long_description = fh.read()
 
 setup(name='autogpy',
       description = "autogpy: AutoGnuplot.py - automatic generation of gnuplot figures (including script and data) from python",
-      version='0.1',
+      version='0.1.1',
       author='Alessandro Corbetta',
       author_email='a.corbetta@tue.nl',
       url='https://github.com/acorbe/autogpy',

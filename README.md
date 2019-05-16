@@ -48,7 +48,7 @@ figure.jupyter_show_pdflatex() # only in jupyter
 
 will generate the following figure (also appearing in jupyter)
 
-<img src="example_fig.jpeg" alt="example figure" width="500px" >
+<img src="https://github.com/acorbe/autogpy/example_fig.jpeg" alt="example figure" width="500px" >
 
 
 **Most importantly**, the following source and data will be created in the folder `test_figure` 
