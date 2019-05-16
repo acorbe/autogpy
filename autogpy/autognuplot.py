@@ -327,7 +327,7 @@ class AutoGnuplotFigure(object):
             )            
         else:            
         
-            xyzt = map( lambda x : np.array(x)[: , np.newaxis ], args  )        
+            xyzt = list(map( lambda x : np.array(x)[: , np.newaxis ], args  ))
 
             data = np.concatenate( xyzt , axis = 1 )
 
@@ -359,7 +359,7 @@ class AutoGnuplotFigure(object):
     def render_variables(self):
 
         return "\n".join(
-            [ "{NAME}={VALUE}".format(NAME = k, VALUE=v) for (k,v) in self.variables.tems()    ]
+            [ "{NAME}={VALUE}".format(NAME = k, VALUE=v) for (k,v) in self.variables.items()    ]
         )
         
         
