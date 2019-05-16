@@ -8,36 +8,45 @@ from collections import OrderedDict
 from . import autognuplot_terms
 
 class AutoGnuplotFigure(object):
-    """Creates an AutoGnuplotFigure object. Wraps one gnuplot figure
+    """Creates an AutoGnuplotFigure object wrapping one gnuplot figure.
 
-        Arguments:
-        folder_name -- target location for the figure scripts and data
-        file_identifier -- common identifier present in the file names of this figure object
-        
-        Keyword arguments:
-        verbose = False -- verbosity.
+        :param folder_name: target location for the figure scripts and data
+        :type folder_name: str
+        :param file_identifier: common identifier present in the file names of this figure object
+        :type file_identifier: str
+        :param verbose:  (False) Verbose operating mode.
+        :type verbose: bool
+        :param autoescape:  (True) Autoescapes latex strings. It enables to use latex directly in raw strings without further escaping.
+        :type verbose: bool
+
 
         Usage:
-        fig = AutoGnuplotFigure('folder','id')
-        fig.p_generic('u 1 : 2 t "my title" ', x ,y)
-        fig.generate_gnuplot_file()
-        fig.jupyter_show_pdflatex(show_stdout=False)
+
+        >>> fig = AutoGnuplotFigure('folder','id')
+        >>> fig.p_generic('u 1 : 2 t "my title" ', x ,y)
+        >>> fig.generate_gnuplot_file()
+        >>> fig.jupyter_show_pdflatex(show_stdout=False)
 
         Class members to be changed:
-        fig.pdflatex_terminal_parameters = {
-            "x_size" : "9.9cm"
-            , "y_size" : "8.cm"
-            , "font" : "phv,12 "
-            , "linewidth" : "2"
-        }
+
+        >>> fig.pdflatex_terminal_parameters = 
+        >>> {
+        >>>     "x_size" : "9.9cm"
+        >>>     , "y_size" : "8.cm"
+        >>>     , "font" : "phv,12 "
+        >>>     , "linewidth" : "2"
+        >>> }
 
     """
 
     def __init__(self
                  , folder_name
                  , file_identifier
-                 , verbose = False):
-        
+                 , verbose = False
+                 , autoescape = True):
+        """ AutoGnuplotFigure
+
+        """
         
 
         self.verbose = verbose
@@ -79,6 +88,7 @@ class AutoGnuplotFigure(object):
             , "linewidth" : "2"
 
         }
+        self._autoescape = autoescape
 
         self.variables = OrderedDict()
 
@@ -94,7 +104,45 @@ class AutoGnuplotFigure(object):
         
 
     def extend_global_plotting_parameters(self, *args, **kw):
-        autoescape = kw.get("autoescape", False)
+        """Extends the preamble of the gnuplot script to modify the plotting settings. 
+        Expects one or more strings with gnuplot syntax.
+ 
+        >>> figure.extend_global_plotting_parameters(
+        >>> r\"\"\"
+        >>> set mxtics 2
+        >>> set mytics 1
+        >>> 
+        >>> # color definitions
+        >>> set border linewidth 1.5
+        >>> set style line 1 lc rgb '#ff0000'  lt 1 lw 2
+        >>> set style line 2 lc rgb '#0000ff' lt 3 lw 4
+        >>> 
+        >>> # Axes
+        >>> set style line 11  lc rgb '#100100100' lt 1
+        >>> set border 3 back ls 11
+        >>> set tics nomirror out scale 0.75
+        >>> # Grid
+        >>> set style line 12 lc rgb'#808080' lt 0 lw 1
+        >>> set grid back ls 12
+        >>> 
+        >>> set format y '$%.4f$'
+        >>> set format x '$%.4f$'
+        >>> 
+        >>> set key top left
+        >>> 
+        >>> set key samplen 2 inside spacing 1 width 0.3 height 1.5  at graph 0.99, 1.05
+        >>> 
+        >>> unset grid
+        >>> #set logscale y
+        >>> set xlabel "$\\nu$"
+        >>> set xrange [1e-5:1.05e-3]
+        >>> set yrange [1e-5:1e-3]
+        >>> set xtics 0,2e-4,1.01e-3
+        >>> #set ytics 2e-4,2e-4,1.01e-3
+        >>> \"\"\")        
+
+        """
+        autoescape = kw.get("autoescape", self._autoescape)
         escaped_args = []
         if autoescape:
             for idx,a in enumerate(args):
@@ -104,6 +152,8 @@ class AutoGnuplotFigure(object):
             self.global_plotting_parameters.extend(args)
 
     def set_multiplot(self, specifiers = ""):
+        """Enables multiplot mode (use in combination with :next_multiplot_group). Multiplot arguments are passed via the kw `specifiers`"""
+        
         self.is_multiplot = True
         self.extend_global_plotting_parameters(
             "set multiplot " + specifiers
@@ -117,7 +167,7 @@ class AutoGnuplotFigure(object):
         self.alter_multiplot_state.append([])
 
     def alter_current_multiplot_parameters(self,*args,**kw):
-        autoescape = kw.get("autoescape", False)
+        autoescape = kw.get("autoescape", self._autoescape)
         escaped_args = []
         if autoescape:
             for idx,a in enumerate(args):
@@ -250,8 +300,9 @@ class AutoGnuplotFigure(object):
         return command_line
 
     def p_generic(self, command_line, *args, **kw):
+        """Central plotting primitive"""
         fname_specs = kw.get("fname_specs","")
-        autoescape = kw.get("autoescape",False)
+        autoescape = kw.get("autoescape",self._autoescape)
 
         if autoescape:
             command_line = self.__autoescape_strings(command_line)
@@ -308,7 +359,7 @@ class AutoGnuplotFigure(object):
     def render_variables(self):
 
         return "\n".join(
-            [ "{NAME}={VALUE}".format(NAME = k, VALUE=v) for (k,v) in self.variables.iteritems()    ]
+            [ "{NAME}={VALUE}".format(NAME = k, VALUE=v) for (k,v) in self.variables.tems()    ]
         )
         
         
@@ -535,13 +586,17 @@ class AutoGnuplotFigure(object):
 
         LUA compilation issue: https://tex.stackexchange.com/a/368194
         solution: 
-        in /usr/share/gnuplot5/gnuplot/5.0/lua/gnuplot-tikz.lua, Replace:
+        in `/usr/share/gnuplot5/gnuplot/5.0/lua/gnuplot-tikz.lua`, replace:
+
+
+        
         pgf.set_dashtype = function(dashtype)
         gp.write("\\gpsetdashtype{"..dashtype.."}\n")
         end
+        
 
 
-        with:
+        
         pgf.set_dashtype = function(dashtype)
         gp.write("%\\gpsetdashtype{"..dashtype.."}\n")
         end
