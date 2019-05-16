@@ -1,7 +1,7 @@
 # autogpy - AutoGnuplot.py
-Automatic generation of gnuplot figures (including script and data) from python.
+## Automatic generation of gnuplot figures (including script and data) from python.
 
-Author: [Alessandro Corbetta](http://corbetta.phys.tue.nl/), 2019
+**Author:** [Alessandro Corbetta](http://corbetta.phys.tue.nl/), 2019
 
 
 
@@ -10,8 +10,25 @@ Author: [Alessandro Corbetta](http://corbetta.phys.tue.nl/), 2019
 In the scientific community, [gnuplot](http://www.gnuplot.info/) is a gold standard for high-quality plots. It used across generations of scientists.  
 Python is quickly becoming a tool of choice for data analytics. Although python comes with several options for plotting, often gnuplot is preferred in production.
 
-`autogpy` eliminates annoying duplication of code/data between pyton analyses and gnuplot figure production.  
-Using a syntax close to gnuplot, automatically generates gnuplot scripts and dumps suitably the data. 
+`autogpy` eliminates annoying duplication of code/data between python analyses and gnuplot figure production.  
+Using a syntax close to gnuplot, automatically generates gnuplot scripts and dumps suitably the data.
+
+**Features**
++ anything that be obtained by the gnuplot command `plot` can be produced
++ any gnuplot state modification can be achieved
++ multiplots
++ `plt.hist`-like gnuplot histogram figures generator
++ jupyter notebook figure preview
++ jupyter notebook gnuplot script inspection
++ gnuplot terminals epslatex, tikz/pgfplot and jpg
++ output figures are shipped in a folder that includes scripts, data and makefile
++ easy scp-based synchronization between
+
+**Works on**
++ Linux/MacOs
++ Python 3
++ Certain feature require imagemagick and working `gnuplot-tikz.lua`. Certain versions of these might have bugs. Do `figure.display_fixes()` to show known fixes.
+
 
 
 
