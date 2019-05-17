@@ -8,26 +8,36 @@ from collections import OrderedDict
 from . import autognuplot_terms
 
 class AutoGnuplotFigure(object):
-    """Creates an AutoGnuplotFigure object wrapping one gnuplot figure.
-
-        :param folder_name: target location for the figure scripts and data
-        :type folder_name: str
-        :param file_identifier: common identifier present in the file names of this figure object
-        :type file_identifier: str
-        :param verbose:  (False) Verbose operating mode.
-        :type verbose: bool
-        :param autoescape:  (True) Autoescapes latex strings. It enables to use latex directly in raw strings without further escaping.
-        :type verbose: bool
+    """Creates an AutoGnuplotFigure object which wraps one gnuplot figure.
 
 
-        Usage:
+        Parameters
+        ---------------------
+        folder_name: str
+             target location for the figure scripts and data
+        file_identifier: str
+             common identifier present in the file names of this figure object
+        verbose: bool, optional
+             (False) Verbose operating mode.
+        autoescape: bool, optional
+             (True) Autoescapes latex strings. It enables to use latex directly in raw strings without further escaping.
+
+        Returns
+        --------------------
+        fig : AutoGnuplotFigure
+
+
+        Examples
+        ----------------
 
         >>> fig = AutoGnuplotFigure('folder','id')
-        >>> fig.p_generic('u 1 : 2 t "my title" ', x ,y)
-        >>> fig.generate_gnuplot_file()
-        >>> fig.jupyter_show_pdflatex(show_stdout=False)
+        >>> fig.p_generic('u 1 : 2 t "my title" ', x ,y) # for some array x,y
+        >>> fig.generate_gnuplot_file() 
+        >>> fig.jupyter_show_pdflatex(show_stdout=False) # only jupyter
 
-        Class members to be changed:
+        Notes
+        -----------------
+        Setting latex terminal sizes. Change parameters in the member dictionary `pdflatex_terminal_parameters`
 
         >>> fig.pdflatex_terminal_parameters = 
         >>> {
@@ -57,21 +67,23 @@ class AutoGnuplotFigure(object):
 
         if not os.path.exists(self.folder_name):
             os.makedirs(self.folder_name)
-            if verbose:
+            if self.verbose:
                 print( "created folder:", self.folder_name )
 
         self.global_file_identifier = self.folder_name + '/' + self.file_identifier
         self.globalize_fname = lambda x : self.folder_name + '/' + x
 
+        # will get name of user/host... This allows to create the scp copy script 
         self.__establish_ssh_info()
         
 
-        self.dataset_counter = 0
+        self.dataset_counter = 0 
 
         self.datasetstring_template = "__{DS_ID}__{SPECS}.dat"
 
         self.datasets_to_plot = [ [] ]
         self.alter_multiplot_state = [  []  ] #the first altering block can be just global variables
+        
         self.multiplot_index = 0
         self.is_multiplot = False
         
@@ -92,6 +104,7 @@ class AutoGnuplotFigure(object):
 
         self.variables = OrderedDict()
 
+        # initializes the Makefile and the autosync script
         with open( self.globalize_fname("Makefile"), "w" ) as f:
             f.write(  autognuplot_terms.MAKEFILE_LATEX  )
 
@@ -105,8 +118,27 @@ class AutoGnuplotFigure(object):
 
     def extend_global_plotting_parameters(self, *args, **kw):
         """Extends the preamble of the gnuplot script to modify the plotting settings. 
+        
         Expects one or more strings with gnuplot syntax.
- 
+
+        Parameters
+        ---------
+
+        *args: strings
+              Set the global gnuplot state for properties such as axis style, legend position and so on.
+              Use gnuplot syntax. Raw strings are advised.
+
+        autoescape: bool, optional
+              Avoids escaping latex strings. Latex source can be written as is.
+
+        Returns
+        --------------
+        fig : AutoGnuplotFigure
+
+        
+
+        Examples
+        -----------
         >>> figure.extend_global_plotting_parameters(
         >>> r\"\"\"
         >>> set mxtics 2
@@ -151,22 +183,101 @@ class AutoGnuplotFigure(object):
         else:
             self.global_plotting_parameters.extend(args)
 
+        return self
+
     def set_multiplot(self, specifiers = ""):
-        """Enables multiplot mode (use in combination with :next_multiplot_group). Multiplot arguments are passed via the kw `specifiers`"""
+        """Enables multiplot mode (use in combination with `next_multiplot_group`). 
+        
+           
+        Parameters
+        --------------
+        specifiers: str
+             multiplot parameters. E.g. argument "2,2" yields a 2x2 matrix 
+
+        
+        Returns
+        --------------
+        fig : AutoGnuplotFigure
+
+        See also
+        ------------
+        next_multiplot_group, alter_current_multiplot_parameters
+        
+        Example
+        -------------
+        >>> fig.set_multiplot("2,1") # establishes multiplot mode with 2 rows and one column
+        >>> fig.p_generic('u 1 : 2 t "my title" ', x ,y) #plot in position 1,1
+        >>> fig.next_multiplot_group() #next item in multiplot
+        >>> fig.p_generic('u 1 : 2 t "my title" ', x ,z) #plot in position 2,1
+        
+        """
         
         self.is_multiplot = True
         self.extend_global_plotting_parameters(
             "set multiplot " + specifiers
         )
 
+        return self
+
     def next_multiplot_group(self):
+        """Shifts the state to the next plot in the multiplot sequence.
+
+        Returns
+        --------------
+        fig : AutoGnuplotFigure
+
+        See also
+        -------------
+        set_multiplot, alter_current_multiplot_parameters
+        
+        """
+        
         if not self.is_multiplot:
             raise Exception("set_multiplot() is expected to use this feature")
         self.multiplot_index += 1
         self.datasets_to_plot.append([])
         self.alter_multiplot_state.append([])
 
+        return self
+
     def alter_current_multiplot_parameters(self,*args,**kw):
+        """Allows to change state variables of current subplot. 
+
+        Works similarly to `extend_global_plotting_parameters`, but allows selective changes between one subplot and the next
+
+        Parameters
+        ------------------------
+        *args: strings
+              Set the global gnuplot state for properties such as axis style, legend position and so on.
+              Use gnuplot syntax. Raw strings are advised.
+
+        autoescape: bool, optional
+              Avoids escaping latex strings. Latex source can be written as is.
+
+
+        Returns
+        --------------
+        fig : AutoGnuplotFigure
+
+        See also
+        ---------------
+        extend_global_plotting_parameters,set_multiplot,next_multiplot_group
+
+
+        Examples
+        ------------------        
+        >>> fig.set_multiplot("2,1") # establishes multiplot mode with 2 rows and one column 
+        >>> fig.extend_global_plotting_parameters(r"set logscale y") #sets logscale in y, globally
+        >>> fig.extend_global_plotting_parameters(r"set xrange [1e-5:1.05e-3]") #sets xrange, globally
+        >>> fig.p_generic('u 1 : 2 t "my title" ', x ,y) #plot in position 1,1
+        >>> fig.next_multiplot_group() #next item in multiplot
+        >>> ### to change xrange from second subplot onwards
+        >>> fig.alter_current_multiplot_parameters(r"set xrange [1e-7:1.05e-2]")  
+        >>> fig.p_generic('u 1 : 2 t "my title" ', x ,z) #plot in position 2,1
+
+
+        """
+        
         autoescape = kw.get("autoescape", self._autoescape)
         escaped_args = []
         if autoescape:
@@ -174,7 +285,10 @@ class AutoGnuplotFigure(object):
                 escaped_args.append(self.__autoescape_strings(a))
             self.alter_multiplot_state[self.multiplot_index].extend(escaped_args)            
         else:
-            self.alter_multiplot_state[self.multiplot_index].extend(args)        
+            self.alter_multiplot_state[self.multiplot_index].extend(args)
+
+
+        return self
         
 
     def __get_multiplot_current_dataset(self):
@@ -190,6 +304,8 @@ class AutoGnuplotFigure(object):
                        , gnuplot_opt = ""
                        , fname_specs = ""
     ):
+        """Deprecated: Makes a x-y plot. Use `p_generic` instead.
+        """
 
         x = np.array(x)
         y = np.array(y)
@@ -239,6 +355,10 @@ class AutoGnuplotFigure(object):
                      , **kw
                     ):
 
+        """Histogram function
+
+        """
+
         v_, e_ = np.histogram(x,**hist_kw)
         edges_mid = .5 * (e_[1:] + e_[:-1])
         
@@ -269,8 +389,9 @@ class AutoGnuplotFigure(object):
                      , title=''                     
                      , suppress_plt_figure = True
                      , **kw):
-        """proxies the interface of plt.hist for a rapid call swap. 
-        Adds "gnuplot_command_no_u" and "title" arguments """
+        """Histogram function. Proxies the interface of plt.hist for a rapid call swap. 
+        Adds "gnuplot_command_no_u" and "title" arguments 
+        """
 
         import matplotlib.pyplot as plt
 
@@ -579,7 +700,7 @@ class AutoGnuplotFigure(object):
     def jupyter_show_tikz(self
                           , show_stdout = False ):
 
-        """Shows a pdflatex rendering within the current jupyter notebook.
+        r"""Shows a pdflatex rendering within the current jupyter notebook.
         To work it requires ImageMagick and authorization to render pdf to jpg. 
         Should it fail:
         https://stackoverflow.com/a/52661288
