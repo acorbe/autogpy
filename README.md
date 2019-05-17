@@ -5,15 +5,15 @@
 
 
 
-**Which problem does it solve?**
+### Which problem does it solve?
 
 In the scientific community, [gnuplot](http://www.gnuplot.info/) is a gold standard for high-quality plots. It used across generations of scientists.  
-Python is quickly becoming a tool of choice for data analytics. Although python comes with several options for plotting, often gnuplot is preferred in production.
+Python is quickly becoming a tool of choice for data analytics in science and beyond. Although python comes with several options for plotting, often gnuplot is preferred in production.
 
 `autogpy` eliminates annoying duplication of code/data between python analyses and gnuplot figure production.  
-Using a syntax close to gnuplot, automatically generates gnuplot scripts and dumps suitably the data.
+Using a syntax close to gnuplot, it automatically generates gnuplot scripts and dumps suitably the data.
 
-**Features**
+### Features
 + anything that be obtained by the gnuplot command `plot` can be produced
 + any gnuplot state modification can be achieved
 + multiplots
@@ -22,20 +22,29 @@ Using a syntax close to gnuplot, automatically generates gnuplot scripts and dum
 + jupyter notebook gnuplot script inspection
 + gnuplot terminals epslatex, tikz/pgfplot and jpg
 + output figures are shipped in a folder that includes scripts, data and makefile
-+ easy scp-based synchronization between
++ easy scp-based synchronization between a machine in which the figures are generated (e.g. from even larger datasets) and the paper writing machine.
 
 **Works on**
 + Linux/MacOs
 + Python 3
-+ Certain feature require imagemagick and working `gnuplot-tikz.lua`. Certain versions of these might have bugs. Do `figure.display_fixes()` to show known fixes.
 
-
+**KWONW ISSUES**
++ Certain features require imagemagick and a working `gnuplot-tikz.lua`. Some versions of these might have bugs. Do `figure.display_fixes()` to show known fixes.
 
 
 
 ## In a nutshell
 
-### Installation
+### Getting autogpy
+
+From `pip`
+
+```bash
+pip install autogpy
+
+```
+
+From source
 
 ```bash
 git clone git@github.com:acorbe/autogpy.git
