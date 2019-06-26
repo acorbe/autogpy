@@ -192,7 +192,7 @@ class AutoGnuplotFigure(object):
         Parameters
         --------------
         specifiers: str
-             multiplot parameters. E.g. argument "2,2" yields a 2x2 matrix 
+             multiplot parameters. E.g. argument "layout 2,2" yields a 2x2 matrix 
 
         
         Returns
@@ -206,7 +206,7 @@ class AutoGnuplotFigure(object):
         
         Example
         -------------
-        >>> fig.set_multiplot("2,1") # establishes multiplot mode with 2 rows and one column
+        >>> fig.set_multiplot("layout 2,1") # establishes multiplot mode with 2 rows and one column
         >>> fig.p_generic('u 1 : 2 t "my title" ', x ,y) #plot in position 1,1
         >>> fig.next_multiplot_group() #next item in multiplot
         >>> fig.p_generic('u 1 : 2 t "my title" ', x ,z) #plot in position 2,1
