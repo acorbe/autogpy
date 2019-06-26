@@ -267,7 +267,7 @@ class AutoGnuplotFigure(object):
 
         Examples
         ------------------        
-        >>> fig.set_multiplot("2,1") # establishes multiplot mode with 2 rows and one column 
+        >>> fig.set_multiplot("layout 2,1") # establishes multiplot mode with 2 rows and one column 
         >>> fig.extend_global_plotting_parameters(r"set logscale y") #sets logscale in y, globally
         >>> fig.extend_global_plotting_parameters(r"set xrange [1e-5:1.05e-3]") #sets xrange, globally
         >>> fig.p_generic('u 1 : 2 t "my title" ', x ,y) #plot in position 1,1
@@ -276,7 +276,16 @@ class AutoGnuplotFigure(object):
         >>> fig.alter_current_multiplot_parameters(r"set xrange [1e-7:1.05e-2]")  
         >>> fig.p_generic('u 1 : 2 t "my title" ', x ,z) #plot in position 2,1
 
-
+        For inset plots
+        >>> fig.set_multiplot()
+        >>> fig.extend_global_plotting_parameters(r"set logscale y") #sets logscale in y, globally
+        >>> fig.extend_global_plotting_parameters(r"set xrange [1e-5:1.05e-3]") #sets xrange, globally
+        >>> fig.p_generic('u 1 : 2 t "my title" ', x ,y) #plot in position 1,1
+        >>> fig.next_multiplot_group() #next item in multiplot
+        >>> fig.alter_current_multiplot_parameters(r\"\"\"set size 0.6, 0.5       # set size of inset
+                                                    set origin 0.4, 0.5     # move bottom left corner of inset\"\"\")  
+        >>> fig.p_generic('u 1 : 2 t "my title" ', x ,z) #inset plot
+        
         """
         
         autoescape = kw.get("autoescape", self._autoescape)
