@@ -202,6 +202,7 @@ class AutoGnuplotFigure(object):
         See also
         ------------
         next_multiplot_group, alter_current_multiplot_parameters
+
         
         Example
         -------------
@@ -462,6 +463,13 @@ class AutoGnuplotFigure(object):
                 if self.verbose:
                     print('Warning: "{DS_FNAME}" will be prepended to your string')
                 command_line = '"{DS_FNAME}"' + " " + command_line
+            if " t " not in command_line and " title " not in command_line:
+
+                command_line =  command_line + " " + """title "{TITLE}" """.format(TITLE = dataset_fname.split('/')[-1].replace("_","\\\_"))
+                if self.verbose:
+                    print('Warning: a title will be appended to avoid latex compilation problems')
+                    print('the final command reads:')
+                    print(command_line)
 
             self.__append_to_multiplot_current_dataset(
                 {'dataset_fname' : dataset_fname
