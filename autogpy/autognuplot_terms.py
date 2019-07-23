@@ -7,9 +7,11 @@ latex_targets_pdf=$(latex_figs:.pdflatex_compile.sh=.pdf)
 tikz_targets_pdf=$(tikz_figs:.tikz_compile.sh=.tikz.pdf)
 all_targets=$(latex_targets_pdf) $(tikz_targets_pdf)
 
+
+all: {ALL_TARGETS}
 latex: $(latex_targets_pdf)
 tikz:  $(tikz_targets_pdf)
-all: $(all_targets)
+
 
 %.tikz.pdf: %.tikz_compile.sh %.tikz.gnu %.core.gnu
 {TAB}bash $<
@@ -33,7 +35,7 @@ deepclean:
 sync:
 {TAB}bash sync_me.sh
 
-""".format(TAB="\t")
+""" #.format(TAB="\t")
 
 SYNC_sc_template =\
 """

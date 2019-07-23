@@ -21,6 +21,10 @@ class AutoGnuplotFigure(object):
              (False) Verbose operating mode.
         autoescape: bool, optional
              (True) Autoescapes latex strings. It enables to use latex directly in raw strings without further escaping.
+        latex_enabled: bool, optional
+             (True) The Makefile of the generated figure will build a latex figure by default (in the first make statement)
+        tikz_enabled: bool, optional
+             (False) The Makefile of the generated figure will build a latex/tikz figure by default (in the first make statement). Disabled as the default tikz configuration has some issue. See method: `display_fixes`.
 
         Returns
         --------------------
@@ -53,7 +57,9 @@ class AutoGnuplotFigure(object):
                  , folder_name
                  , file_identifier
                  , verbose = False
-                 , autoescape = True):
+                 , autoescape = True
+                 , latex_enabled = True
+                 , tikz_enabled = False):
         """ AutoGnuplotFigure
 
         """
@@ -104,16 +110,34 @@ class AutoGnuplotFigure(object):
 
         self.variables = OrderedDict()
 
+        self.terminals_enabled_by_default =[
+            {'type' : 'latex', 'is_enabled' : latex_enabled
+             , 'makefile_string' : '$(latex_targets_pdf)'}
+            , {'type' : 'tikz', 'is_enabled' : tikz_enabled
+             , 'makefile_string' : '$(tikz_targets_pdf)'}
+        ]
+
+
+        self.__Makefile_replacement_dict = { 
+            'TAB' : "\t"  #ensure correct tab formatting
+            , 'ALL_TARGETS' : "" + " ".join(
+                [ x['makefile_string'] for x in self.terminals_enabled_by_default if x['is_enabled'] ]
+            ) 
+        }
+        
+
         # initializes the Makefile and the autosync script
         with open( self.globalize_fname("Makefile"), "w" ) as f:
-            f.write(  autognuplot_terms.MAKEFILE_LATEX  )
+            f.write(  autognuplot_terms.MAKEFILE_LATEX.format(
+                **self.__Makefile_replacement_dict
+            )  )
 
         with open( self.globalize_fname("sync_me.sh"), "w" ) as f:
             f.write(  autognuplot_terms.SYNC_sc_template.format(
                 SYNC_SCP_CALL = self.__scp_string_nofolder
             )
             )
-        
+
         
 
     def extend_global_plotting_parameters(self, *args, **kw):
