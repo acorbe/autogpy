@@ -475,14 +475,17 @@ class AutoGnuplotFigure(object):
         if len(args) == 0: #case an explicit function is plotted:
 
             print ("To be tested")
-            
-            self.__append_to_multiplot_current_dataset(
+
+            to_append = \
                 {'dataset_fname' : ""
                  , 'plottype' : 'expl_f'
                  , 'gnuplot_opt' : ""
                  , 'gnuplot_command_template' : command_line
                  #, 'prepended_parameters' : prepend_parameters
                 }
+            
+            self.__append_to_multiplot_current_dataset(
+                to_append 
             )            
         else:            
         
@@ -511,15 +514,22 @@ class AutoGnuplotFigure(object):
                     print('the final command reads:')
                     print(command_line)
 
-            self.__append_to_multiplot_current_dataset(
-                {'dataset_fname' : dataset_fname
+            to_append = {
+                'dataset_fname' : dataset_fname
                  , 'plottype' : 'xyzt_gen'
                  , 'gnuplot_opt' : ""
                  , 'gnuplot_command_template' : command_line
                  #, 'prepended_parameters' : prepend_parameters
                 }
+
+
+            self.__append_to_multiplot_current_dataset(
+                to_append
             )
             self.__dataset_counter += 1
+
+        return to_append
+        
 
     def add_variable_declaration(self,name,value,is_string = False):
         self.variables[name] = "'%s'"%str(value) if is_string else str(value)
