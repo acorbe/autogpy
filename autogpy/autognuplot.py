@@ -7,6 +7,7 @@ from collections import OrderedDict
 
 from . import autognuplot_terms
 
+
 class AutoGnuplotFigure(object):
     """Creates an AutoGnuplotFigure object which wraps one gnuplot figure.
 
@@ -83,7 +84,7 @@ class AutoGnuplotFigure(object):
         self.__establish_ssh_info()
         
 
-        self.dataset_counter = 0 
+        self.dataset_counter = 0
 
         self.datasetstring_template = "__{DS_ID}__{SPECS}.dat"
 
@@ -366,7 +367,7 @@ class AutoGnuplotFigure(object):
                                       , v_
                                       , normalization ):
 
-        N_coeff = 1.
+        N_coeff = 1
         if normalization is not None:
             if isinstance( normalization, float):
                 N_coeff =  normalization
@@ -385,7 +386,7 @@ class AutoGnuplotFigure(object):
                      , normalization = None
                      , kde = False
                      , kde_kw = {}
-                     , reweight = lambda edges_mid : 1.
+                     , reweight = lambda edges_mid : 1
                      , **kw
                     ):
 
@@ -405,10 +406,13 @@ class AutoGnuplotFigure(object):
 
             v_ = kde_vals        
             
-        v_ *= reweight(edges_mid)                   
+        v_ = v_ * reweight(edges_mid)                   
 
         N_coeff = self.__hist_normalization_function(v_,normalization)
-        v_ /= N_coeff
+        # if self.verbose:
+        #     print("v_:", v_)
+        #     print("N_coeff:", N_coeff)
+        v_ = v_ / N_coeff
         
         self.p_generic(
             gnuplot_command_using + " " + gnuplot_command_no_u
