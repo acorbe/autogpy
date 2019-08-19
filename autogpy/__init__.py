@@ -4,5 +4,7 @@
 
 """
 
+from . import plot_helpers 
 from .autognuplot import AutoGnuplotFigure
+
 AutogpyFigure = AutoGnuplotFigure
