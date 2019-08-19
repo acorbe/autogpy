@@ -83,8 +83,7 @@ class AutoGnuplotFigure(object):
         # will get name of user/host... This allows to create the scp copy script 
         self.__establish_ssh_info()
         
-
-        self.dataset_counter = 0
+        self.__dataset_counter = 0 
 
         self.datasetstring_template = "__{DS_ID}__{SPECS}.dat"
 
@@ -346,7 +345,7 @@ class AutoGnuplotFigure(object):
         y = np.array(y)
         data = np.concatenate([x[:,np.newaxis] ,y[:,np.newaxis]  ],axis = 1)
         dataset_fname = self.file_identifier + self.datasetstring_template.format(            
-            DS_ID = self.dataset_counter
+            DS_ID = self.__dataset_counter
             , SPECS = fname_specs)
         
         np.savetxt( self.globalize_fname(dataset_fname) ,  data)
@@ -361,7 +360,7 @@ class AutoGnuplotFigure(object):
             }
 
         )
-        self.dataset_counter += 1
+        self.__dataset_counter += 1
 
     def __hist_normalization_function(self
                                       , v_
@@ -374,6 +373,7 @@ class AutoGnuplotFigure(object):
             elif isinstance( normalization, str):
                 if normalization == 'max':
                     N_coeff = np.max(v_)
+        
 
         return N_coeff 
 
@@ -491,7 +491,7 @@ class AutoGnuplotFigure(object):
             data = np.concatenate( xyzt , axis = 1 )
 
             dataset_fname = self.file_identifier + self.datasetstring_template.format(            
-                DS_ID = self.dataset_counter
+                DS_ID = self.__dataset_counter
                 , SPECS = fname_specs)
 
             np.savetxt( self.globalize_fname(dataset_fname) ,  data)
@@ -516,7 +516,7 @@ class AutoGnuplotFigure(object):
                  #, 'prepended_parameters' : prepend_parameters
                 }
             )
-            self.dataset_counter += 1
+            self.__dataset_counter += 1
 
     def add_variable_declaration(self,name,value,is_string = False):
         self.variables[name] = "'%s'"%str(value) if is_string else str(value)
