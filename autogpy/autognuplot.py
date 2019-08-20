@@ -7,6 +7,7 @@ from collections import OrderedDict
 
 from . import autognuplot_terms
 
+
 class AutoGnuplotFigure(object):
     """Creates an AutoGnuplotFigure object which wraps one gnuplot figure.
 
@@ -82,7 +83,6 @@ class AutoGnuplotFigure(object):
         # will get name of user/host... This allows to create the scp copy script 
         self.__establish_ssh_info()
         
-
         self.__dataset_counter = 0 
 
         self.datasetstring_template = "__{DS_ID}__{SPECS}.dat"
@@ -366,7 +366,7 @@ class AutoGnuplotFigure(object):
                                       , v_
                                       , normalization ):
 
-        N_coeff = 1.
+        N_coeff = 1
         if normalization is not None:
             if isinstance( normalization, float):
                 N_coeff =  normalization
@@ -386,7 +386,7 @@ class AutoGnuplotFigure(object):
                      , normalization = None
                      , kde = False
                      , kde_kw = {}
-                     , reweight = lambda edges_mid : 1.
+                     , reweight = lambda edges_mid : 1
                      , **kw
                     ):
 
@@ -406,10 +406,13 @@ class AutoGnuplotFigure(object):
 
             v_ = kde_vals        
             
-        v_ *= reweight(edges_mid)                   
+        v_ = v_ * reweight(edges_mid)                   
 
         N_coeff = self.__hist_normalization_function(v_,normalization)
-        v_ /= N_coeff
+        # if self.verbose:
+        #     print("v_:", v_)
+        #     print("N_coeff:", N_coeff)
+        v_ = v_ / N_coeff
         
         self.p_generic(
             gnuplot_command_using + " " + gnuplot_command_no_u
@@ -472,14 +475,17 @@ class AutoGnuplotFigure(object):
         if len(args) == 0: #case an explicit function is plotted:
 
             print ("To be tested")
-            
-            self.__append_to_multiplot_current_dataset(
+
+            to_append = \
                 {'dataset_fname' : ""
                  , 'plottype' : 'expl_f'
                  , 'gnuplot_opt' : ""
                  , 'gnuplot_command_template' : command_line
                  #, 'prepended_parameters' : prepend_parameters
                 }
+            
+            self.__append_to_multiplot_current_dataset(
+                to_append 
             )            
         else:            
         
@@ -497,7 +503,10 @@ class AutoGnuplotFigure(object):
                 if self.verbose:
                     print('Warning: "{DS_FNAME}" will be prepended to your string')
                 command_line = '"{DS_FNAME}"' + " " + command_line
-            if " t " not in command_line and " title " not in command_line:
+            if " t " not in command_line \
+               and " t\"" not in command_line\
+               and " title " not in command_line\
+               and " title\"" not in command_line:
 
                 command_line =  command_line + " " + """title "{TITLE}" """.format(TITLE = dataset_fname.split('/')[-1].replace("_","\\\_"))
                 if self.verbose:
@@ -505,15 +514,22 @@ class AutoGnuplotFigure(object):
                     print('the final command reads:')
                     print(command_line)
 
-            self.__append_to_multiplot_current_dataset(
-                {'dataset_fname' : dataset_fname
+            to_append = {
+                'dataset_fname' : dataset_fname
                  , 'plottype' : 'xyzt_gen'
                  , 'gnuplot_opt' : ""
                  , 'gnuplot_command_template' : command_line
                  #, 'prepended_parameters' : prepend_parameters
                 }
+
+
+            self.__append_to_multiplot_current_dataset(
+                to_append
             )
             self.__dataset_counter += 1
+
+        return to_append
+        
 
     def add_variable_declaration(self,name,value,is_string = False):
         self.variables[name] = "'%s'"%str(value) if is_string else str(value)
