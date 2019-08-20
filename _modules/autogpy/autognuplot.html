@@ -1,0 +1,964 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>autogpy.autognuplot &#8212; Autogpy - AutoGnuplot.py  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for autogpy.autognuplot</h1><div class="highlight"><pre>
+<span></span><span class="c1">### makes it easy to pass data to gnuplot - plotting tools - dumps data and generates one elementary plotting script</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">autognuplot_terms</span>
+
+
+<div class="viewcode-block" id="AutoGnuplotFigure"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure">[docs]</a><span class="k">class</span> <span class="nc">AutoGnuplotFigure</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates an AutoGnuplotFigure object which wraps one gnuplot figure.</span>
+
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ---------------------</span>
+<span class="sd">        folder_name: str</span>
+<span class="sd">             target location for the figure scripts and data</span>
+<span class="sd">        file_identifier: str</span>
+<span class="sd">             common identifier present in the file names of this figure object</span>
+<span class="sd">        verbose: bool, optional</span>
+<span class="sd">             (False) Verbose operating mode.</span>
+<span class="sd">        autoescape: bool, optional</span>
+<span class="sd">             (True) Autoescapes latex strings. It enables to use latex directly in raw strings without further escaping.</span>
+<span class="sd">        latex_enabled: bool, optional</span>
+<span class="sd">             (True) The Makefile of the generated figure will build a latex figure by default (in the first make statement)</span>
+<span class="sd">        tikz_enabled: bool, optional</span>
+<span class="sd">             (False) The Makefile of the generated figure will build a latex/tikz figure by default (in the first make statement). Disabled as the default tikz configuration has some issue. See method: `display_fixes`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------------------</span>
+<span class="sd">        fig : AutoGnuplotFigure</span>
+
+
+<span class="sd">        Examples</span>
+<span class="sd">        ----------------</span>
+
+<span class="sd">        &gt;&gt;&gt; fig = AutoGnuplotFigure(&#39;folder&#39;,&#39;id&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,y) # for some array x,y</span>
+<span class="sd">        &gt;&gt;&gt; fig.generate_gnuplot_file() </span>
+<span class="sd">        &gt;&gt;&gt; fig.jupyter_show_pdflatex(show_stdout=False) # only jupyter</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----------------</span>
+<span class="sd">        Setting latex terminal sizes. Change parameters in the member dictionary `pdflatex_terminal_parameters`</span>
+
+<span class="sd">        &gt;&gt;&gt; fig.pdflatex_terminal_parameters = </span>
+<span class="sd">        &gt;&gt;&gt; {</span>
+<span class="sd">        &gt;&gt;&gt;     &quot;x_size&quot; : &quot;9.9cm&quot;</span>
+<span class="sd">        &gt;&gt;&gt;     , &quot;y_size&quot; : &quot;8.cm&quot;</span>
+<span class="sd">        &gt;&gt;&gt;     , &quot;font&quot; : &quot;phv,12 &quot;</span>
+<span class="sd">        &gt;&gt;&gt;     , &quot;linewidth&quot; : &quot;2&quot;</span>
+<span class="sd">        &gt;&gt;&gt; }</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span>
+                 <span class="p">,</span> <span class="n">folder_name</span>
+                 <span class="p">,</span> <span class="n">file_identifier</span>
+                 <span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span>
+                 <span class="p">,</span> <span class="n">autoescape</span> <span class="o">=</span> <span class="kc">True</span>
+                 <span class="p">,</span> <span class="n">latex_enabled</span> <span class="o">=</span> <span class="kc">True</span>
+                 <span class="p">,</span> <span class="n">tikz_enabled</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; AutoGnuplotFigure</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span> <span class="o">=</span> <span class="n">folder_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_dir_whole_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span>  <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_identifier</span> <span class="o">=</span> <span class="n">file_identifier</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span> <span class="s2">&quot;created folder:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span> <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_file_identifier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_identifier</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">globalize_fname</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">x</span>
+
+        <span class="c1"># will get name of user/host... This allows to create the scp copy script </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__establish_ssh_info</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dataset_counter</span> <span class="o">=</span> <span class="mi">0</span> 
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">datasetstring_template</span> <span class="o">=</span> <span class="s2">&quot;__</span><span class="si">{DS_ID}</span><span class="s2">__</span><span class="si">{SPECS}</span><span class="s2">.dat&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">datasets_to_plot</span> <span class="o">=</span> <span class="p">[</span> <span class="p">[]</span> <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alter_multiplot_state</span> <span class="o">=</span> <span class="p">[</span>  <span class="p">[]</span>  <span class="p">]</span> <span class="c1">#the first altering block can be just global variables</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">multiplot_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_multiplot</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_plotting_parameters</span> <span class="o">=</span> <span class="p">[]</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_jpg_convert_density</span> <span class="o">=</span> <span class="mi">300</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_jpg_convert_quality</span> <span class="o">=</span> <span class="mi">90</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_terminal_parameters</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;x_size&quot;</span> <span class="p">:</span> <span class="s2">&quot;9.9cm&quot;</span>
+            <span class="p">,</span> <span class="s2">&quot;y_size&quot;</span> <span class="p">:</span> <span class="s2">&quot;8.cm&quot;</span>
+            <span class="p">,</span> <span class="s2">&quot;font&quot;</span> <span class="p">:</span> <span class="s2">&quot;phv,12 &quot;</span>
+            <span class="p">,</span> <span class="s2">&quot;linewidth&quot;</span> <span class="p">:</span> <span class="s2">&quot;2&quot;</span>
+
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_autoescape</span> <span class="o">=</span> <span class="n">autoescape</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">variables</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">terminals_enabled_by_default</span> <span class="o">=</span><span class="p">[</span>
+            <span class="p">{</span><span class="s1">&#39;type&#39;</span> <span class="p">:</span> <span class="s1">&#39;latex&#39;</span><span class="p">,</span> <span class="s1">&#39;is_enabled&#39;</span> <span class="p">:</span> <span class="n">latex_enabled</span>
+             <span class="p">,</span> <span class="s1">&#39;makefile_string&#39;</span> <span class="p">:</span> <span class="s1">&#39;$(latex_targets_pdf)&#39;</span><span class="p">}</span>
+            <span class="p">,</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span> <span class="p">:</span> <span class="s1">&#39;tikz&#39;</span><span class="p">,</span> <span class="s1">&#39;is_enabled&#39;</span> <span class="p">:</span> <span class="n">tikz_enabled</span>
+             <span class="p">,</span> <span class="s1">&#39;makefile_string&#39;</span> <span class="p">:</span> <span class="s1">&#39;$(tikz_targets_pdf)&#39;</span><span class="p">}</span>
+        <span class="p">]</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__Makefile_replacement_dict</span> <span class="o">=</span> <span class="p">{</span> 
+            <span class="s1">&#39;TAB&#39;</span> <span class="p">:</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span>  <span class="c1">#ensure correct tab formatting</span>
+            <span class="p">,</span> <span class="s1">&#39;ALL_TARGETS&#39;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;makefile_string&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminals_enabled_by_default</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;is_enabled&#39;</span><span class="p">]</span> <span class="p">]</span>
+            <span class="p">)</span> 
+        <span class="p">}</span>
+        
+
+        <span class="c1"># initializes the Makefile and the autosync script</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">globalize_fname</span><span class="p">(</span><span class="s2">&quot;Makefile&quot;</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span> <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>  <span class="n">autognuplot_terms</span><span class="o">.</span><span class="n">MAKEFILE_LATEX</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">__Makefile_replacement_dict</span>
+            <span class="p">)</span>  <span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">globalize_fname</span><span class="p">(</span><span class="s2">&quot;sync_me.sh&quot;</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span> <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>  <span class="n">autognuplot_terms</span><span class="o">.</span><span class="n">SYNC_sc_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">SYNC_SCP_CALL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__scp_string_nofolder</span>
+            <span class="p">)</span>
+            <span class="p">)</span>
+
+        
+
+<div class="viewcode-block" id="AutoGnuplotFigure.extend_global_plotting_parameters"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.extend_global_plotting_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">extend_global_plotting_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Extends the preamble of the gnuplot script to modify the plotting settings. </span>
+<span class="sd">        </span>
+<span class="sd">        Expects one or more strings with gnuplot syntax.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ---------</span>
+
+<span class="sd">        *args: strings</span>
+<span class="sd">              Set the global gnuplot state for properties such as axis style, legend position and so on.</span>
+<span class="sd">              Use gnuplot syntax. Raw strings are advised.</span>
+
+<span class="sd">        autoescape: bool, optional</span>
+<span class="sd">              Avoids escaping latex strings. Latex source can be written as is.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------------</span>
+<span class="sd">        fig : AutoGnuplotFigure</span>
+
+<span class="sd">        </span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        -----------</span>
+<span class="sd">        &gt;&gt;&gt; figure.extend_global_plotting_parameters(</span>
+<span class="sd">        &gt;&gt;&gt; r\&quot;\&quot;\&quot;</span>
+<span class="sd">        &gt;&gt;&gt; set mxtics 2</span>
+<span class="sd">        &gt;&gt;&gt; set mytics 1</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; # color definitions</span>
+<span class="sd">        &gt;&gt;&gt; set border linewidth 1.5</span>
+<span class="sd">        &gt;&gt;&gt; set style line 1 lc rgb &#39;#ff0000&#39;  lt 1 lw 2</span>
+<span class="sd">        &gt;&gt;&gt; set style line 2 lc rgb &#39;#0000ff&#39; lt 3 lw 4</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; # Axes</span>
+<span class="sd">        &gt;&gt;&gt; set style line 11  lc rgb &#39;#100100100&#39; lt 1</span>
+<span class="sd">        &gt;&gt;&gt; set border 3 back ls 11</span>
+<span class="sd">        &gt;&gt;&gt; set tics nomirror out scale 0.75</span>
+<span class="sd">        &gt;&gt;&gt; # Grid</span>
+<span class="sd">        &gt;&gt;&gt; set style line 12 lc rgb&#39;#808080&#39; lt 0 lw 1</span>
+<span class="sd">        &gt;&gt;&gt; set grid back ls 12</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; set format y &#39;$%.4f$&#39;</span>
+<span class="sd">        &gt;&gt;&gt; set format x &#39;$%.4f$&#39;</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; set key top left</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; set key samplen 2 inside spacing 1 width 0.3 height 1.5  at graph 0.99, 1.05</span>
+<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; unset grid</span>
+<span class="sd">        &gt;&gt;&gt; #set logscale y</span>
+<span class="sd">        &gt;&gt;&gt; set xlabel &quot;$\\nu$&quot;</span>
+<span class="sd">        &gt;&gt;&gt; set xrange [1e-5:1.05e-3]</span>
+<span class="sd">        &gt;&gt;&gt; set yrange [1e-5:1e-3]</span>
+<span class="sd">        &gt;&gt;&gt; set xtics 0,2e-4,1.01e-3</span>
+<span class="sd">        &gt;&gt;&gt; #set ytics 2e-4,2e-4,1.01e-3</span>
+<span class="sd">        &gt;&gt;&gt; \&quot;\&quot;\&quot;)        </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">autoescape</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;autoescape&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_autoescape</span><span class="p">)</span>
+        <span class="n">escaped_args</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">autoescape</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span><span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+                <span class="n">escaped_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__autoescape_strings</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_plotting_parameters</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">escaped_args</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_plotting_parameters</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="AutoGnuplotFigure.set_multiplot"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.set_multiplot">[docs]</a>    <span class="k">def</span> <span class="nf">set_multiplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">specifiers</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Enables multiplot mode (use in combination with `next_multiplot_group`). </span>
+<span class="sd">        </span>
+<span class="sd">           </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        --------------</span>
+<span class="sd">        specifiers: str</span>
+<span class="sd">             multiplot parameters. E.g. argument &quot;layout 2,2&quot; yields a 2x2 matrix </span>
+
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        --------------</span>
+<span class="sd">        fig : AutoGnuplotFigure</span>
+
+<span class="sd">        See also</span>
+<span class="sd">        ------------</span>
+<span class="sd">        next_multiplot_group, alter_current_multiplot_parameters</span>
+
+<span class="sd">        </span>
+<span class="sd">        Example</span>
+<span class="sd">        -------------</span>
+<span class="sd">        &gt;&gt;&gt; fig.set_multiplot(&quot;layout 2,1&quot;) # establishes multiplot mode with 2 rows and one column</span>
+<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,y) #plot in position 1,1</span>
+<span class="sd">        &gt;&gt;&gt; fig.next_multiplot_group() #next item in multiplot</span>
+<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,z) #plot in position 2,1</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_multiplot</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extend_global_plotting_parameters</span><span class="p">(</span>
+            <span class="s2">&quot;set multiplot &quot;</span> <span class="o">+</span> <span class="n">specifiers</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="AutoGnuplotFigure.next_multiplot_group"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.next_multiplot_group">[docs]</a>    <span class="k">def</span> <span class="nf">next_multiplot_group</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Shifts the state to the next plot in the multiplot sequence.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------------</span>
+<span class="sd">        fig : AutoGnuplotFigure</span>
+
+<span class="sd">        See also</span>
+<span class="sd">        -------------</span>
+<span class="sd">        set_multiplot, alter_current_multiplot_parameters</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_multiplot</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;set_multiplot() is expected to use this feature&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">multiplot_index</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">datasets_to_plot</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alter_multiplot_state</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="AutoGnuplotFigure.alter_current_multiplot_parameters"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.alter_current_multiplot_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">alter_current_multiplot_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Allows to change state variables of current subplot. </span>
+
+<span class="sd">        Works similarly to `extend_global_plotting_parameters`, but allows selective changes between one subplot and the next</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ------------------------</span>
+<span class="sd">        *args: strings</span>
+<span class="sd">              Set the global gnuplot state for properties such as axis style, legend position and so on.</span>
+<span class="sd">              Use gnuplot syntax. Raw strings are advised.</span>
+
+<span class="sd">        autoescape: bool, optional</span>
+<span class="sd">              Avoids escaping latex strings. Latex source can be written as is.</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------------</span>
+<span class="sd">        fig : AutoGnuplotFigure</span>
+
+<span class="sd">        See also</span>
+<span class="sd">        ---------------</span>
+<span class="sd">        extend_global_plotting_parameters,set_multiplot,next_multiplot_group</span>
+
+
+<span class="sd">        Examples</span>
+<span class="sd">        ------------------        </span>
+<span class="sd">        &gt;&gt;&gt; fig.set_multiplot(&quot;layout 2,1&quot;) # establishes multiplot mode with 2 rows and one column </span>
+<span class="sd">        &gt;&gt;&gt; fig.extend_global_plotting_parameters(r&quot;set logscale y&quot;) #sets logscale in y, globally</span>
+<span class="sd">        &gt;&gt;&gt; fig.extend_global_plotting_parameters(r&quot;set xrange [1e-5:1.05e-3]&quot;) #sets xrange, globally</span>
+<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,y) #plot in position 1,1</span>
+<span class="sd">        &gt;&gt;&gt; fig.next_multiplot_group() #next item in multiplot</span>
+<span class="sd">        &gt;&gt;&gt; ### to change xrange from second subplot onwards</span>
+<span class="sd">        &gt;&gt;&gt; fig.alter_current_multiplot_parameters(r&quot;set xrange [1e-7:1.05e-2]&quot;)  </span>
+<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,z) #plot in position 2,1</span>
+
+<span class="sd">        For inset plots</span>
+<span class="sd">        &gt;&gt;&gt; fig.set_multiplot()</span>
+<span class="sd">        &gt;&gt;&gt; fig.extend_global_plotting_parameters(r&quot;set logscale y&quot;) #sets logscale in y, globally</span>
+<span class="sd">        &gt;&gt;&gt; fig.extend_global_plotting_parameters(r&quot;set xrange [1e-5:1.05e-3]&quot;) #sets xrange, globally</span>
+<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,y) #plot in position 1,1</span>
+<span class="sd">        &gt;&gt;&gt; fig.next_multiplot_group() #next item in multiplot</span>
+<span class="sd">        &gt;&gt;&gt; fig.alter_current_multiplot_parameters(r\&quot;\&quot;\&quot;set size 0.6, 0.5       # set size of inset</span>
+<span class="sd">                                                    set origin 0.4, 0.5     # move bottom left corner of inset\&quot;\&quot;\&quot;)  </span>
+<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,z) #inset plot</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">autoescape</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;autoescape&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_autoescape</span><span class="p">)</span>
+        <span class="n">escaped_args</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">autoescape</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span><span class="n">a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+                <span class="n">escaped_args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__autoescape_strings</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alter_multiplot_state</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">multiplot_index</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">escaped_args</span><span class="p">)</span>            
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alter_multiplot_state</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">multiplot_index</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+        
+
+    <span class="k">def</span> <span class="nf">__get_multiplot_current_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets_to_plot</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">multiplot_index</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__append_to_multiplot_current_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">datasets_to_plot</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">multiplot_index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    
+
+<div class="viewcode-block" id="AutoGnuplotFigure.add_xy_dataset"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.add_xy_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">add_xy_dataset</span><span class="p">(</span><span class="bp">self</span>
+                       <span class="p">,</span> <span class="n">x</span>
+                       <span class="p">,</span> <span class="n">y</span>                       
+                       <span class="p">,</span> <span class="n">gnuplot_opt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                       <span class="p">,</span> <span class="n">fname_specs</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Deprecated: Makes a x-y plot. Use `p_generic` instead.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">x</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="p">,</span><span class="n">y</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>  <span class="p">],</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">dataset_fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_identifier</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasetstring_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>            
+            <span class="n">DS_ID</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dataset_counter</span>
+            <span class="p">,</span> <span class="n">SPECS</span> <span class="o">=</span> <span class="n">fname_specs</span><span class="p">)</span>
+        
+        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">globalize_fname</span><span class="p">(</span><span class="n">dataset_fname</span><span class="p">)</span> <span class="p">,</span>  <span class="n">data</span><span class="p">)</span>
+
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__append_to_multiplot_current_dataset</span><span class="p">(</span>
+            <span class="p">{</span><span class="s1">&#39;dataset_fname&#39;</span> <span class="p">:</span> <span class="n">dataset_fname</span>
+             <span class="p">,</span> <span class="s1">&#39;plottype&#39;</span> <span class="p">:</span> <span class="s1">&#39;xy&#39;</span>
+             <span class="p">,</span> <span class="s1">&#39;gnuplot_opt&#39;</span> <span class="p">:</span> <span class="n">gnuplot_opt</span>
+             <span class="p">,</span> <span class="s1">&#39;gnuplot_command_template&#39;</span> <span class="p">:</span> <span class="s2">&quot;&quot;&quot; &quot;</span><span class="si">{DS_FNAME}</span><span class="s2">&quot; u 1:2 </span><span class="si">{OPTS}</span><span class="s2">  &quot;&quot;&quot;</span>
+
+            <span class="p">}</span>
+
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dataset_counter</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+    <span class="k">def</span> <span class="nf">__hist_normalization_function</span><span class="p">(</span><span class="bp">self</span>
+                                      <span class="p">,</span> <span class="n">v_</span>
+                                      <span class="p">,</span> <span class="n">normalization</span> <span class="p">):</span>
+
+        <span class="n">N_coeff</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">normalization</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span> <span class="n">normalization</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                <span class="n">N_coeff</span> <span class="o">=</span>  <span class="n">normalization</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span> <span class="n">normalization</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">normalization</span> <span class="o">==</span> <span class="s1">&#39;max&#39;</span><span class="p">:</span>
+                    <span class="n">N_coeff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">v_</span><span class="p">)</span>
+        
+
+        <span class="k">return</span> <span class="n">N_coeff</span> 
+
+        
+
+<div class="viewcode-block" id="AutoGnuplotFigure.hist_generic"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.hist_generic">[docs]</a>    <span class="k">def</span> <span class="nf">hist_generic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span>
+                     <span class="p">,</span> <span class="n">gnuplot_command_no_u</span>
+                     <span class="p">,</span> <span class="n">hist_kw</span> <span class="o">=</span> <span class="p">{}</span>
+                     <span class="p">,</span> <span class="n">gnuplot_command_using</span> <span class="o">=</span> <span class="s2">&quot;u 1:2&quot;</span>
+                     <span class="p">,</span> <span class="n">normalization</span> <span class="o">=</span> <span class="kc">None</span>
+                     <span class="p">,</span> <span class="n">kde</span> <span class="o">=</span> <span class="kc">False</span>
+                     <span class="p">,</span> <span class="n">kde_kw</span> <span class="o">=</span> <span class="p">{}</span>
+                     <span class="p">,</span> <span class="n">reweight</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">edges_mid</span> <span class="p">:</span> <span class="mi">1</span>
+                     <span class="p">,</span> <span class="o">**</span><span class="n">kw</span>
+                    <span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;Histogram function</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">v_</span><span class="p">,</span> <span class="n">e_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="o">**</span><span class="n">hist_kw</span><span class="p">)</span>
+        <span class="n">edges_mid</span> <span class="o">=</span> <span class="o">.</span><span class="mi">5</span> <span class="o">*</span> <span class="p">(</span><span class="n">e_</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">e_</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        
+        
+        <span class="k">if</span> <span class="n">kde</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">gaussian_kde</span>
+            <span class="n">kernel</span> <span class="o">=</span> <span class="n">gaussian_kde</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="o">**</span><span class="n">kde_kw</span><span class="p">)</span>
+
+            <span class="n">kde_vals</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">(</span><span class="n">edges_mid</span><span class="p">)</span>
+
+            <span class="n">v_</span> <span class="o">=</span> <span class="n">kde_vals</span>        
+            
+        <span class="n">v_</span> <span class="o">=</span> <span class="n">v_</span> <span class="o">*</span> <span class="n">reweight</span><span class="p">(</span><span class="n">edges_mid</span><span class="p">)</span>                   
+
+        <span class="n">N_coeff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hist_normalization_function</span><span class="p">(</span><span class="n">v_</span><span class="p">,</span><span class="n">normalization</span><span class="p">)</span>
+        <span class="c1"># if self.verbose:</span>
+        <span class="c1">#     print(&quot;v_:&quot;, v_)</span>
+        <span class="c1">#     print(&quot;N_coeff:&quot;, N_coeff)</span>
+        <span class="n">v_</span> <span class="o">=</span> <span class="n">v_</span> <span class="o">/</span> <span class="n">N_coeff</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_generic</span><span class="p">(</span>
+            <span class="n">gnuplot_command_using</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">gnuplot_command_no_u</span>
+            <span class="p">,</span> <span class="n">edges_mid</span> <span class="p">,</span> <span class="n">v_</span>
+            <span class="p">,</span> <span class="o">**</span><span class="n">kw</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="AutoGnuplotFigure.hist_plthist"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.hist_plthist">[docs]</a>    <span class="k">def</span> <span class="nf">hist_plthist</span><span class="p">(</span><span class="bp">self</span>
+                     <span class="p">,</span> <span class="n">x</span>
+                     <span class="p">,</span> <span class="n">normalization</span> <span class="o">=</span> <span class="kc">None</span>
+                     <span class="p">,</span> <span class="n">gnuplot_command_no_u_no_title</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+                     <span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;&#39;</span>                     
+                     <span class="p">,</span> <span class="n">suppress_plt_figure</span> <span class="o">=</span> <span class="kc">True</span>
+                     <span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Histogram function. Proxies the interface of plt.hist for a rapid call swap. </span>
+<span class="sd">        Adds &quot;gnuplot_command_no_u&quot; and &quot;title&quot; arguments </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+        <span class="n">v_</span><span class="p">,</span><span class="n">e_</span><span class="p">,</span><span class="n">patches</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">suppress_plt_figure</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="n">edges_mid</span> <span class="o">=</span> <span class="o">.</span><span class="mi">5</span> <span class="o">*</span> <span class="p">(</span><span class="n">e_</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">e_</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">N_coeff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__hist_normalization_function</span><span class="p">(</span><span class="n">v_</span><span class="p">,</span><span class="n">normalization</span><span class="p">)</span>
+        <span class="n">v_</span> <span class="o">/=</span> <span class="n">N_coeff</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">p_generic</span><span class="p">(</span>
+            <span class="s2">&quot;u 1:2 t </span><span class="se">\&quot;</span><span class="si">{TITLE}</span><span class="se">\&quot;</span><span class="s2"> </span><span class="si">{REST}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">TITLE</span> <span class="o">=</span> <span class="n">title</span>
+                                            <span class="p">,</span> <span class="n">REST</span> <span class="o">=</span> <span class="n">gnuplot_command_no_u_no_title</span><span class="p">)</span> 
+            <span class="p">,</span> <span class="n">edges_mid</span> <span class="p">,</span> <span class="n">v_</span>            
+        <span class="p">)</span>        </div>
+        
+        
+    <span class="k">def</span> <span class="nf">__autoescape_strings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_line</span><span class="p">):</span>
+        <span class="n">command_line</span> <span class="o">=</span> <span class="n">command_line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span><span class="s2">&quot;</span><span class="se">\\\\</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">command_line</span> <span class="o">=</span> <span class="n">command_line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span><span class="s2">&quot;{{&quot;</span><span class="p">)</span>
+        <span class="n">command_line</span> <span class="o">=</span> <span class="n">command_line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span><span class="s2">&quot;}}&quot;</span><span class="p">)</span>
+
+        <span class="c1">#preserves some needed blocks</span>
+        <span class="n">command_line</span> <span class="o">=</span> <span class="n">command_line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{{DS_FNAME}}&quot;</span><span class="p">,</span><span class="s2">&quot;</span><span class="si">{DS_FNAME}</span><span class="s2">&quot;</span> <span class="p">)</span>
+        <span class="k">return</span> <span class="n">command_line</span>
+
+<div class="viewcode-block" id="AutoGnuplotFigure.p_generic"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.p_generic">[docs]</a>    <span class="k">def</span> <span class="nf">p_generic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_line</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Central plotting primitive&quot;&quot;&quot;</span>
+        <span class="n">fname_specs</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fname_specs&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">autoescape</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;autoescape&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_autoescape</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">autoescape</span><span class="p">:</span>
+            <span class="n">command_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__autoescape_strings</span><span class="p">(</span><span class="n">command_line</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;autoescaping -- processing:&quot;</span><span class="p">,</span> <span class="n">command_line</span><span class="p">)</span>
+        
+        <span class="c1">#prepend_parameters = kw.get(&quot;prepend_parameters&quot;,[&quot;&quot;])</span>
+        <span class="c1">#fname_specs = &quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1">#case an explicit function is plotted:</span>
+
+            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;To be tested&quot;</span><span class="p">)</span>
+
+            <span class="n">to_append</span> <span class="o">=</span> \
+                <span class="p">{</span><span class="s1">&#39;dataset_fname&#39;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span>
+                 <span class="p">,</span> <span class="s1">&#39;plottype&#39;</span> <span class="p">:</span> <span class="s1">&#39;expl_f&#39;</span>
+                 <span class="p">,</span> <span class="s1">&#39;gnuplot_opt&#39;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span>
+                 <span class="p">,</span> <span class="s1">&#39;gnuplot_command_template&#39;</span> <span class="p">:</span> <span class="n">command_line</span>
+                 <span class="c1">#, &#39;prepended_parameters&#39; : prepend_parameters</span>
+                <span class="p">}</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">__append_to_multiplot_current_dataset</span><span class="p">(</span>
+                <span class="n">to_append</span> 
+            <span class="p">)</span>            
+        <span class="k">else</span><span class="p">:</span>            
+        
+            <span class="n">xyzt</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)[:</span> <span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span> <span class="p">],</span> <span class="n">args</span>  <span class="p">))</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span> <span class="n">xyzt</span> <span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">)</span>
+
+            <span class="n">dataset_fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_identifier</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasetstring_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>            
+                <span class="n">DS_ID</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dataset_counter</span>
+                <span class="p">,</span> <span class="n">SPECS</span> <span class="o">=</span> <span class="n">fname_specs</span><span class="p">)</span>
+
+            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">globalize_fname</span><span class="p">(</span><span class="n">dataset_fname</span><span class="p">)</span> <span class="p">,</span>  <span class="n">data</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="s1">&#39;&quot;</span><span class="si">{DS_FNAME}</span><span class="s1">&quot;&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">command_line</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning: &quot;</span><span class="si">{DS_FNAME}</span><span class="s1">&quot; will be prepended to your string&#39;</span><span class="p">)</span>
+                <span class="n">command_line</span> <span class="o">=</span> <span class="s1">&#39;&quot;</span><span class="si">{DS_FNAME}</span><span class="s1">&quot;&#39;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">command_line</span>
+            <span class="k">if</span> <span class="s2">&quot; t &quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">command_line</span> \
+               <span class="ow">and</span> <span class="s2">&quot; t</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">command_line</span>\
+               <span class="ow">and</span> <span class="s2">&quot; title &quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">command_line</span>\
+               <span class="ow">and</span> <span class="s2">&quot; title</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">command_line</span><span class="p">:</span>
+
+                <span class="n">command_line</span> <span class="o">=</span>  <span class="n">command_line</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="s2">&quot;&quot;&quot;title &quot;</span><span class="si">{TITLE}</span><span class="s2">&quot; &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">TITLE</span> <span class="o">=</span> <span class="n">dataset_fname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">\_&quot;</span><span class="p">))</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning: a title will be appended to avoid latex compilation problems&#39;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;the final command reads:&#39;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">command_line</span><span class="p">)</span>
+
+            <span class="n">to_append</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;dataset_fname&#39;</span> <span class="p">:</span> <span class="n">dataset_fname</span>
+                 <span class="p">,</span> <span class="s1">&#39;plottype&#39;</span> <span class="p">:</span> <span class="s1">&#39;xyzt_gen&#39;</span>
+                 <span class="p">,</span> <span class="s1">&#39;gnuplot_opt&#39;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span>
+                 <span class="p">,</span> <span class="s1">&#39;gnuplot_command_template&#39;</span> <span class="p">:</span> <span class="n">command_line</span>
+                 <span class="c1">#, &#39;prepended_parameters&#39; : prepend_parameters</span>
+                <span class="p">}</span>
+
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">__append_to_multiplot_current_dataset</span><span class="p">(</span>
+                <span class="n">to_append</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__dataset_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">to_append</span></div>
+        
+
+    <span class="k">def</span> <span class="nf">add_variable_declaration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">,</span><span class="n">is_string</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span><span class="o">%</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">if</span> <span class="n">is_string</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        
+        <span class="c1">#self.global_plotting_parameters.append(  &quot;{NAME}={VALUE}&quot;.format(NAME = name, VALUE = &quot;&#39;%s&#39;&quot;%str(value) if is_string else str(value) ) )</span>
+    <span class="k">def</span> <span class="nf">render_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span> <span class="s2">&quot;</span><span class="si">{NAME}</span><span class="s2">=</span><span class="si">{VALUE}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">NAME</span> <span class="o">=</span> <span class="n">k</span><span class="p">,</span> <span class="n">VALUE</span><span class="o">=</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>    <span class="p">]</span>
+        <span class="p">)</span>
+        
+        
+    <span class="k">def</span> <span class="nf">__generate_gnuplot_plotting_calls</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">calls</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">mp_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">alterations</span><span class="p">,</span> <span class="n">datasets</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alter_multiplot_state</span>
+                                        <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets_to_plot</span><span class="p">):</span>
+            
+            <span class="n">alterations_t</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span> <span class="p">[</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"># this is multiplot idx: </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">mp_count</span><span class="p">]</span> <span class="o">+</span> <span class="n">alterations</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">])</span>
+            <span class="n">plt_call</span> <span class="o">=</span> <span class="s2">&quot;p </span><span class="si">{ST}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ST</span> <span class="o">=</span> <span class="s2">&quot;,</span><span class="se">\\\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="nb">map</span><span class="p">(</span> 
+                    <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">x</span><span class="p">[</span> <span class="s1">&#39;gnuplot_command_template&#39;</span> <span class="p">]</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> <span class="n">DS_FNAME</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span> <span class="s1">&#39;dataset_fname&#39;</span> <span class="p">]</span> <span class="p">,</span> <span class="n">OPTS</span> <span class="o">=</span>  <span class="n">x</span><span class="p">[</span> <span class="s1">&#39;gnuplot_opt&#39;</span> <span class="p">]</span>  <span class="p">)</span>
+                    <span class="p">,</span> <span class="n">datasets</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="p">)</span>
+
+            <span class="n">calls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alterations_t</span> <span class="o">+</span> <span class="n">plt_call</span><span class="p">)</span>
+            <span class="n">mp_count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">calls</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">generate_gnuplot_file_content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">redended_variables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_variables</span><span class="p">()</span>
+        <span class="n">parameters_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_plotting_parameters</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        
+
+        
+
+        <span class="c1"># plotting_string =  &quot;p {ST}&quot;.format(ST = &quot;,\\\n&quot;.join(</span>
+        <span class="c1">#     map(</span>
+        <span class="c1">#         lambda x : x[ &#39;gnuplot_command_template&#39; ].format( DS_FNAME = x[ &#39;dataset_fname&#39; ] , OPTS =  x[ &#39;gnuplot_opt&#39; ]  )</span>
+        <span class="c1">#         , self.datasets_to_plot</span>
+        <span class="c1">#     )</span>
+        <span class="c1"># )</span>
+        <span class="c1"># )</span>
+
+        <span class="n">plotting_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__generate_gnuplot_plotting_calls</span><span class="p">()</span>
+
+        <span class="n">final_content</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span> <span class="n">redended_variables</span> <span class="p">,</span>  <span class="n">parameters_string</span> <span class="p">,</span> <span class="n">plotting_string</span> <span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">final_content</span>
+
+    <span class="k">def</span> <span class="nf">print_gnuplot_file_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">highlight</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="n">final_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_gnuplot_file_content</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">highlight</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">pygments</span> <span class="k">import</span> <span class="n">highlight</span>
+            <span class="kn">from</span> <span class="nn">pygments.lexers</span> <span class="k">import</span> <span class="n">GnuplotLexer</span>
+            <span class="kn">from</span> <span class="nn">pygments.formatters</span> <span class="k">import</span> <span class="n">HtmlFormatter</span>
+
+            <span class="kn">from</span> <span class="nn">pygments.styles</span> <span class="k">import</span> <span class="n">get_style_by_name</span>
+             
+
+            <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="k">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span>
+            <span class="n">html__</span> <span class="o">=</span>  <span class="n">highlight</span><span class="p">(</span><span class="n">final_content</span><span class="p">,</span> <span class="n">GnuplotLexer</span><span class="p">(),</span> <span class="n">HtmlFormatter</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;colorful&#39;</span><span class="p">,</span> <span class="n">noclasses</span> <span class="o">=</span> <span class="kc">False</span><span class="p">))</span>
+            <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            &lt;style&gt;</span>
+<span class="s2">            </span><span class="si">{pygments_css}</span><span class="s2"></span>
+<span class="s2">            &lt;/style&gt;</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pygments_css</span><span class="o">=</span><span class="n">HtmlFormatter</span><span class="p">()</span><span class="o">.</span><span class="n">get_style_defs</span><span class="p">(</span><span class="s1">&#39;.highlight&#39;</span><span class="p">))))</span>
+            
+            <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span> <span class="n">html__</span> <span class="p">)</span> <span class="p">)</span>
+            <span class="c1">#print(html__)</span>
+        <span class="k">else</span><span class="p">:</span>
+        
+            
+            <span class="nb">print</span> <span class="p">(</span><span class="n">final_content</span><span class="p">)</span>
+
+        
+    
+
+    <span class="k">def</span> <span class="nf">generate_gnuplot_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">final_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_gnuplot_file_content</span><span class="p">()</span>
+
+        <span class="c1">### CORE FILE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__core_gnuplot_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_file_identifier</span> <span class="o">+</span> <span class="s2">&quot;__.core.gnu&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__local_core_gnuplot_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_identifier</span> <span class="o">+</span> <span class="s2">&quot;__.core.gnu&quot;</span>
+        
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__core_gnuplot_file</span>  <span class="p">,</span> <span class="s1">&#39;w&#39;</span>  <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>            
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">final_content</span><span class="p">)</span>
+
+        <span class="c1">### JPG terminal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__local_jpg_gnuplot_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_identifier</span> <span class="o">+</span> <span class="s2">&quot;__.jpg.gnu&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__jpg_gnuplot_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">globalize_fname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__local_jpg_gnuplot_file</span><span class="p">)</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__local_jpg_output</span>  <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_identifier</span> <span class="o">+</span> <span class="s2">&quot;__.jpg&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__jpg_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">globalize_fname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__local_jpg_output</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__jpg_gnuplot_file</span> <span class="p">,</span> <span class="s1">&#39;w&#39;</span> <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                <span class="n">autognuplot_terms</span><span class="o">.</span><span class="n">JPG_wrapper_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">OUTFILE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__local_jpg_output</span>
+                     <span class="p">,</span> <span class="n">CORE</span> <span class="o">=</span>   <span class="bp">self</span><span class="o">.</span><span class="n">__local_core_gnuplot_file</span>   <span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="c1">#### pdflatex terminal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">local_pdflatex_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_identifier</span> <span class="o">+</span> <span class="s2">&quot;__.pdf&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">globalize_fname</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__local_jpg_output</span> <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">local_pdflatex_output_jpg_convert</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_pdflatex_output</span> <span class="o">+</span> <span class="s2">&quot;_converted_to.jpg&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_output_jpg_convert</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">globalize_fname</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_pdflatex_output_jpg_convert</span> <span class="p">)</span>
+        
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">local_pdflatex_gnuplot_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_identifier</span> <span class="o">+</span> <span class="s2">&quot;__.pdflatex.gnu&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_gnuplot_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">globalize_fname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">local_pdflatex_gnuplot_file</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">local_pdflatex_compilesh_gnuplot_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_identifier</span> <span class="o">+</span> <span class="s2">&quot;__.pdflatex_compile.sh&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_compilesh_gnuplot_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">globalize_fname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">local_pdflatex_compilesh_gnuplot_file</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_gnuplot_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span>  <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                <span class="n">autognuplot_terms</span><span class="o">.</span><span class="n">LATEX_wrapper_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">CORE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__local_core_gnuplot_file</span>
+                    <span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_terminal_parameters</span>
+                    <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span> <span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_compilesh_gnuplot_file</span> <span class="p">,</span> <span class="s1">&#39;w&#39;</span> <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                <span class="n">autognuplot_terms</span><span class="o">.</span><span class="n">LATEX_compile_sh_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">LATEX_TARGET_GNU</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_pdflatex_gnuplot_file</span>
+                    <span class="p">,</span> <span class="n">FINAL_PDF_NAME</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_pdflatex_output</span>
+                    <span class="p">,</span> <span class="n">FINAL_PDF_NAME_jpg_convert</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_pdflatex_output_jpg_convert</span>
+                    <span class="p">,</span> <span class="n">pdflatex_jpg_convert_density</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_jpg_convert_density</span>
+                    <span class="p">,</span> <span class="n">pdflatex_jpg_convert_quality</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_jpg_convert_quality</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__generate_gnuplot_files_tikz</span><span class="p">()</span>
+        
+
+    <span class="k">def</span> <span class="nf">__generate_gnuplot_files_tikz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__local_tikz_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_identifier</span> <span class="o">+</span> <span class="s2">&quot;__.tikz.pdf&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__tikz_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">globalize_fname</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__local_tikz_output</span> <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__local_tikz_output_jpg_convert</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__local_tikz_output</span> <span class="o">+</span> <span class="s2">&quot;_converted_to.jpg&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__tikz_output_jpg_convert</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">globalize_fname</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__local_tikz_output_jpg_convert</span> <span class="p">)</span>
+        
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__local_tikz_gnuplot_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_identifier</span> <span class="o">+</span> <span class="s2">&quot;__.tikz.gnu&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__tikz_gnuplot_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">globalize_fname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__local_tikz_gnuplot_file</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__local_tikz_compilesh_gnuplot_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_identifier</span> <span class="o">+</span> <span class="s2">&quot;__.tikz_compile.sh&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__tikz_compilesh_gnuplot_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">globalize_fname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__local_tikz_compilesh_gnuplot_file</span><span class="p">)</span>
+        
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tikz_gnuplot_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span>  <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                <span class="n">autognuplot_terms</span><span class="o">.</span><span class="n">TIKZ_wrapper_file</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">CORE</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__local_core_gnuplot_file</span>
+                    <span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_terminal_parameters</span> <span class="c1">## maybetochange?</span>
+                    <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span> <span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tikz_compilesh_gnuplot_file</span> <span class="p">,</span> <span class="s1">&#39;w&#39;</span> <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+                <span class="n">autognuplot_terms</span><span class="o">.</span><span class="n">TIKZ_compile_sh_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">TIKZ_TARGET_GNU</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__local_tikz_gnuplot_file</span>
+                    <span class="p">,</span> <span class="n">FINAL_PDF_NAME</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__local_tikz_output</span>
+                    <span class="p">,</span> <span class="n">FINAL_PDF_NAME_jpg_convert</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__local_tikz_output_jpg_convert</span>
+                    <span class="p">,</span> <span class="n">pdflatex_jpg_convert_density</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_jpg_convert_density</span>
+                    <span class="p">,</span> <span class="n">pdflatex_jpg_convert_quality</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_jpg_convert_quality</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">jupyter_show</span><span class="p">(</span><span class="bp">self</span>
+                     <span class="p">,</span> <span class="n">show_stdout</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span> <span class="k">as</span> <span class="n">_Popen</span><span class="p">,</span> <span class="n">PIPE</span> <span class="k">as</span> <span class="n">_PIPE</span><span class="p">,</span> <span class="n">call</span> <span class="k">as</span> <span class="n">_call</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;trying call: &quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;gnuplot&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__jpg_gnuplot_file</span> <span class="p">])</span>
+
+        <span class="n">proc</span> <span class="o">=</span> <span class="n">_Popen</span><span class="p">([</span><span class="s2">&quot;gnuplot&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__local_jpg_gnuplot_file</span> <span class="p">]</span> <span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="n">universal_newlines</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">_PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">_PIPE</span><span class="p">)</span>
+        <span class="n">output</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">show_stdout</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="n">output</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span>
+
+        <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="k">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
+        <span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__jpg_output</span>  <span class="p">))</span>
+
+<div class="viewcode-block" id="AutoGnuplotFigure.jupyter_show_pdflatex"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.jupyter_show_pdflatex">[docs]</a>    <span class="k">def</span> <span class="nf">jupyter_show_pdflatex</span><span class="p">(</span><span class="bp">self</span>
+                              <span class="p">,</span> <span class="n">show_stdout</span> <span class="o">=</span> <span class="kc">False</span> <span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;Shows a pdflatex rendering within the current jupyter notebook.</span>
+<span class="sd">        To work it requires ImageMagick and authorization to render pdf to jpg. </span>
+<span class="sd">        Should it fail:</span>
+<span class="sd">        https://stackoverflow.com/a/52661288</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span> <span class="k">as</span> <span class="n">_Popen</span><span class="p">,</span> <span class="n">PIPE</span> <span class="k">as</span> <span class="n">_PIPE</span><span class="p">,</span> <span class="n">call</span> <span class="k">as</span> <span class="n">_call</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;trying call: &quot;</span><span class="p">,</span> <span class="p">[</span>  <span class="bp">self</span><span class="o">.</span><span class="n">local_pdflatex_compilesh_gnuplot_file</span>   <span class="p">])</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;from folder_name: &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span><span class="p">)</span>
+
+        <span class="n">proc</span> <span class="o">=</span> <span class="n">_Popen</span><span class="p">([</span><span class="s2">&quot;bash&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_pdflatex_compilesh_gnuplot_file</span>  <span class="p">]</span>
+                      <span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span>
+                      <span class="p">,</span>  <span class="n">universal_newlines</span><span class="o">=</span><span class="kc">True</span>
+                      <span class="p">,</span> <span class="n">cwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span>
+                      <span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">_PIPE</span>
+                      <span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">_PIPE</span><span class="p">)</span>
+        <span class="n">output</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">show_stdout</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="n">output</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span>
+
+        <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="k">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;opening:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_output_jpg_convert</span><span class="p">)</span>
+        <span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_output_jpg_convert</span>  <span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="AutoGnuplotFigure.jupyter_show_tikz"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.jupyter_show_tikz">[docs]</a>    <span class="k">def</span> <span class="nf">jupyter_show_tikz</span><span class="p">(</span><span class="bp">self</span>
+                          <span class="p">,</span> <span class="n">show_stdout</span> <span class="o">=</span> <span class="kc">False</span> <span class="p">):</span>
+
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Shows a pdflatex rendering within the current jupyter notebook.</span>
+<span class="sd">        To work it requires ImageMagick and authorization to render pdf to jpg. </span>
+<span class="sd">        Should it fail:</span>
+<span class="sd">        https://stackoverflow.com/a/52661288</span>
+
+<span class="sd">        LUA compilation issue: https://tex.stackexchange.com/a/368194</span>
+<span class="sd">        solution: </span>
+<span class="sd">        in `/usr/share/gnuplot5/gnuplot/5.0/lua/gnuplot-tikz.lua`, replace:</span>
+
+
+<span class="sd">        </span>
+<span class="sd">        pgf.set_dashtype = function(dashtype)</span>
+<span class="sd">        gp.write(&quot;\\gpsetdashtype{&quot;..dashtype..&quot;}\n&quot;)</span>
+<span class="sd">        end</span>
+<span class="sd">        </span>
+
+
+<span class="sd">        </span>
+<span class="sd">        pgf.set_dashtype = function(dashtype)</span>
+<span class="sd">        gp.write(&quot;%\\gpsetdashtype{&quot;..dashtype..&quot;}\n&quot;)</span>
+<span class="sd">        end</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span> <span class="k">as</span> <span class="n">_Popen</span><span class="p">,</span> <span class="n">PIPE</span> <span class="k">as</span> <span class="n">_PIPE</span><span class="p">,</span> <span class="n">call</span> <span class="k">as</span> <span class="n">_call</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;trying call: &quot;</span><span class="p">,</span> <span class="p">[</span>  <span class="bp">self</span><span class="o">.</span><span class="n">__local_tikz_compilesh_gnuplot_file</span>   <span class="p">])</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;from folder_name: &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span><span class="p">)</span>
+
+        <span class="n">proc</span> <span class="o">=</span> <span class="n">_Popen</span><span class="p">([</span><span class="s2">&quot;bash&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__local_tikz_compilesh_gnuplot_file</span>  <span class="p">]</span>
+                      <span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span>
+                      <span class="p">,</span>  <span class="n">universal_newlines</span><span class="o">=</span><span class="kc">True</span>
+                      <span class="p">,</span> <span class="n">cwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span>
+                      <span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">_PIPE</span>
+                      <span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">_PIPE</span><span class="p">)</span>
+        <span class="n">output</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">show_stdout</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="n">output</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span>
+
+        <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="k">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;opening:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tikz_output_jpg_convert</span><span class="p">)</span>
+        <span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tikz_output_jpg_convert</span>  <span class="p">))</span></div>
+
+        
+
+    <span class="k">def</span> <span class="nf">__establish_ssh_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">socket</span>
+        <span class="kn">import</span> <span class="nn">getpass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__ssh_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{user}</span><span class="s2">@</span><span class="si">{hostname}</span><span class="s2">:</span><span class="si">{dir_}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">getpass</span><span class="o">.</span><span class="n">getuser</span><span class="p">()</span>
+                                                      <span class="p">,</span> <span class="n">hostname</span><span class="o">=</span><span class="n">socket</span><span class="o">.</span><span class="n">gethostname</span><span class="p">()</span>
+                                                      <span class="p">,</span> <span class="n">dir_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">global_dir_whole_path</span> <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__scp_string</span> <span class="o">=</span> <span class="s2">&quot;scp -r &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ssh_string</span> <span class="o">+</span> <span class="s2">&quot; .&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__scp_string_nofolder</span> <span class="o">=</span> <span class="s2">&quot;scp -r &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ssh_string</span> <span class="o">+</span><span class="s2">&quot;/*&quot;</span> <span class="o">+</span> <span class="s2">&quot; .&quot;</span>
+
+    <span class="k">def</span> <span class="nf">display_fixes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">fixes_</span> <span class="o">=</span>\
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">These are some fixes found for imagemagick and gnuplot tikz terminal</span>
+
+
+<span class="sd">Shows a pdflatex rendering within the current jupyter notebook.</span>
+<span class="sd">To work it requires ImageMagick and authorization to render pdf to jpg. </span>
+<span class="sd">Should it fail:</span>
+<span class="sd">https://stackoverflow.com/a/52661288</span>
+
+<span class="sd">LUA compilation issue: https://tex.stackexchange.com/a/368194</span>
+<span class="sd">solution: </span>
+<span class="sd">in /usr/share/gnuplot5/gnuplot/5.0/lua/gnuplot-tikz.lua, Replace:</span>
+<span class="sd">pgf.set_dashtype = function(dashtype)</span>
+<span class="sd">gp.write(&quot;\\gpsetdashtype{&quot;..dashtype..&quot;}\n&quot;)</span>
+<span class="sd">end</span>
+
+
+<span class="sd">with:</span>
+<span class="sd">pgf.set_dashtype = function(dashtype)</span>
+<span class="sd">gp.write(&quot;%\\gpsetdashtype{&quot;..dashtype..&quot;}\n&quot;)</span>
+<span class="sd">end</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+        <span class="nb">print</span> <span class="p">(</span><span class="n">fixes_</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fixes_</span>
+
+        
+    <span class="k">def</span> <span class="nf">get_folder_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        
+        <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;(folder local): &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span><span class="p">)</span>
+        <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;(folder global): &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_dir_whole_path</span><span class="p">)</span>
+        <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;(ssh): &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ssh_string</span>  <span class="p">)</span>
+        
+        <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;(scp): &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__scp_string</span> <span class="p">)</span>
+        <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;(autosync): &quot;</span><span class="p">)</span>
+        <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;      echo &#39;</span><span class="si">{scp_string}</span><span class="s2">&#39; &gt; retrieve_</span><span class="si">{fold_name}</span><span class="s2">.sh ; bash retrieve_</span><span class="si">{fold_name}</span><span class="s2">.sh &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+              <span class="n">scp_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__scp_string</span>
+            <span class="p">,</span> <span class="n">fold_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span><span class="s2">&quot;__&quot;</span><span class="p">)</span>
+        <span class="p">)</span>   <span class="p">)</span></div>
+        
+
+    
+            
+                          
+        
+        
+        
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Autogpy - AutoGnuplot.py</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Alessandro Corbetta.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
