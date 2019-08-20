@@ -69,9 +69,11 @@
 <span class="sd">        ----------------</span>
 
 <span class="sd">        &gt;&gt;&gt; fig = AutoGnuplotFigure(&#39;folder&#39;,&#39;id&#39;)</span>
-<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,y) # for some array x,y</span>
+<span class="sd">        &gt;&gt;&gt; # for some existing arrays x,y</span>
+<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,y) </span>
 <span class="sd">        &gt;&gt;&gt; fig.generate_gnuplot_file() </span>
-<span class="sd">        &gt;&gt;&gt; fig.jupyter_show_pdflatex(show_stdout=False) # only jupyter</span>
+<span class="sd">        &gt;&gt;&gt; # only jupyter</span>
+<span class="sd">        &gt;&gt;&gt; fig.jupyter_show_pdflatex(show_stdout=False) </span>
 
 <span class="sd">        Notes</span>
 <span class="sd">        -----------------</span>
@@ -197,30 +199,31 @@
 <span class="sd">        Examples</span>
 <span class="sd">        -----------</span>
 <span class="sd">        &gt;&gt;&gt; figure.extend_global_plotting_parameters(</span>
-<span class="sd">        &gt;&gt;&gt; r\&quot;\&quot;\&quot;</span>
+<span class="sd">        &gt;&gt;&gt; r&#39;&#39;&#39;</span>
 <span class="sd">        &gt;&gt;&gt; set mxtics 2</span>
 <span class="sd">        &gt;&gt;&gt; set mytics 1</span>
-<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; #</span>
 <span class="sd">        &gt;&gt;&gt; # color definitions</span>
 <span class="sd">        &gt;&gt;&gt; set border linewidth 1.5</span>
 <span class="sd">        &gt;&gt;&gt; set style line 1 lc rgb &#39;#ff0000&#39;  lt 1 lw 2</span>
 <span class="sd">        &gt;&gt;&gt; set style line 2 lc rgb &#39;#0000ff&#39; lt 3 lw 4</span>
-<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; #</span>
 <span class="sd">        &gt;&gt;&gt; # Axes</span>
 <span class="sd">        &gt;&gt;&gt; set style line 11  lc rgb &#39;#100100100&#39; lt 1</span>
 <span class="sd">        &gt;&gt;&gt; set border 3 back ls 11</span>
 <span class="sd">        &gt;&gt;&gt; set tics nomirror out scale 0.75</span>
+<span class="sd">        &gt;&gt;&gt; #</span>
 <span class="sd">        &gt;&gt;&gt; # Grid</span>
 <span class="sd">        &gt;&gt;&gt; set style line 12 lc rgb&#39;#808080&#39; lt 0 lw 1</span>
 <span class="sd">        &gt;&gt;&gt; set grid back ls 12</span>
-<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; #</span>
 <span class="sd">        &gt;&gt;&gt; set format y &#39;$%.4f$&#39;</span>
 <span class="sd">        &gt;&gt;&gt; set format x &#39;$%.4f$&#39;</span>
-<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; #</span>
 <span class="sd">        &gt;&gt;&gt; set key top left</span>
-<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; #</span>
 <span class="sd">        &gt;&gt;&gt; set key samplen 2 inside spacing 1 width 0.3 height 1.5  at graph 0.99, 1.05</span>
-<span class="sd">        &gt;&gt;&gt; </span>
+<span class="sd">        &gt;&gt;&gt; #</span>
 <span class="sd">        &gt;&gt;&gt; unset grid</span>
 <span class="sd">        &gt;&gt;&gt; #set logscale y</span>
 <span class="sd">        &gt;&gt;&gt; set xlabel &quot;$\\nu$&quot;</span>
@@ -228,7 +231,7 @@
 <span class="sd">        &gt;&gt;&gt; set yrange [1e-5:1e-3]</span>
 <span class="sd">        &gt;&gt;&gt; set xtics 0,2e-4,1.01e-3</span>
 <span class="sd">        &gt;&gt;&gt; #set ytics 2e-4,2e-4,1.01e-3</span>
-<span class="sd">        &gt;&gt;&gt; \&quot;\&quot;\&quot;)        </span>
+<span class="sd">        &gt;&gt;&gt; &#39;&#39;&#39;)        </span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">autoescape</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;autoescape&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_autoescape</span><span class="p">)</span>
@@ -263,10 +266,14 @@
 <span class="sd">        </span>
 <span class="sd">        Example</span>
 <span class="sd">        -------------</span>
-<span class="sd">        &gt;&gt;&gt; fig.set_multiplot(&quot;layout 2,1&quot;) # establishes multiplot mode with 2 rows and one column</span>
-<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,y) #plot in position 1,1</span>
-<span class="sd">        &gt;&gt;&gt; fig.next_multiplot_group() #next item in multiplot</span>
-<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,z) #plot in position 2,1</span>
+<span class="sd">        &gt;&gt;&gt; # establishes multiplot mode with 2 rows and one column</span>
+<span class="sd">        &gt;&gt;&gt; fig.set_multiplot(&quot;layout 2,1&quot;) </span>
+<span class="sd">        &gt;&gt;&gt; #plot in position 1,1</span>
+<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,y) </span>
+<span class="sd">        &gt;&gt;&gt; #next item in multiplot</span>
+<span class="sd">        &gt;&gt;&gt; fig.next_multiplot_group() </span>
+<span class="sd">        &gt;&gt;&gt; #plot in position 2,1</span>
+<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,z) </span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
@@ -324,26 +331,38 @@
 
 <span class="sd">        Examples</span>
 <span class="sd">        ------------------        </span>
-<span class="sd">        &gt;&gt;&gt; fig.set_multiplot(&quot;layout 2,1&quot;) # establishes multiplot mode with 2 rows and one column </span>
-<span class="sd">        &gt;&gt;&gt; fig.extend_global_plotting_parameters(r&quot;set logscale y&quot;) #sets logscale in y, globally</span>
-<span class="sd">        &gt;&gt;&gt; fig.extend_global_plotting_parameters(r&quot;set xrange [1e-5:1.05e-3]&quot;) #sets xrange, globally</span>
-<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,y) #plot in position 1,1</span>
-<span class="sd">        &gt;&gt;&gt; fig.next_multiplot_group() #next item in multiplot</span>
+<span class="sd">        &gt;&gt;&gt; # establishes multiplot mode with 2 rows and one column </span>
+<span class="sd">        &gt;&gt;&gt; fig.set_multiplot(&quot;layout 2,1&quot;) </span>
+<span class="sd">        &gt;&gt;&gt; #sets logscale in y, globally</span>
+<span class="sd">        &gt;&gt;&gt; fig.extend_global_plotting_parameters(r&quot;set logscale y&quot;) </span>
+<span class="sd">        &gt;&gt;&gt; #sets xrange, globally</span>
+<span class="sd">        &gt;&gt;&gt; fig.extend_global_plotting_parameters(r&quot;set xrange [1e-5:1.05e-3]&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; #plot in position 1,1</span>
+<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,y) </span>
+<span class="sd">        &gt;&gt;&gt; #next item in multiplot</span>
+<span class="sd">        &gt;&gt;&gt; fig.next_multiplot_group() </span>
 <span class="sd">        &gt;&gt;&gt; ### to change xrange from second subplot onwards</span>
 <span class="sd">        &gt;&gt;&gt; fig.alter_current_multiplot_parameters(r&quot;set xrange [1e-7:1.05e-2]&quot;)  </span>
-<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,z) #plot in position 2,1</span>
+<span class="sd">        &gt;&gt;&gt; #plot in position 2,1</span>
+<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,z) </span>
 
 <span class="sd">        For inset plots</span>
 <span class="sd">        &gt;&gt;&gt; fig.set_multiplot()</span>
-<span class="sd">        &gt;&gt;&gt; fig.extend_global_plotting_parameters(r&quot;set logscale y&quot;) #sets logscale in y, globally</span>
-<span class="sd">        &gt;&gt;&gt; fig.extend_global_plotting_parameters(r&quot;set xrange [1e-5:1.05e-3]&quot;) #sets xrange, globally</span>
-<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,y) #plot in position 1,1</span>
-<span class="sd">        &gt;&gt;&gt; fig.next_multiplot_group() #next item in multiplot</span>
+<span class="sd">        &gt;&gt;&gt; #sets logscale in y, globally</span>
+<span class="sd">        &gt;&gt;&gt; fig.extend_global_plotting_parameters(r&quot;set logscale y&quot;) </span>
+<span class="sd">        &gt;&gt;&gt; #sets xrange, globally</span>
+<span class="sd">        &gt;&gt;&gt; fig.extend_global_plotting_parameters(r&quot;set xrange [1e-5:1.05e-3]&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; #plot in position 1,1</span>
+<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,y) </span>
+<span class="sd">        &gt;&gt;&gt; #next item in multiplot</span>
+<span class="sd">        &gt;&gt;&gt; fig.next_multiplot_group() </span>
 <span class="sd">        &gt;&gt;&gt; fig.alter_current_multiplot_parameters(r\&quot;\&quot;\&quot;set size 0.6, 0.5       # set size of inset</span>
 <span class="sd">                                                    set origin 0.4, 0.5     # move bottom left corner of inset\&quot;\&quot;\&quot;)  </span>
-<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,z) #inset plot</span>
+<span class="sd">        &gt;&gt;&gt; #inset plot</span>
+<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,z) </span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        
         
         <span class="n">autoescape</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;autoescape&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_autoescape</span><span class="p">)</span>
         <span class="n">escaped_args</span> <span class="o">=</span> <span class="p">[]</span>
@@ -423,8 +442,32 @@
                      <span class="p">,</span> <span class="o">**</span><span class="n">kw</span>
                     <span class="p">):</span>
 
-        <span class="sd">&quot;&quot;&quot;Histogram function</span>
+        <span class="sd">&quot;&quot;&quot;Proxy function to generate histograms </span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ------------------------</span>
+<span class="sd">        x: list, np.array, or other format compatible with np.histogram</span>
+<span class="sd">             1D dataset to histogram</span>
+<span class="sd">        gnuplot_command_no_u: str</span>
+<span class="sd">             gnuplot `plot` call arguments, skipping the filename and the `usigng` part. Should be used for title, plotstyle, etc.</span>
+<span class="sd">        hist_kw: dict, optional</span>
+<span class="sd">             ({}) arguments to pass to the inner np.histogram call</span>
+<span class="sd">        gnuplot_command_using: str, optional</span>
+<span class="sd">             (&quot;u 1:2&quot;) overrides the default `using` part. (default: &quot;using 1:2&quot;)</span>
+<span class="sd">        normalization: float, str, optional</span>
+<span class="sd">             (None) allows to provide a further normalization coefficient (pass float) or to normalize such that the `max` is one (pass `&#39;max&#39;`)</span>
+<span class="sd">        kde: bool, optional</span>
+<span class="sd">             (False) a gaussian kernel will be used to histogram the data, edges used are from the np.histogram call</span>
+<span class="sd">        kde_kw: dict, optional</span>
+<span class="sd">             ({}) parameters to pass to the `scipy.stats.gaussian_kde` call</span>
+<span class="sd">        reweight: function, optional</span>
+<span class="sd">             (`lambda: edges_mid : 1`) function to reweight the histogram or kde values. Receives the bin center as parameter.</span>
+<span class="sd">        **kw: optional</span>
+<span class="sd">             passes through to the inner `p_generic` call.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        ------------</span>
+<span class="sd">        p_generic output</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">v_</span><span class="p">,</span> <span class="n">e_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="o">**</span><span class="n">hist_kw</span><span class="p">)</span>
@@ -447,7 +490,7 @@
         <span class="c1">#     print(&quot;N_coeff:&quot;, N_coeff)</span>
         <span class="n">v_</span> <span class="o">=</span> <span class="n">v_</span> <span class="o">/</span> <span class="n">N_coeff</span>
         
-        <span class="bp">self</span><span class="o">.</span><span class="n">p_generic</span><span class="p">(</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_generic</span><span class="p">(</span>
             <span class="n">gnuplot_command_using</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">gnuplot_command_no_u</span>
             <span class="p">,</span> <span class="n">edges_mid</span> <span class="p">,</span> <span class="n">v_</span>
             <span class="p">,</span> <span class="o">**</span><span class="n">kw</span>
@@ -461,7 +504,22 @@
                      <span class="p">,</span> <span class="n">suppress_plt_figure</span> <span class="o">=</span> <span class="kc">True</span>
                      <span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Histogram function. Proxies the interface of plt.hist for a rapid call swap. </span>
-<span class="sd">        Adds &quot;gnuplot_command_no_u&quot; and &quot;title&quot; arguments </span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x: list, array</span>
+<span class="sd">             1D array to histogram</span>
+<span class="sd">        normalization: float, str, optional</span>
+<span class="sd">             (None) renormalizes the data after the historgram (see `hist_generic`)</span>
+<span class="sd">        gnuplot_command_no_u_no_title: str, optional</span>
+<span class="sd">             (&#39;&#39;) additional gnuplot commands, excluding title</span>
+<span class="sd">        title: str, optional</span>
+<span class="sd">             (&#39;&#39;) gnuplot `title`</span>
+<span class="sd">        suppress_plt_figure: bool, optional</span>
+<span class="sd">             (True) prevents the inner `plt.hist` call to spawn an histogram figure</span>
+<span class="sd">        **kw: </span>
+<span class="sd">             `plt.hist` parameters</span>
+<span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -568,7 +626,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span><span class="o">%</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">if</span> <span class="n">is_string</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         
         <span class="c1">#self.global_plotting_parameters.append(  &quot;{NAME}={VALUE}&quot;.format(NAME = name, VALUE = &quot;&#39;%s&#39;&quot;%str(value) if is_string else str(value) ) )</span>
-    <span class="k">def</span> <span class="nf">render_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__render_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="p">[</span> <span class="s2">&quot;</span><span class="si">{NAME}</span><span class="s2">=</span><span class="si">{VALUE}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">NAME</span> <span class="o">=</span> <span class="n">k</span><span class="p">,</span> <span class="n">VALUE</span><span class="o">=</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>    <span class="p">]</span>
@@ -595,8 +653,8 @@
 
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">calls</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">generate_gnuplot_file_content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">redended_variables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_variables</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">__generate_gnuplot_file_content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">redended_variables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__render_variables</span><span class="p">()</span>
         <span class="n">parameters_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_plotting_parameters</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
         
 
@@ -616,8 +674,15 @@
 
         <span class="k">return</span> <span class="n">final_content</span>
 
-    <span class="k">def</span> <span class="nf">print_gnuplot_file_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">highlight</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-        <span class="n">final_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_gnuplot_file_content</span><span class="p">()</span>
+<div class="viewcode-block" id="AutoGnuplotFigure.print_gnuplot_file_content"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.print_gnuplot_file_content">[docs]</a>    <span class="k">def</span> <span class="nf">print_gnuplot_file_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">highlight</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Displays the content of the gnuplot file generated. Intended for debug.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------------</span>
+<span class="sd">        highlight: bool, optional</span>
+<span class="sd">             (False) Uses `pygaments` to color the gnuplot script</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">final_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__generate_gnuplot_file_content</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">highlight</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">pygments</span> <span class="k">import</span> <span class="n">highlight</span>
             <span class="kn">from</span> <span class="nn">pygments.lexers</span> <span class="k">import</span> <span class="n">GnuplotLexer</span>
@@ -639,14 +704,16 @@
         <span class="k">else</span><span class="p">:</span>
         
             
-            <span class="nb">print</span> <span class="p">(</span><span class="n">final_content</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="n">final_content</span><span class="p">)</span></div>
 
         
     
 
-    <span class="k">def</span> <span class="nf">generate_gnuplot_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AutoGnuplotFigure.generate_gnuplot_file"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.generate_gnuplot_file">[docs]</a>    <span class="k">def</span> <span class="nf">generate_gnuplot_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generates the final gnuplot scripts without creating any figure. Inclides Makefiles</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">final_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_gnuplot_file_content</span><span class="p">()</span>
+        <span class="n">final_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__generate_gnuplot_file_content</span><span class="p">()</span>
 
         <span class="c1">### CORE FILE</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__core_gnuplot_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_file_identifier</span> <span class="o">+</span> <span class="s2">&quot;__.core.gnu&quot;</span>
@@ -702,7 +769,7 @@
                     <span class="p">,</span> <span class="n">pdflatex_jpg_convert_quality</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_jpg_convert_quality</span>
                 <span class="p">)</span>
             <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__generate_gnuplot_files_tikz</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__generate_gnuplot_files_tikz</span><span class="p">()</span></div>
         
 
     <span class="k">def</span> <span class="nf">__generate_gnuplot_files_tikz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
