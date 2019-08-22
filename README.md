@@ -1,8 +1,10 @@
 # autogpy - AutoGnuplot.py
 ## Automatic generation of gnuplot figures (including script and data) from python.
 
+
 **Author:** [Alessandro Corbetta](http://corbetta.phys.tue.nl/), 2019
 
+![https://travis-ci.org/acorbe/autogpy.svg?branch=master]()
 
 
 ### Which problem does it solve?
