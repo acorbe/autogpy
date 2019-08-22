@@ -307,6 +307,7 @@ class AutoGnuplotFigure(object):
         >>> fig.p_generic('u 1 : 2 t "my title" ', x ,z) 
 
         For inset plots
+
         >>> fig.set_multiplot()
         >>> #sets logscale in y, globally
         >>> fig.extend_global_plotting_parameters(r"set logscale y") 
@@ -320,7 +321,8 @@ class AutoGnuplotFigure(object):
         >>> r\"\"\"set size 0.6, 0.5
         >>> # set size of inset
         >>> set origin 0.4, 0.5
-        >>> # move bottom left corner of inset\"\"\")
+        >>> # move bottom left corner of inset
+        >>> \"\"\")
         >>> #inset plot
         >>> fig.p_generic('u 1 : 2 t "my title" ', x ,z)
         
