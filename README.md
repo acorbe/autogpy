@@ -4,7 +4,8 @@
 
 **Author:** [Alessandro Corbetta](http://corbetta.phys.tue.nl/), 2019
 
-![https://travis-ci.org/acorbe/autogpy.svg?branch=master]()
+![build status](https://travis-ci.org/acorbe/autogpy.svg?branch=master)
+
 
 
 ### Which problem does it solve?
