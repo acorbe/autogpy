@@ -347,20 +347,24 @@
 <span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,z) </span>
 
 <span class="sd">        For inset plots</span>
+
 <span class="sd">        &gt;&gt;&gt; fig.set_multiplot()</span>
 <span class="sd">        &gt;&gt;&gt; #sets logscale in y, globally</span>
 <span class="sd">        &gt;&gt;&gt; fig.extend_global_plotting_parameters(r&quot;set logscale y&quot;) </span>
 <span class="sd">        &gt;&gt;&gt; #sets xrange, globally</span>
-<span class="sd">        &gt;&gt;&gt; fig.extend_global_plotting_parameters(r&quot;set xrange [1e-5:1.05e-3]&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; fig.extend_global_plotting_parameters(r&quot;set xrange [1e-5:1.05e-3]&quot;) </span>
 <span class="sd">        &gt;&gt;&gt; #plot in position 1,1</span>
 <span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,y) </span>
 <span class="sd">        &gt;&gt;&gt; #next item in multiplot</span>
-<span class="sd">        &gt;&gt;&gt; fig.next_multiplot_group() </span>
-<span class="sd">        &gt;&gt;&gt; fig.alter_current_multiplot_parameters(r\&quot;\&quot;\&quot;set size 0.6, 0.5       # set size of inset</span>
-<span class="sd">                                                    set origin 0.4, 0.5     # move bottom left corner of inset\&quot;\&quot;\&quot;)  </span>
+<span class="sd">        &gt;&gt;&gt; fig.next_multiplot_group()</span>
+<span class="sd">        &gt;&gt;&gt; fig.alter_current_multiplot_parameters(</span>
+<span class="sd">        &gt;&gt;&gt; r\&quot;\&quot;\&quot;set size 0.6, 0.5</span>
+<span class="sd">        &gt;&gt;&gt; # set size of inset</span>
+<span class="sd">        &gt;&gt;&gt; set origin 0.4, 0.5</span>
+<span class="sd">        &gt;&gt;&gt; # move bottom left corner of inset</span>
+<span class="sd">        &gt;&gt;&gt; \&quot;\&quot;\&quot;)</span>
 <span class="sd">        &gt;&gt;&gt; #inset plot</span>
-<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,z) </span>
-<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,z)        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
         

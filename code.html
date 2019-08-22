@@ -128,21 +128,23 @@ Use gnuplot syntax. Raw strings are advised.</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">p_generic</span><span class="p">(</span><span class="s1">&#39;u 1 : 2 t &quot;my title&quot; &#39;</span><span class="p">,</span> <span class="n">x</span> <span class="p">,</span><span class="n">z</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>For inset plots
-&gt;&gt;&gt; fig.set_multiplot()
-&gt;&gt;&gt; #sets logscale in y, globally
-&gt;&gt;&gt; fig.extend_global_plotting_parameters(r”set logscale y”)
-&gt;&gt;&gt; #sets xrange, globally
-&gt;&gt;&gt; fig.extend_global_plotting_parameters(r”set xrange [1e-5:1.05e-3]”)
-&gt;&gt;&gt; #plot in position 1,1
-&gt;&gt;&gt; fig.p_generic(‘u 1 : 2 t “my title” ‘, x ,y)
-&gt;&gt;&gt; #next item in multiplot
-&gt;&gt;&gt; fig.next_multiplot_group()
-&gt;&gt;&gt; fig.alter_current_multiplot_parameters(r”””set size 0.6, 0.5       # set size of inset</p>
-<blockquote>
-<div><p>set origin 0.4, 0.5     # move bottom left corner of inset”””)</p>
-</div></blockquote>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1">#inset plot</span>
+<p>For inset plots</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">set_multiplot</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#sets logscale in y, globally</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">extend_global_plotting_parameters</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;set logscale y&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#sets xrange, globally</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">extend_global_plotting_parameters</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;set xrange [1e-5:1.05e-3]&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#plot in position 1,1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">p_generic</span><span class="p">(</span><span class="s1">&#39;u 1 : 2 t &quot;my title&quot; &#39;</span><span class="p">,</span> <span class="n">x</span> <span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#next item in multiplot</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">next_multiplot_group</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">alter_current_multiplot_parameters</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;set size 0.6, 0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sd"># set size of inset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sd">set origin 0.4, 0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sd"># move bottom left corner of inset</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="sd">&quot;&quot;&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#inset plot</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">p_generic</span><span class="p">(</span><span class="s1">&#39;u 1 : 2 t &quot;my title&quot; &#39;</span><span class="p">,</span> <span class="n">x</span> <span class="p">,</span><span class="n">z</span><span class="p">)</span>
 </pre></div>
 </div>
