@@ -9,10 +9,12 @@ Welcome to Autogpy - AutoGnuplot.py's documentation!
 .. include code.rst
 
 .. toctree::
-   :maxdepth: 2
    :caption: Contents:
-	     code
+   :maxdepth: 2
 
+   code
+       
+      
 Indices and tables
 ==================
 

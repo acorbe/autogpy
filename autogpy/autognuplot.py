@@ -36,9 +36,11 @@ class AutoGnuplotFigure(object):
         ----------------
 
         >>> fig = AutoGnuplotFigure('folder','id')
-        >>> fig.p_generic('u 1 : 2 t "my title" ', x ,y) # for some array x,y
+        >>> # for some existing arrays x,y
+        >>> fig.p_generic('u 1 : 2 t "my title" ', x ,y) 
         >>> fig.generate_gnuplot_file() 
-        >>> fig.jupyter_show_pdflatex(show_stdout=False) # only jupyter
+        >>> # only jupyter
+        >>> fig.jupyter_show_pdflatex(show_stdout=False) 
 
         Notes
         -----------------
@@ -164,30 +166,31 @@ class AutoGnuplotFigure(object):
         Examples
         -----------
         >>> figure.extend_global_plotting_parameters(
-        >>> r\"\"\"
+        >>> r'''
         >>> set mxtics 2
         >>> set mytics 1
-        >>> 
+        >>> #
         >>> # color definitions
         >>> set border linewidth 1.5
         >>> set style line 1 lc rgb '#ff0000'  lt 1 lw 2
         >>> set style line 2 lc rgb '#0000ff' lt 3 lw 4
-        >>> 
+        >>> #
         >>> # Axes
         >>> set style line 11  lc rgb '#100100100' lt 1
         >>> set border 3 back ls 11
         >>> set tics nomirror out scale 0.75
+        >>> #
         >>> # Grid
         >>> set style line 12 lc rgb'#808080' lt 0 lw 1
         >>> set grid back ls 12
-        >>> 
+        >>> #
         >>> set format y '$%.4f$'
         >>> set format x '$%.4f$'
-        >>> 
+        >>> #
         >>> set key top left
-        >>> 
+        >>> #
         >>> set key samplen 2 inside spacing 1 width 0.3 height 1.5  at graph 0.99, 1.05
-        >>> 
+        >>> #
         >>> unset grid
         >>> #set logscale y
         >>> set xlabel "$\\nu$"
@@ -195,7 +198,7 @@ class AutoGnuplotFigure(object):
         >>> set yrange [1e-5:1e-3]
         >>> set xtics 0,2e-4,1.01e-3
         >>> #set ytics 2e-4,2e-4,1.01e-3
-        >>> \"\"\")        
+        >>> ''')        
 
         """
         autoescape = kw.get("autoescape", self._autoescape)
@@ -230,10 +233,14 @@ class AutoGnuplotFigure(object):
         
         Example
         -------------
-        >>> fig.set_multiplot("layout 2,1") # establishes multiplot mode with 2 rows and one column
-        >>> fig.p_generic('u 1 : 2 t "my title" ', x ,y) #plot in position 1,1
-        >>> fig.next_multiplot_group() #next item in multiplot
-        >>> fig.p_generic('u 1 : 2 t "my title" ', x ,z) #plot in position 2,1
+        >>> # establishes multiplot mode with 2 rows and one column
+        >>> fig.set_multiplot("layout 2,1") 
+        >>> #plot in position 1,1
+        >>> fig.p_generic('u 1 : 2 t "my title" ', x ,y) 
+        >>> #next item in multiplot
+        >>> fig.next_multiplot_group() 
+        >>> #plot in position 2,1
+        >>> fig.p_generic('u 1 : 2 t "my title" ', x ,z) 
         
         """
         
@@ -296,7 +303,7 @@ class AutoGnuplotFigure(object):
         >>> #sets logscale in y, globally
         >>> fig.extend_global_plotting_parameters(r"set logscale y") 
         >>> #sets xrange, globally
-        >>> fig.extend_global_plotting_parameters(r"set xrange [1e-5:1.05e-3]") 
+        >>> fig.extend_global_plotting_parameters(r"set xrange [1e-5:1.05e-3]")
         >>> #plot in position 1,1
         >>> fig.p_generic('u 1 : 2 t "my title" ', x ,y) 
         >>> #next item in multiplot
@@ -324,9 +331,9 @@ class AutoGnuplotFigure(object):
         >>> # move bottom left corner of inset
         >>> \"\"\")
         >>> #inset plot
-        >>> fig.p_generic('u 1 : 2 t "my title" ', x ,z)
-        
+        >>> fig.p_generic('u 1 : 2 t "my title" ', x ,z)        
         """
+        
         
         autoescape = kw.get("autoescape", self._autoescape)
         escaped_args = []
@@ -406,8 +413,32 @@ class AutoGnuplotFigure(object):
                      , **kw
                     ):
 
-        """Histogram function
+        """Proxy function to generate histograms 
 
+        Parameters
+        ------------------------
+        x: list, np.array, or other format compatible with np.histogram
+             1D dataset to histogram
+        gnuplot_command_no_u: str
+             gnuplot `plot` call arguments, skipping the filename and the `usigng` part. Should be used for title, plotstyle, etc.
+        hist_kw: dict, optional
+             ({}) arguments to pass to the inner np.histogram call
+        gnuplot_command_using: str, optional
+             ("u 1:2") overrides the default `using` part. (default: "using 1:2")
+        normalization: float, str, optional
+             (None) allows to provide a further normalization coefficient (pass float) or to normalize such that the `max` is one (pass `'max'`)
+        kde: bool, optional
+             (False) a gaussian kernel will be used to histogram the data, edges used are from the np.histogram call
+        kde_kw: dict, optional
+             ({}) parameters to pass to the `scipy.stats.gaussian_kde` call
+        reweight: function, optional
+             (`lambda: edges_mid : 1`) function to reweight the histogram or kde values. Receives the bin center as parameter.
+        **kw: optional
+             passes through to the inner `p_generic` call.
+
+        Returns
+        ------------
+        p_generic output
         """
 
         v_, e_ = np.histogram(x,**hist_kw)
@@ -430,7 +461,7 @@ class AutoGnuplotFigure(object):
         #     print("N_coeff:", N_coeff)
         v_ = v_ / N_coeff
         
-        self.p_generic(
+        return self.p_generic(
             gnuplot_command_using + " " + gnuplot_command_no_u
             , edges_mid , v_
             , **kw
@@ -444,7 +475,22 @@ class AutoGnuplotFigure(object):
                      , suppress_plt_figure = True
                      , **kw):
         """Histogram function. Proxies the interface of plt.hist for a rapid call swap. 
-        Adds "gnuplot_command_no_u" and "title" arguments 
+
+        Arguments
+        ----------
+        x: list, array
+             1D array to histogram
+        normalization: float, str, optional
+             (None) renormalizes the data after the historgram (see `hist_generic`)
+        gnuplot_command_no_u_no_title: str, optional
+             ('') additional gnuplot commands, excluding title
+        title: str, optional
+             ('') gnuplot `title`
+        suppress_plt_figure: bool, optional
+             (True) prevents the inner `plt.hist` call to spawn an histogram figure
+        **kw: 
+             `plt.hist` parameters
+        
         """
 
         import matplotlib.pyplot as plt
@@ -551,7 +597,7 @@ class AutoGnuplotFigure(object):
         self.variables[name] = "'%s'"%str(value) if is_string else str(value)
         
         #self.global_plotting_parameters.append(  "{NAME}={VALUE}".format(NAME = name, VALUE = "'%s'"%str(value) if is_string else str(value) ) )
-    def render_variables(self):
+    def __render_variables(self):
 
         return "\n".join(
             [ "{NAME}={VALUE}".format(NAME = k, VALUE=v) for (k,v) in self.variables.items()    ]
@@ -578,8 +624,8 @@ class AutoGnuplotFigure(object):
 
         return "\n\n".join(calls)
 
-    def generate_gnuplot_file_content(self):
-        redended_variables = self.render_variables()
+    def __generate_gnuplot_file_content(self):
+        redended_variables = self.__render_variables()
         parameters_string = "\n".join(self.global_plotting_parameters) + "\n\n"
         
 
@@ -600,7 +646,14 @@ class AutoGnuplotFigure(object):
         return final_content
 
     def print_gnuplot_file_content(self, highlight = True):
-        final_content = self.generate_gnuplot_file_content()
+        """Displays the content of the gnuplot file generated. Intended for debug.
+
+        Parameters
+        ----------------
+        highlight: bool, optional
+             (False) Uses `pygaments` to color the gnuplot script
+        """
+        final_content = self.__generate_gnuplot_file_content()
         if highlight:
             from pygments import highlight
             from pygments.lexers import GnuplotLexer
@@ -628,8 +681,10 @@ class AutoGnuplotFigure(object):
     
 
     def generate_gnuplot_file(self):
+        """Generates the final gnuplot scripts without creating any figure. Inclides Makefiles
+        """
 
-        final_content = self.generate_gnuplot_file_content()
+        final_content = self.__generate_gnuplot_file_content()
 
         ### CORE FILE
         self.__core_gnuplot_file = self.global_file_identifier + "__.core.gnu"

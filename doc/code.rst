@@ -1,3 +1,6 @@
+Content
+=========
+
 .. autoclass:: autogpy.AutogpyFigure
    :members:
 

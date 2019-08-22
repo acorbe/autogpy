@@ -1,13 +1,13 @@
 language: python
 
 install:
-  - pip install sphinx
+  - pip install sphinx sphinxcontrib-napoleon
 
 script:
   - cd doc
   # Use Sphinx to make the html docs
   - make html
-  # Tell GitHub not to use jekyll to compile the docs
+  # Tell GitHub not to use jekyll to compile the docs 
   - touch _build/html/.nojekyll
 
 # Tell Travis CI to copy the documentation to the gh-pages branch of
