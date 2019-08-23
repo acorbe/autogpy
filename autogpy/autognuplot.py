@@ -52,6 +52,7 @@ class AutoGnuplotFigure(object):
         >>>     , "y_size" : "8.cm"
         >>>     , "font" : "phv,12 "
         >>>     , "linewidth" : "2"
+        >>>     , "other" : "" # use e.g. for header package import
         >>> }
 
     """
@@ -106,6 +107,7 @@ class AutoGnuplotFigure(object):
             , "y_size" : "8.cm"
             , "font" : "phv,12 "
             , "linewidth" : "2"
+            , "other" : ""
 
         }
         self._autoescape = autoescape
@@ -795,7 +797,9 @@ class AutoGnuplotFigure(object):
         display(Image( self.__jpg_output  ))
 
     def jupyter_show_pdflatex(self
-                              , show_stdout = False ):
+                              , show_stdout = False
+                              , width = None
+                              , height = None ):
 
         """Shows a pdflatex rendering within the current jupyter notebook.
         To work it requires ImageMagick and authorization to render pdf to jpg. 
@@ -822,8 +826,12 @@ class AutoGnuplotFigure(object):
             print (err)
 
         from IPython.core.display import Image, display
-        print("opening:", self.pdflatex_output_jpg_convert)
-        display(Image( self.pdflatex_output_jpg_convert  ))
+        if self.verbose:
+            print("opening:", self.pdflatex_output_jpg_convert)
+            
+        display(Image( self.pdflatex_output_jpg_convert
+                       , width = width
+                       , height = height))
 
 
     def jupyter_show_tikz(self
@@ -872,7 +880,9 @@ class AutoGnuplotFigure(object):
             print (err)
 
         from IPython.core.display import Image, display
-        print("opening:", self.__tikz_output_jpg_convert)
+        if self.verbose:
+            print("opening:", self.__tikz_output_jpg_convert)
+            
         display(Image( self.__tikz_output_jpg_convert  ))
 
         

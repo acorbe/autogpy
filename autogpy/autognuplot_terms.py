@@ -64,7 +64,7 @@ rm *.ps || true
 LATEX_wrapper_file=\
 """
 set terminal epslatex size {x_size},{y_size} color colortext standalone \
-     '{font}'  linewidth {linewidth}
+     '{font}'  linewidth {linewidth} {other}
 set output 'fig.latex.nice/plot_out.tex'
 
 load "{CORE}"; 
@@ -74,7 +74,7 @@ load "{CORE}";
 TIKZ_wrapper_file=\
 """
 set terminal tikz size {x_size},{y_size} color colortext standalone \
-     '{font}'  linewidth {linewidth}
+     '{font}'  linewidth {linewidth} {other}
 set output 'fig.latex.nice/tikz_out.tex'
 
 load "{CORE}"; 

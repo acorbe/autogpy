@@ -25,3 +25,21 @@ set grid back ls 12
 
 unset grid
 """
+
+
+def latex_header_package_import(*args):
+    """generates the string to import the desired latex package based on 
+    their names.
+    """
+
+    typebased_op_support =\
+        lambda entry_o :\
+        {
+            "str": lambda entry: r"\\usepackage{%s}" % entry
+            , "tuple": lambda entry: r"\\usepackage[%s]{%s}" % (str(entry[0]), entry[1])
+        }[type(entry_o).__name__]
+
+    typebased_op = lambda x : typebased_op_support(x)(x)
+    
+
+    return "header " + "\"" + "\n".join(map(typebased_op, args)) + "\""
