@@ -63,7 +63,8 @@ class AutoGnuplotFigure(object):
                  , verbose = False
                  , autoescape = True
                  , latex_enabled = True
-                 , tikz_enabled = False):
+                 , tikz_enabled = False
+                 , allow_strings = False):
         """ AutoGnuplotFigure
 
         """
@@ -128,7 +129,8 @@ class AutoGnuplotFigure(object):
                 [ x['makefile_string'] for x in self.terminals_enabled_by_default if x['is_enabled'] ]
             ) 
         }
-        
+
+        self._allow_strings = allow_strings 
 
         # initializes the Makefile and the autosync script
         with open( self.globalize_fname("Makefile"), "w" ) as f:
@@ -142,7 +144,7 @@ class AutoGnuplotFigure(object):
             )
             )
 
-        
+                
 
     def extend_global_plotting_parameters(self, *args, **kw):
         """Extends the preamble of the gnuplot script to modify the plotting settings. 
@@ -526,6 +528,8 @@ class AutoGnuplotFigure(object):
         """Central plotting primitive"""
         fname_specs = kw.get("fname_specs","")
         autoescape = kw.get("autoescape",self._autoescape)
+        allow_strings = kw.get("allow_strings",self._allow_strings)
+        column_names = kw.get("column_names",None)
 
         if autoescape:
             command_line = self.__autoescape_strings(command_line)
@@ -551,17 +555,45 @@ class AutoGnuplotFigure(object):
             self.__append_to_multiplot_current_dataset(
                 to_append 
             )            
-        else:            
-        
-            xyzt = list(map( lambda x : np.array(x)[: , np.newaxis ], args  ))
-
-            data = np.concatenate( xyzt , axis = 1 )
+        else:
 
             dataset_fname = self.file_identifier + self.datasetstring_template.format(            
                 DS_ID = self.__dataset_counter
                 , SPECS = fname_specs)
 
-            np.savetxt( self.globalize_fname(dataset_fname) ,  data)
+            globalized_dataset_fname = self.globalize_fname(dataset_fname)
+
+            if allow_strings:
+                # pandas way. need to import
+                import pandas as pd
+                if column_names is None:
+                    column_names = ["col_%02d" % x for x in range(len(args))]
+                    
+                xyzt = pd.DataFrame(
+                    {
+                        n : v
+                        for n,v in zip(column_names, args)
+                    }
+                )
+                xyzt.to_csv(globalized_dataset_fname
+                            , sep = " "
+                            , header = False
+                            , index = False)
+                print(xyzt) 
+
+                ##########
+
+            else:
+                # numpy way
+                try:
+                    xyzt = list(map( lambda x : np.array(x)[: , np.newaxis ], args  ))
+                    data = np.concatenate( xyzt , axis = 1 )
+                    np.savetxt( globalized_dataset_fname ,  data)
+                except TypeError:
+                    print("\nWARNING: You got this exception likely beacuse you have columns with strings.\n"
+                          "Please set 'allow_strings' to True.")
+                    raise
+                
 
             if '"{DS_FNAME}"' not in command_line:
                 if self.verbose:
@@ -790,8 +822,11 @@ class AutoGnuplotFigure(object):
         output, err = proc.communicate()
 
         if show_stdout:
-            print (output)
+            print ("===== stderr =====")
             print (err)
+            print ("===== stdout =====")
+            print (output)
+
 
         from IPython.core.display import Image, display
         display(Image( self.__jpg_output  ))
@@ -822,8 +857,11 @@ class AutoGnuplotFigure(object):
         output, err = proc.communicate()
 
         if show_stdout:
-            print (output)
+            print ("===== stderr =====")
             print (err)
+            print ("===== stout =====")
+            print (output)
+
 
         from IPython.core.display import Image, display
         if self.verbose:
