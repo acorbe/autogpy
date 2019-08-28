@@ -41,7 +41,7 @@
 
 <dl class="class">
 <dt id="autogpy.AutoGnuplotFigure">
-<em class="property">class </em><code class="sig-prename descclassname">autogpy.</code><code class="sig-name descname">AutoGnuplotFigure</code><span class="sig-paren">(</span><em class="sig-param">folder_name</em>, <em class="sig-param">file_identifier</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">autoescape=True</em>, <em class="sig-param">latex_enabled=True</em>, <em class="sig-param">tikz_enabled=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">autogpy.</code><code class="sig-name descname">AutoGnuplotFigure</code><span class="sig-paren">(</span><em class="sig-param">folder_name</em>, <em class="sig-param">file_identifier</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">autoescape=True</em>, <em class="sig-param">latex_enabled=True</em>, <em class="sig-param">tikz_enabled=False</em>, <em class="sig-param">allow_strings=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an AutoGnuplotFigure object which wraps one gnuplot figure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -78,6 +78,7 @@
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">,</span> <span class="s2">&quot;y_size&quot;</span> <span class="p">:</span> <span class="s2">&quot;8.cm&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">,</span> <span class="s2">&quot;font&quot;</span> <span class="p">:</span> <span class="s2">&quot;phv,12 &quot;</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">,</span> <span class="s2">&quot;linewidth&quot;</span> <span class="p">:</span> <span class="s2">&quot;2&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">,</span> <span class="s2">&quot;other&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span> <span class="c1"># use e.g. for header package import</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">}</span>
 </pre></div>
 </div>
@@ -262,7 +263,7 @@ Use gnuplot syntax. Raw strings are advised.</p></li>
 
 <dl class="method">
 <dt id="autogpy.AutoGnuplotFigure.jupyter_show_pdflatex">
-<code class="sig-name descname">jupyter_show_pdflatex</code><span class="sig-paren">(</span><em class="sig-param">show_stdout=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.jupyter_show_pdflatex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.jupyter_show_pdflatex" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">jupyter_show_pdflatex</code><span class="sig-paren">(</span><em class="sig-param">show_stdout=False</em>, <em class="sig-param">width=None</em>, <em class="sig-param">height=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.jupyter_show_pdflatex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.jupyter_show_pdflatex" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shows a pdflatex rendering within the current jupyter notebook.
 To work it requires ImageMagick and authorization to render pdf to jpg.
 Should it fail:

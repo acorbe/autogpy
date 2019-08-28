@@ -85,6 +85,7 @@
 <span class="sd">        &gt;&gt;&gt;     , &quot;y_size&quot; : &quot;8.cm&quot;</span>
 <span class="sd">        &gt;&gt;&gt;     , &quot;font&quot; : &quot;phv,12 &quot;</span>
 <span class="sd">        &gt;&gt;&gt;     , &quot;linewidth&quot; : &quot;2&quot;</span>
+<span class="sd">        &gt;&gt;&gt;     , &quot;other&quot; : &quot;&quot; # use e.g. for header package import</span>
 <span class="sd">        &gt;&gt;&gt; }</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -95,7 +96,8 @@
                  <span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span>
                  <span class="p">,</span> <span class="n">autoescape</span> <span class="o">=</span> <span class="kc">True</span>
                  <span class="p">,</span> <span class="n">latex_enabled</span> <span class="o">=</span> <span class="kc">True</span>
-                 <span class="p">,</span> <span class="n">tikz_enabled</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+                 <span class="p">,</span> <span class="n">tikz_enabled</span> <span class="o">=</span> <span class="kc">False</span>
+                 <span class="p">,</span> <span class="n">allow_strings</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; AutoGnuplotFigure</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -139,6 +141,7 @@
             <span class="p">,</span> <span class="s2">&quot;y_size&quot;</span> <span class="p">:</span> <span class="s2">&quot;8.cm&quot;</span>
             <span class="p">,</span> <span class="s2">&quot;font&quot;</span> <span class="p">:</span> <span class="s2">&quot;phv,12 &quot;</span>
             <span class="p">,</span> <span class="s2">&quot;linewidth&quot;</span> <span class="p">:</span> <span class="s2">&quot;2&quot;</span>
+            <span class="p">,</span> <span class="s2">&quot;other&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span>
 
         <span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_autoescape</span> <span class="o">=</span> <span class="n">autoescape</span>
@@ -159,7 +162,8 @@
                 <span class="p">[</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;makefile_string&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminals_enabled_by_default</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s1">&#39;is_enabled&#39;</span><span class="p">]</span> <span class="p">]</span>
             <span class="p">)</span> 
         <span class="p">}</span>
-        
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_allow_strings</span> <span class="o">=</span> <span class="n">allow_strings</span> 
 
         <span class="c1"># initializes the Makefile and the autosync script</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">globalize_fname</span><span class="p">(</span><span class="s2">&quot;Makefile&quot;</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span> <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -173,7 +177,7 @@
             <span class="p">)</span>
             <span class="p">)</span>
 
-        
+                
 
 <div class="viewcode-block" id="AutoGnuplotFigure.extend_global_plotting_parameters"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.extend_global_plotting_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">extend_global_plotting_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Extends the preamble of the gnuplot script to modify the plotting settings. </span>
@@ -557,6 +561,8 @@
         <span class="sd">&quot;&quot;&quot;Central plotting primitive&quot;&quot;&quot;</span>
         <span class="n">fname_specs</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fname_specs&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="n">autoescape</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;autoescape&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_autoescape</span><span class="p">)</span>
+        <span class="n">allow_strings</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;allow_strings&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_allow_strings</span><span class="p">)</span>
+        <span class="n">column_names</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;column_names&quot;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">autoescape</span><span class="p">:</span>
             <span class="n">command_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__autoescape_strings</span><span class="p">(</span><span class="n">command_line</span><span class="p">)</span>
@@ -582,17 +588,45 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">__append_to_multiplot_current_dataset</span><span class="p">(</span>
                 <span class="n">to_append</span> 
             <span class="p">)</span>            
-        <span class="k">else</span><span class="p">:</span>            
-        
-            <span class="n">xyzt</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)[:</span> <span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span> <span class="p">],</span> <span class="n">args</span>  <span class="p">))</span>
-
-            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span> <span class="n">xyzt</span> <span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
 
             <span class="n">dataset_fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_identifier</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasetstring_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>            
                 <span class="n">DS_ID</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dataset_counter</span>
                 <span class="p">,</span> <span class="n">SPECS</span> <span class="o">=</span> <span class="n">fname_specs</span><span class="p">)</span>
 
-            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">globalize_fname</span><span class="p">(</span><span class="n">dataset_fname</span><span class="p">)</span> <span class="p">,</span>  <span class="n">data</span><span class="p">)</span>
+            <span class="n">globalized_dataset_fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">globalize_fname</span><span class="p">(</span><span class="n">dataset_fname</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">allow_strings</span><span class="p">:</span>
+                <span class="c1"># pandas way. need to import</span>
+                <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+                <span class="k">if</span> <span class="n">column_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;col_</span><span class="si">%02d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">))]</span>
+                    
+                <span class="n">xyzt</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="n">n</span> <span class="p">:</span> <span class="n">v</span>
+                        <span class="k">for</span> <span class="n">n</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">column_names</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+                <span class="n">xyzt</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">globalized_dataset_fname</span>
+                            <span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span>
+                            <span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">False</span>
+                            <span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">xyzt</span><span class="p">)</span> 
+
+                <span class="c1">##########</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># numpy way</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">xyzt</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)[:</span> <span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span> <span class="p">],</span> <span class="n">args</span>  <span class="p">))</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span> <span class="n">xyzt</span> <span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">)</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span> <span class="n">globalized_dataset_fname</span> <span class="p">,</span>  <span class="n">data</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">WARNING: You got this exception likely beacuse you have columns with strings.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                          <span class="s2">&quot;Please set &#39;allow_strings&#39; to True.&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span>
+                
 
             <span class="k">if</span> <span class="s1">&#39;&quot;</span><span class="si">{DS_FNAME}</span><span class="s1">&quot;&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">command_line</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
@@ -821,14 +855,19 @@
         <span class="n">output</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">show_stdout</span><span class="p">:</span>
-            <span class="nb">print</span> <span class="p">(</span><span class="n">output</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;===== stderr =====&quot;</span><span class="p">)</span>
             <span class="nb">print</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;===== stdout =====&quot;</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
 
         <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="k">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
         <span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__jpg_output</span>  <span class="p">))</span>
 
 <div class="viewcode-block" id="AutoGnuplotFigure.jupyter_show_pdflatex"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.jupyter_show_pdflatex">[docs]</a>    <span class="k">def</span> <span class="nf">jupyter_show_pdflatex</span><span class="p">(</span><span class="bp">self</span>
-                              <span class="p">,</span> <span class="n">show_stdout</span> <span class="o">=</span> <span class="kc">False</span> <span class="p">):</span>
+                              <span class="p">,</span> <span class="n">show_stdout</span> <span class="o">=</span> <span class="kc">False</span>
+                              <span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="kc">None</span>
+                              <span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="kc">None</span> <span class="p">):</span>
 
         <span class="sd">&quot;&quot;&quot;Shows a pdflatex rendering within the current jupyter notebook.</span>
 <span class="sd">        To work it requires ImageMagick and authorization to render pdf to jpg. </span>
@@ -851,12 +890,19 @@
         <span class="n">output</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">show_stdout</span><span class="p">:</span>
-            <span class="nb">print</span> <span class="p">(</span><span class="n">output</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;===== stderr =====&quot;</span><span class="p">)</span>
             <span class="nb">print</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;===== stout =====&quot;</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="n">output</span><span class="p">)</span>
+
 
         <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="k">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;opening:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_output_jpg_convert</span><span class="p">)</span>
-        <span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_output_jpg_convert</span>  <span class="p">))</span></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;opening:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_output_jpg_convert</span><span class="p">)</span>
+            
+        <span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_output_jpg_convert</span>
+                       <span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">width</span>
+                       <span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">height</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="AutoGnuplotFigure.jupyter_show_tikz"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.jupyter_show_tikz">[docs]</a>    <span class="k">def</span> <span class="nf">jupyter_show_tikz</span><span class="p">(</span><span class="bp">self</span>
@@ -905,7 +951,9 @@
             <span class="nb">print</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span>
 
         <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="k">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;opening:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tikz_output_jpg_convert</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;opening:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tikz_output_jpg_convert</span><span class="p">)</span>
+            
         <span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tikz_output_jpg_convert</span>  <span class="p">))</span></div>
 
         
