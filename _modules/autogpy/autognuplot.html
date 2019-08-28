@@ -558,7 +558,22 @@
         <span class="k">return</span> <span class="n">command_line</span>
 
 <div class="viewcode-block" id="AutoGnuplotFigure.p_generic"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.p_generic">[docs]</a>    <span class="k">def</span> <span class="nf">p_generic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_line</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Central plotting primitive&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Central plotting primitive</span>
+<span class="sd">                Arguments</span>
+<span class="sd">        ----------</span>
+<span class="sd">        command_line: string</span>
+<span class="sd">             gnuplot command, without the explicit call to plot and the filename of the content</span>
+<span class="sd">        *args: lists or np.array, optional</span>
+<span class="sd">             columns with the data, one or more columns can contain strings (e.g. for labels). In this case &#39;allow_strings&#39; must be True.</span>
+<span class="sd">        fname_specs: string, optional</span>
+<span class="sd">             (&quot;&quot;) allows to specify a filename for the data different for the default one.</span>
+<span class="sd">        autoescape: bool, optional</span>
+<span class="sd">             (as set in by the constructor) allows to selectively modify the class setting for autoescaping</span>
+<span class="sd">        allow_strings: bool, optional</span>
+<span class="sd">             (False) set to True to allows columns with strings. This requires pandas. Might become True by default in the future.</span>
+<span class="sd">             </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fname_specs</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fname_specs&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="n">autoescape</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;autoescape&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_autoescape</span><span class="p">)</span>
         <span class="n">allow_strings</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;allow_strings&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_allow_strings</span><span class="p">)</span>

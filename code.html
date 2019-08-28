@@ -309,7 +309,22 @@ end</p>
 <dl class="method">
 <dt id="autogpy.AutoGnuplotFigure.p_generic">
 <code class="sig-name descname">p_generic</code><span class="sig-paren">(</span><em class="sig-param">command_line</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.p_generic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.p_generic" title="Permalink to this definition">¶</a></dt>
-<dd><p>Central plotting primitive</p>
+<dd><dl class="simple">
+<dt>Central plotting primitive</dt><dd><p>Arguments</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>command_line: string</dt><dd><p>gnuplot command, without the explicit call to plot and the filename of the content</p>
+</dd>
+<dt><a href="#id1"><span class="problematic" id="id2">*</span></a>args: lists or np.array, optional</dt><dd><p>columns with the data, one or more columns can contain strings (e.g. for labels). In this case ‘allow_strings’ must be True.</p>
+</dd>
+<dt>fname_specs: string, optional</dt><dd><p>(“”) allows to specify a filename for the data different for the default one.</p>
+</dd>
+<dt>autoescape: bool, optional</dt><dd><p>(as set in by the constructor) allows to selectively modify the class setting for autoescaping</p>
+</dd>
+<dt>allow_strings: bool, optional</dt><dd><p>(False) set to True to allows columns with strings. This requires pandas. Might become True by default in the future.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
