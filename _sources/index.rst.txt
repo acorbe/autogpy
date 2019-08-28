@@ -8,6 +8,8 @@ Welcome to Autogpy - AutoGnuplot.py's documentation!
 
 .. include code.rst
 
+.. mdinclude:: ../README.md
+   
 .. toctree::
    :caption: Contents:
    :maxdepth: 2
