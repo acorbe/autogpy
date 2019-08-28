@@ -525,7 +525,22 @@ class AutoGnuplotFigure(object):
         return command_line
 
     def p_generic(self, command_line, *args, **kw):
-        """Central plotting primitive"""
+        """Central plotting primitive
+                Arguments
+        ----------
+        command_line: string
+             gnuplot command, without the explicit call to plot and the filename of the content
+        *args: lists or np.array, optional
+             columns with the data, one or more columns can contain strings (e.g. for labels). In this case 'allow_strings' must be True.
+        fname_specs: string, optional
+             ("") allows to specify a filename for the data different for the default one.
+        autoescape: bool, optional
+             (as set in by the constructor) allows to selectively modify the class setting for autoescaping
+        allow_strings: bool, optional
+             (False) set to True to allows columns with strings. This requires pandas. Might become True by default in the future.
+             
+
+        """
         fname_specs = kw.get("fname_specs","")
         autoescape = kw.get("autoescape",self._autoescape)
         allow_strings = kw.get("allow_strings",self._allow_strings)
