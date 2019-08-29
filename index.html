@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Welcome to Autogpy - AutoGnuplot.py’s documentation! &#8212; Autogpy - AutoGnuplot.py  documentation</title>
+    <title>Which problem does it solve? &#8212; Autogpy - AutoGnuplot.py  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -31,24 +31,16 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="welcome-to-autogpy-autognuplot-py-s-documentation">
-<h1>Welcome to Autogpy - AutoGnuplot.py’s documentation!<a class="headerlink" href="#welcome-to-autogpy-autognuplot-py-s-documentation" title="Permalink to this headline">¶</a></h1>
-</div>
-<div class="section" id="autogpy-autognuplot-py">
-<h1>autogpy - AutoGnuplot.py<a class="headerlink" href="#autogpy-autognuplot-py" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="automatic-generation-of-gnuplot-figures-including-script-and-data-from-python">
-<h2>Automatic generation of gnuplot figures (including script and data) from python.<a class="headerlink" href="#automatic-generation-of-gnuplot-figures-including-script-and-data-from-python" title="Permalink to this headline">¶</a></h2>
-<p><strong>Author:</strong> <a class="reference external" href="http://corbetta.phys.tue.nl/">Alessandro Corbetta</a>, 2019</p>
+  <h1>autogpy - AutoGnuplot.py</h1><h2>Automatic generation of gnuplot figures/scripts/data from python.</h2><p><strong>Author:</strong> <a class="reference external" href="http://corbetta.phys.tue.nl/">Alessandro Corbetta</a>, 2019<span class="raw-html-m2r"><br></span>
+<strong>Documentation:</strong> <a class="reference external" href="https://acorbe.github.io/autogpy/">https://acorbe.github.io/autogpy/</a></p>
 <a class="reference external image-reference" href="https://travis-ci.org/acorbe/autogpy.svg?branch=master"><img alt="build status" src="https://travis-ci.org/acorbe/autogpy.svg?branch=master" /></a>
 <div class="section" id="which-problem-does-it-solve">
-<h3>Which problem does it solve?<a class="headerlink" href="#which-problem-does-it-solve" title="Permalink to this headline">¶</a></h3>
-<p>In the scientific community, <a class="reference external" href="http://www.gnuplot.info/">gnuplot</a> is a gold standard for high-quality plots. It used across generations of scientists.<span class="raw-html-m2r"><br></span>
-Python is quickly becoming a tool of choice for data analytics in science and beyond. Although python comes with several options for plotting, often gnuplot is preferred in production.</p>
-<p><code class="docutils literal notranslate"><span class="pre">autogpy</span></code> eliminates annoying duplication of code/data between python analyses and gnuplot figure production.<span class="raw-html-m2r"><br></span>
-Using a syntax close to gnuplot, it automatically generates gnuplot scripts and dumps suitably the data.</p>
+<h1>Which problem does it solve?<a class="headerlink" href="#which-problem-does-it-solve" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">autogpy</span></code> eliminates annoying duplications of code/data when doing data analytics in python and publication figures in gnuplot. Using a syntax close to gnuplot, it automatically generates gnuplot scripts and dumps suitably the data.</p>
+<p>In the scientific community, <a class="reference external" href="http://www.gnuplot.info/">gnuplot</a> is a gold standard for publication-quality plots. Python is quickly becoming a tool of choice for data analytics. While it comes with several options for plotting, often gnuplot is preferred in production.</p>
 </div>
 <div class="section" id="features">
-<h3>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h3>
+<h1>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
 <li><p>anything that be obtained by the gnuplot command <code class="docutils literal notranslate"><span class="pre">plot</span></code> can be produced</p></li>
 <li><p>any gnuplot state modification can be achieved</p></li>
@@ -58,7 +50,7 @@ Using a syntax close to gnuplot, it automatically generates gnuplot scripts and 
 <li><p>jupyter notebook gnuplot script inspection</p></li>
 <li><p>gnuplot terminals epslatex, tikz/pgfplot and jpg</p></li>
 <li><p>output figures are shipped in a folder that includes scripts, data and makefile</p></li>
-<li><p>easy scp-based synchronization between a machine in which the figures are generated (e.g. from even larger datasets) and the paper writing machine.</p></li>
+<li><p>easy scp-based synchronization between a machine in which the figures are generated (e.g. from even larger datasets) and the “paper writing” machine.</p></li>
 </ul>
 <p><strong>Works on</strong></p>
 <ul class="simple">
@@ -69,12 +61,12 @@ Using a syntax close to gnuplot, it automatically generates gnuplot scripts and 
 <ul class="simple">
 <li><p>Certain features require imagemagick and a working <code class="docutils literal notranslate"><span class="pre">gnuplot-tikz.lua</span></code>. Some versions of these might have bugs. Do <code class="docutils literal notranslate"><span class="pre">figure.display_fixes()</span></code> to show known fixes.</p></li>
 </ul>
-</div>
-</div>
 <div class="section" id="in-a-nutshell">
 <h2>In a nutshell<a class="headerlink" href="#in-a-nutshell" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
 <div class="section" id="getting-autogpy">
-<h3>Getting autogpy<a class="headerlink" href="#getting-autogpy" title="Permalink to this headline">¶</a></h3>
+<h1>Getting autogpy<a class="headerlink" href="#getting-autogpy" title="Permalink to this headline">¶</a></h1>
 <p>From <code class="docutils literal notranslate"><span class="pre">pip</span></code></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install autogpy
 </pre></div>
@@ -86,7 +78,7 @@ pip install ./autogpy
 </div>
 </div>
 <div class="section" id="usage">
-<h3>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h3>
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">autogpy</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
@@ -140,11 +132,6 @@ Notice that the input data has been formatted automatically.</p>
 <li class="toctree-l1"><a class="reference internal" href="code.html">Content</a></li>
 </ul>
 </div>
-</div>
-</div>
-</div>
-<div class="section" id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
