@@ -556,9 +556,7 @@ class AutoGnuplotFigure(object):
         #fname_specs = ""
 
         if len(args) == 0: #case an explicit function is plotted:
-
-            print ("To be tested")
-
+            
             to_append = \
                 {'dataset_fname' : ""
                  , 'plottype' : 'expl_f'
@@ -594,7 +592,8 @@ class AutoGnuplotFigure(object):
                             , sep = " "
                             , header = False
                             , index = False)
-                print(xyzt) 
+                if self.verbose:
+                    print(xyzt)
 
                 ##########
 
@@ -825,8 +824,41 @@ class AutoGnuplotFigure(object):
                 )
             )
 
+    def __jupyter_show_generic(self
+                               , command_to_call
+                               , image_to_display
+                               , show_stderr = True
+                               , show_stdout = False
+                               , height = None
+                               , width = None):
+        
+        from subprocess import Popen as _Popen, PIPE as _PIPE, call as _call
+
+        if self.verbose:
+            print ("trying call: ", command_to_call)
+            
+        proc = _Popen(command_to_call
+                      , shell=False
+                      , universal_newlines=True
+                      , cwd = self.folder_name
+                      , stdout=_PIPE
+                      , stderr=_PIPE)
+        output, err = proc.communicate()
+
+        if show_stderr:
+            print ("===== stderr =====")
+            print (err)
+        if show_stdout:
+            print ("===== stdout =====")
+            print (output)
+            
+        from IPython.core.display import Image, display
+        display(Image( image_to_display  ))
+
+    
 
     def jupyter_show(self
+                     
                      , show_stdout = False):
         from subprocess import Popen as _Popen, PIPE as _PIPE, call as _call
 
@@ -848,6 +880,7 @@ class AutoGnuplotFigure(object):
 
     def jupyter_show_pdflatex(self
                               , show_stdout = False
+                              , show_stderr = False
                               , width = None
                               , height = None ):
 
@@ -858,36 +891,14 @@ class AutoGnuplotFigure(object):
         Should it fail:
         https://stackoverflow.com/a/52661288
         """
-
-        from subprocess import Popen as _Popen, PIPE as _PIPE, call as _call
-
-        if self.verbose:
-            print ("trying call: ", [  self.local_pdflatex_compilesh_gnuplot_file   ])
-            print ("from folder_name: ", self.folder_name)
-
-        proc = _Popen(["bash", self.local_pdflatex_compilesh_gnuplot_file  ]
-                      , shell=False
-                      ,  universal_newlines=True
-                      , cwd = self.folder_name
-                      , stdout=_PIPE
-                      , stderr=_PIPE)
-        output, err = proc.communicate()
-
-        if show_stdout:
-            print ("===== stderr =====")
-            print (err)
-            print ("===== stout =====")
-            print (output)
-
-
-        from IPython.core.display import Image, display
-        if self.verbose:
-            print("opening:", self.pdflatex_output_jpg_convert)
-            
-        display(Image( self.pdflatex_output_jpg_convert
-                       , width = width
-                       , height = height))
-
+        self.__jupyter_show_generic(
+            [ "bash", self.local_pdflatex_compilesh_gnuplot_file  ]
+            , self.pdflatex_output_jpg_convert
+            , height = height
+            , width = width
+            , show_stderr = show_stderr 
+            , show_stdout = show_stdout 
+        )
 
     def jupyter_show_tikz(self
                           , show_stdout = False ):
