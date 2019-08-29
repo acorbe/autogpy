@@ -852,6 +852,8 @@ class AutoGnuplotFigure(object):
                               , height = None ):
 
         """Shows a pdflatex rendering within the current jupyter notebook.
+
+        
         To work it requires ImageMagick and authorization to render pdf to jpg. 
         Should it fail:
         https://stackoverflow.com/a/52661288
@@ -891,6 +893,7 @@ class AutoGnuplotFigure(object):
                           , show_stdout = False ):
 
         r"""Shows a pdflatex rendering within the current jupyter notebook.
+
         To work it requires ImageMagick and authorization to render pdf to jpg. 
         Should it fail:
         https://stackoverflow.com/a/52661288
