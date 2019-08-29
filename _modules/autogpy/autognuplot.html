@@ -589,9 +589,7 @@
         <span class="c1">#fname_specs = &quot;&quot;</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1">#case an explicit function is plotted:</span>
-
-            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;To be tested&quot;</span><span class="p">)</span>
-
+            
             <span class="n">to_append</span> <span class="o">=</span> \
                 <span class="p">{</span><span class="s1">&#39;dataset_fname&#39;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span>
                  <span class="p">,</span> <span class="s1">&#39;plottype&#39;</span> <span class="p">:</span> <span class="s1">&#39;expl_f&#39;</span>
@@ -627,7 +625,8 @@
                             <span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span>
                             <span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">False</span>
                             <span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">xyzt</span><span class="p">)</span> 
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">xyzt</span><span class="p">)</span>
 
                 <span class="c1">##########</span>
 
@@ -858,8 +857,41 @@
                 <span class="p">)</span>
             <span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">__jupyter_show_generic</span><span class="p">(</span><span class="bp">self</span>
+                               <span class="p">,</span> <span class="n">command_to_call</span>
+                               <span class="p">,</span> <span class="n">image_to_display</span>
+                               <span class="p">,</span> <span class="n">show_stderr</span> <span class="o">=</span> <span class="kc">True</span>
+                               <span class="p">,</span> <span class="n">show_stdout</span> <span class="o">=</span> <span class="kc">False</span>
+                               <span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="kc">None</span>
+                               <span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        
+        <span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span> <span class="k">as</span> <span class="n">_Popen</span><span class="p">,</span> <span class="n">PIPE</span> <span class="k">as</span> <span class="n">_PIPE</span><span class="p">,</span> <span class="n">call</span> <span class="k">as</span> <span class="n">_call</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;trying call: &quot;</span><span class="p">,</span> <span class="n">command_to_call</span><span class="p">)</span>
+            
+        <span class="n">proc</span> <span class="o">=</span> <span class="n">_Popen</span><span class="p">(</span><span class="n">command_to_call</span>
+                      <span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span>
+                      <span class="p">,</span> <span class="n">universal_newlines</span><span class="o">=</span><span class="kc">True</span>
+                      <span class="p">,</span> <span class="n">cwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span>
+                      <span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">_PIPE</span>
+                      <span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">_PIPE</span><span class="p">)</span>
+        <span class="n">output</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">show_stderr</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;===== stderr =====&quot;</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">show_stdout</span><span class="p">:</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;===== stdout =====&quot;</span><span class="p">)</span>
+            <span class="nb">print</span> <span class="p">(</span><span class="n">output</span><span class="p">)</span>
+            
+        <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="k">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
+        <span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span> <span class="n">image_to_display</span>  <span class="p">))</span>
+
+    
 
     <span class="k">def</span> <span class="nf">jupyter_show</span><span class="p">(</span><span class="bp">self</span>
+                     
                      <span class="p">,</span> <span class="n">show_stdout</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span> <span class="k">as</span> <span class="n">_Popen</span><span class="p">,</span> <span class="n">PIPE</span> <span class="k">as</span> <span class="n">_PIPE</span><span class="p">,</span> <span class="n">call</span> <span class="k">as</span> <span class="n">_call</span>
 
@@ -881,6 +913,7 @@
 
 <div class="viewcode-block" id="AutoGnuplotFigure.jupyter_show_pdflatex"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.jupyter_show_pdflatex">[docs]</a>    <span class="k">def</span> <span class="nf">jupyter_show_pdflatex</span><span class="p">(</span><span class="bp">self</span>
                               <span class="p">,</span> <span class="n">show_stdout</span> <span class="o">=</span> <span class="kc">False</span>
+                              <span class="p">,</span> <span class="n">show_stderr</span> <span class="o">=</span> <span class="kc">False</span>
                               <span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="kc">None</span>
                               <span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="kc">None</span> <span class="p">):</span>
 
@@ -891,36 +924,14 @@
 <span class="sd">        Should it fail:</span>
 <span class="sd">        https://stackoverflow.com/a/52661288</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span> <span class="k">as</span> <span class="n">_Popen</span><span class="p">,</span> <span class="n">PIPE</span> <span class="k">as</span> <span class="n">_PIPE</span><span class="p">,</span> <span class="n">call</span> <span class="k">as</span> <span class="n">_call</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;trying call: &quot;</span><span class="p">,</span> <span class="p">[</span>  <span class="bp">self</span><span class="o">.</span><span class="n">local_pdflatex_compilesh_gnuplot_file</span>   <span class="p">])</span>
-            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;from folder_name: &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span><span class="p">)</span>
-
-        <span class="n">proc</span> <span class="o">=</span> <span class="n">_Popen</span><span class="p">([</span><span class="s2">&quot;bash&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_pdflatex_compilesh_gnuplot_file</span>  <span class="p">]</span>
-                      <span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="kc">False</span>
-                      <span class="p">,</span>  <span class="n">universal_newlines</span><span class="o">=</span><span class="kc">True</span>
-                      <span class="p">,</span> <span class="n">cwd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span>
-                      <span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">_PIPE</span>
-                      <span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">_PIPE</span><span class="p">)</span>
-        <span class="n">output</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">proc</span><span class="o">.</span><span class="n">communicate</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="n">show_stdout</span><span class="p">:</span>
-            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;===== stderr =====&quot;</span><span class="p">)</span>
-            <span class="nb">print</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span>
-            <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;===== stout =====&quot;</span><span class="p">)</span>
-            <span class="nb">print</span> <span class="p">(</span><span class="n">output</span><span class="p">)</span>
-
-
-        <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="k">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;opening:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_output_jpg_convert</span><span class="p">)</span>
-            
-        <span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_output_jpg_convert</span>
-                       <span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">width</span>
-                       <span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">height</span><span class="p">))</span></div>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">__jupyter_show_generic</span><span class="p">(</span>
+            <span class="p">[</span> <span class="s2">&quot;bash&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_pdflatex_compilesh_gnuplot_file</span>  <span class="p">]</span>
+            <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_output_jpg_convert</span>
+            <span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">height</span>
+            <span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">width</span>
+            <span class="p">,</span> <span class="n">show_stderr</span> <span class="o">=</span> <span class="n">show_stderr</span> 
+            <span class="p">,</span> <span class="n">show_stdout</span> <span class="o">=</span> <span class="n">show_stdout</span> 
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="AutoGnuplotFigure.jupyter_show_tikz"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.jupyter_show_tikz">[docs]</a>    <span class="k">def</span> <span class="nf">jupyter_show_tikz</span><span class="p">(</span><span class="bp">self</span>
                           <span class="p">,</span> <span class="n">show_stdout</span> <span class="o">=</span> <span class="kc">False</span> <span class="p">):</span>
