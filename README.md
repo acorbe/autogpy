@@ -1,20 +1,20 @@
-# autogpy - AutoGnuplot.py
-## Automatic generation of gnuplot figures (including script and data) from python.
+<h1>autogpy - AutoGnuplot.py</h1>
+
+<h2>Automatic generation of gnuplot figures/scripts/data from python.</h2>
 
 
-**Author:** [Alessandro Corbetta](http://corbetta.phys.tue.nl/), 2019
+**Author:** [Alessandro Corbetta](http://corbetta.phys.tue.nl/), 2019  
+**Documentation:** https://acorbe.github.io/autogpy/  
 
 ![build status](https://travis-ci.org/acorbe/autogpy.svg?branch=master)
 
 
-
 ### Which problem does it solve?
 
-In the scientific community, [gnuplot](http://www.gnuplot.info/) is a gold standard for high-quality plots. It used across generations of scientists.  
-Python is quickly becoming a tool of choice for data analytics in science and beyond. Although python comes with several options for plotting, often gnuplot is preferred in production.
+`autogpy` eliminates annoying duplications of code/data when doing data analytics in python and publication figures in gnuplot. Using a syntax close to gnuplot, it automatically generates gnuplot scripts and dumps suitably the data.  
 
-`autogpy` eliminates annoying duplication of code/data between python analyses and gnuplot figure production.  
-Using a syntax close to gnuplot, it automatically generates gnuplot scripts and dumps suitably the data.
+In the scientific community, [gnuplot](http://www.gnuplot.info/) is a gold standard for publication-quality plots. Python is quickly becoming a tool of choice for data analytics. While it comes with several options for plotting, often gnuplot is preferred in production.
+
 
 ### Features
 + anything that be obtained by the gnuplot command `plot` can be produced
@@ -25,7 +25,7 @@ Using a syntax close to gnuplot, it automatically generates gnuplot scripts and 
 + jupyter notebook gnuplot script inspection
 + gnuplot terminals epslatex, tikz/pgfplot and jpg
 + output figures are shipped in a folder that includes scripts, data and makefile
-+ easy scp-based synchronization between a machine in which the figures are generated (e.g. from even larger datasets) and the paper writing machine.
++ easy scp-based synchronization between a machine in which the figures are generated (e.g. from even larger datasets) and the "paper writing" machine.
 
 **Works on**
 + Linux/MacOs
