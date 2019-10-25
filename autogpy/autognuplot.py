@@ -545,6 +545,12 @@ class AutoGnuplotFigure(object):
         autoescape = kw.get("autoescape",self._autoescape)
         allow_strings = kw.get("allow_strings",self._allow_strings)
         column_names = kw.get("column_names",None)
+        for_enabled = kw.get("for_",None)
+        if for_enabled is not None:
+            allow_strings = False
+            for_prepend = "for " + for_enabled
+        else:
+            for_prepend = ""
 
         if autoescape:
             command_line = self.__autoescape_strings(command_line)
@@ -600,7 +606,10 @@ class AutoGnuplotFigure(object):
             else:
                 # numpy way
                 try:
-                    xyzt = list(map( lambda x : np.array(x)[: , np.newaxis ], args  ))
+                    xyzt = list(map( lambda x : np.array(x), args  ))
+                    ## adding second dimension if needed, this is a feature to allow a for loop
+                    xyzt = [  x[: , np.newaxis ] if len(x.shape) == 1 else x for x in xyzt]                   
+                    
                     data = np.concatenate( xyzt , axis = 1 )
                     np.savetxt( globalized_dataset_fname ,  data)
                 except TypeError:
@@ -612,7 +621,7 @@ class AutoGnuplotFigure(object):
             if '"{DS_FNAME}"' not in command_line:
                 if self.verbose:
                     print('Warning: "{DS_FNAME}" will be prepended to your string')
-                command_line = '"{DS_FNAME}"' + " " + command_line
+                command_line = for_prepend + ' "{DS_FNAME}"' + " " + command_line
             if " t " not in command_line \
                and " t\"" not in command_line\
                and " title " not in command_line\
