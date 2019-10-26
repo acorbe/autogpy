@@ -43,3 +43,18 @@ def latex_header_package_import(*args):
     
 
     return "header " + "\"" + "\n".join(map(typebased_op, args)) + "\""
+
+
+def load_gnuplotting_palette(palette_name, folder_dest):
+    """Downloads palettes by name from Gnuplotting/gnuplot-palettes.
+    """
+    import requests
+    BASIC_ADDRESS="https://raw.githubusercontent.com/Gnuplotting/gnuplot-palettes/master/"
+    final_name = palette_name + '.pal'
+    r = requests.get(BASIC_ADDRESS + final_name, allow_redirects=True)
+    open(folder_dest + '/' + final_name, 'wb').write(r.content)
+
+    return "load '%s'" % final_name
+
+
+    

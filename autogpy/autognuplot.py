@@ -6,6 +6,7 @@ import numpy as np
 from collections import OrderedDict
 
 from . import autognuplot_terms
+from . import plot_helpers
 
 
 class AutoGnuplotFigure(object):
@@ -350,7 +351,9 @@ class AutoGnuplotFigure(object):
 
 
         return self
-        
+
+    def load_gnuplotting_palette(self, palette_name):
+        return plot_helpers.load_gnuplotting_palette(palette_name, self.folder_name)
 
     def __get_multiplot_current_dataset(self):
         return self.datasets_to_plot[self.multiplot_index]
