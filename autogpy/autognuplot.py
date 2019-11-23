@@ -418,6 +418,7 @@ class AutoGnuplotFigure(object):
                      , kde_kw = {}
                      , reweight = lambda edges_mid : 1
                      , dump_data = False
+                     , compress_dumped_data = True
                      , **kw
                     ):
 
@@ -444,6 +445,8 @@ class AutoGnuplotFigure(object):
              (`lambda: edges_mid : 1`) function to reweight the histogram or kde values. Receives the bin center as parameter.
         dump_data: bool, optional
              (False) dumps the input data as csv
+        compress_dumped_data: bool, optional
+             (True) the data dumped (by dump_data = True) are gz-compressed.
         **kw: optional
              passes through to the inner `p_generic` call.
 
@@ -480,7 +483,7 @@ class AutoGnuplotFigure(object):
         if dump_data:
             print("DUMPING ALL!")
             dataset_fname_hist = plot_out["dataset_fname"]
-            dataset_dump_data = dataset_fname_hist + '.hist_compl_dump.dat'
+            dataset_dump_data = dataset_fname_hist + '.hist_compl_dump.dat' + ( '.gz' if compress_dumped_data else '' )
             globalized_dataset_dump_data = self.globalize_fname(dataset_dump_data)
 
             xyzt = [  x[: , np.newaxis ] if len(x.shape) == 1 else x for x in [x] ]                   
