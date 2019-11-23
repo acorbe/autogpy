@@ -417,6 +417,7 @@ class AutoGnuplotFigure(object):
                      , kde = False
                      , kde_kw = {}
                      , reweight = lambda edges_mid : 1
+                     , dump_data = False
                      , **kw
                     ):
 
@@ -435,11 +436,14 @@ class AutoGnuplotFigure(object):
         normalization: float, str, optional
              (None) allows to provide a further normalization coefficient (pass float) or to normalize such that the `max` is one (pass `'max'`)
         kde: bool, optional
-             (False) a gaussian kernel will be used to histogram the data, edges used are from the np.histogram call
+             (False) a gaussian kernel will be used to histogram the data, edges used are from the np.histogram call. 
+             Note the number of bins is specified in the hist_kw dict.
         kde_kw: dict, optional
              ({}) parameters to pass to the `scipy.stats.gaussian_kde` call
         reweight: function, optional
              (`lambda: edges_mid : 1`) function to reweight the histogram or kde values. Receives the bin center as parameter.
+        dump_data: bool, optional
+             (False) dumps the input data as csv
         **kw: optional
              passes through to the inner `p_generic` call.
 
@@ -467,12 +471,24 @@ class AutoGnuplotFigure(object):
         #     print("v_:", v_)
         #     print("N_coeff:", N_coeff)
         v_ = v_ / N_coeff
-        
-        return self.p_generic(
+
+        plot_out = self.p_generic(
             gnuplot_command_using + " " + gnuplot_command_no_u
             , edges_mid , v_
             , **kw
         )
+        if dump_data:
+            print("DUMPING ALL!")
+            dataset_fname_hist = plot_out["dataset_fname"]
+            dataset_dump_data = dataset_fname_hist + '.hist_compl_dump.dat'
+            globalized_dataset_dump_data = self.globalize_fname(dataset_dump_data)
+
+            xyzt = [  x[: , np.newaxis ] if len(x.shape) == 1 else x for x in [x] ]                   
+                    
+            data = np.concatenate( xyzt , axis = 1 )
+            np.savetxt( globalized_dataset_dump_data ,  data)
+                    
+        return plot_out
 
     def hist_plthist(self
                      , x
