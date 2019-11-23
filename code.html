@@ -218,7 +218,7 @@ Use gnuplot syntax. Raw strings are advised.</p></li>
 
 <dl class="method">
 <dt id="autogpy.AutoGnuplotFigure.hist_generic">
-<code class="sig-name descname">hist_generic</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">gnuplot_command_no_u</em>, <em class="sig-param">hist_kw={}</em>, <em class="sig-param">gnuplot_command_using='u 1:2'</em>, <em class="sig-param">normalization=None</em>, <em class="sig-param">kde=False</em>, <em class="sig-param">kde_kw={}</em>, <em class="sig-param">reweight=&lt;function AutoGnuplotFigure.&lt;lambda&gt;&gt;</em>, <em class="sig-param">**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.hist_generic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.hist_generic" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">hist_generic</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">gnuplot_command_no_u</em>, <em class="sig-param">hist_kw={}</em>, <em class="sig-param">gnuplot_command_using='u 1:2'</em>, <em class="sig-param">normalization=None</em>, <em class="sig-param">kde=False</em>, <em class="sig-param">kde_kw={}</em>, <em class="sig-param">reweight=&lt;function AutoGnuplotFigure.&lt;lambda&gt;&gt;</em>, <em class="sig-param">dump_data=False</em>, <em class="sig-param">**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.hist_generic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.hist_generic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Proxy function to generate histograms</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -228,9 +228,11 @@ Use gnuplot syntax. Raw strings are advised.</p></li>
 <li><p><strong>hist_kw</strong> (<em>dict</em><em>, </em><em>optional</em>) – ({}) arguments to pass to the inner np.histogram call</p></li>
 <li><p><strong>gnuplot_command_using</strong> (<em>str</em><em>, </em><em>optional</em>) – (“u 1:2”) overrides the default <cite>using</cite> part. (default: “using 1:2”)</p></li>
 <li><p><strong>normalization</strong> (<em>float</em><em>, </em><em>str</em><em>, </em><em>optional</em>) – (None) allows to provide a further normalization coefficient (pass float) or to normalize such that the <cite>max</cite> is one (pass <cite>‘max’</cite>)</p></li>
-<li><p><strong>kde</strong> (<em>bool</em><em>, </em><em>optional</em>) – (False) a gaussian kernel will be used to histogram the data, edges used are from the np.histogram call</p></li>
+<li><p><strong>kde</strong> (<em>bool</em><em>, </em><em>optional</em>) – (False) a gaussian kernel will be used to histogram the data, edges used are from the np.histogram call.
+Note the number of bins is specified in the hist_kw dict.</p></li>
 <li><p><strong>kde_kw</strong> (<em>dict</em><em>, </em><em>optional</em>) – ({}) parameters to pass to the <cite>scipy.stats.gaussian_kde</cite> call</p></li>
 <li><p><strong>reweight</strong> (<em>function</em><em>, </em><em>optional</em>) – (<cite>lambda: edges_mid : 1</cite>) function to reweight the histogram or kde values. Receives the bin center as parameter.</p></li>
+<li><p><strong>dump_data</strong> (<em>bool</em><em>, </em><em>optional</em>) – (False) dumps the input data as csv</p></li>
 <li><p><strong>**kw</strong> (<em>optional</em>) – passes through to the inner <cite>p_generic</cite> call.</p></li>
 </ul>
 </dd>
@@ -426,7 +428,7 @@ end</p>
       &copy;2019, Alessandro Corbetta.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

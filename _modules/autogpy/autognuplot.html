@@ -450,6 +450,7 @@
                      <span class="p">,</span> <span class="n">kde</span> <span class="o">=</span> <span class="kc">False</span>
                      <span class="p">,</span> <span class="n">kde_kw</span> <span class="o">=</span> <span class="p">{}</span>
                      <span class="p">,</span> <span class="n">reweight</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">edges_mid</span> <span class="p">:</span> <span class="mi">1</span>
+                     <span class="p">,</span> <span class="n">dump_data</span> <span class="o">=</span> <span class="kc">False</span>
                      <span class="p">,</span> <span class="o">**</span><span class="n">kw</span>
                     <span class="p">):</span>
 
@@ -468,11 +469,14 @@
 <span class="sd">        normalization: float, str, optional</span>
 <span class="sd">             (None) allows to provide a further normalization coefficient (pass float) or to normalize such that the `max` is one (pass `&#39;max&#39;`)</span>
 <span class="sd">        kde: bool, optional</span>
-<span class="sd">             (False) a gaussian kernel will be used to histogram the data, edges used are from the np.histogram call</span>
+<span class="sd">             (False) a gaussian kernel will be used to histogram the data, edges used are from the np.histogram call. </span>
+<span class="sd">             Note the number of bins is specified in the hist_kw dict.</span>
 <span class="sd">        kde_kw: dict, optional</span>
 <span class="sd">             ({}) parameters to pass to the `scipy.stats.gaussian_kde` call</span>
 <span class="sd">        reweight: function, optional</span>
 <span class="sd">             (`lambda: edges_mid : 1`) function to reweight the histogram or kde values. Receives the bin center as parameter.</span>
+<span class="sd">        dump_data: bool, optional</span>
+<span class="sd">             (False) dumps the input data as csv</span>
 <span class="sd">        **kw: optional</span>
 <span class="sd">             passes through to the inner `p_generic` call.</span>
 
@@ -500,12 +504,24 @@
         <span class="c1">#     print(&quot;v_:&quot;, v_)</span>
         <span class="c1">#     print(&quot;N_coeff:&quot;, N_coeff)</span>
         <span class="n">v_</span> <span class="o">=</span> <span class="n">v_</span> <span class="o">/</span> <span class="n">N_coeff</span>
-        
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_generic</span><span class="p">(</span>
+
+        <span class="n">plot_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_generic</span><span class="p">(</span>
             <span class="n">gnuplot_command_using</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">gnuplot_command_no_u</span>
             <span class="p">,</span> <span class="n">edges_mid</span> <span class="p">,</span> <span class="n">v_</span>
             <span class="p">,</span> <span class="o">**</span><span class="n">kw</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">dump_data</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DUMPING ALL!&quot;</span><span class="p">)</span>
+            <span class="n">dataset_fname_hist</span> <span class="o">=</span> <span class="n">plot_out</span><span class="p">[</span><span class="s2">&quot;dataset_fname&quot;</span><span class="p">]</span>
+            <span class="n">dataset_dump_data</span> <span class="o">=</span> <span class="n">dataset_fname_hist</span> <span class="o">+</span> <span class="s1">&#39;.hist_compl_dump.dat&#39;</span>
+            <span class="n">globalized_dataset_dump_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">globalize_fname</span><span class="p">(</span><span class="n">dataset_dump_data</span><span class="p">)</span>
+
+            <span class="n">xyzt</span> <span class="o">=</span> <span class="p">[</span>  <span class="n">x</span><span class="p">[:</span> <span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span> <span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="p">]</span>                   
+                    
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span> <span class="n">xyzt</span> <span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">)</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span> <span class="n">globalized_dataset_dump_data</span> <span class="p">,</span>  <span class="n">data</span><span class="p">)</span>
+                    
+        <span class="k">return</span> <span class="n">plot_out</span></div>
 
 <div class="viewcode-block" id="AutoGnuplotFigure.hist_plthist"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.hist_plthist">[docs]</a>    <span class="k">def</span> <span class="nf">hist_plthist</span><span class="p">(</span><span class="bp">self</span>
                      <span class="p">,</span> <span class="n">x</span>
@@ -1116,7 +1132,7 @@
       &copy;2019, Alessandro Corbetta.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
