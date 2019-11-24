@@ -451,6 +451,7 @@
                      <span class="p">,</span> <span class="n">kde_kw</span> <span class="o">=</span> <span class="p">{}</span>
                      <span class="p">,</span> <span class="n">reweight</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">edges_mid</span> <span class="p">:</span> <span class="mi">1</span>
                      <span class="p">,</span> <span class="n">dump_data</span> <span class="o">=</span> <span class="kc">False</span>
+                     <span class="p">,</span> <span class="n">compress_dumped_data</span> <span class="o">=</span> <span class="kc">True</span>
                      <span class="p">,</span> <span class="o">**</span><span class="n">kw</span>
                     <span class="p">):</span>
 
@@ -477,6 +478,8 @@
 <span class="sd">             (`lambda: edges_mid : 1`) function to reweight the histogram or kde values. Receives the bin center as parameter.</span>
 <span class="sd">        dump_data: bool, optional</span>
 <span class="sd">             (False) dumps the input data as csv</span>
+<span class="sd">        compress_dumped_data: bool, optional</span>
+<span class="sd">             (True) the data dumped (by dump_data = True) are gz-compressed.</span>
 <span class="sd">        **kw: optional</span>
 <span class="sd">             passes through to the inner `p_generic` call.</span>
 
@@ -511,9 +514,10 @@
             <span class="p">,</span> <span class="o">**</span><span class="n">kw</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">dump_data</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DUMPING ALL!&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dumping histogram raw data.&quot;</span><span class="p">)</span>
             <span class="n">dataset_fname_hist</span> <span class="o">=</span> <span class="n">plot_out</span><span class="p">[</span><span class="s2">&quot;dataset_fname&quot;</span><span class="p">]</span>
-            <span class="n">dataset_dump_data</span> <span class="o">=</span> <span class="n">dataset_fname_hist</span> <span class="o">+</span> <span class="s1">&#39;.hist_compl_dump.dat&#39;</span>
+            <span class="n">dataset_dump_data</span> <span class="o">=</span> <span class="n">dataset_fname_hist</span> <span class="o">+</span> <span class="s1">&#39;.hist_compl_dump.dat&#39;</span> <span class="o">+</span> <span class="p">(</span> <span class="s1">&#39;.gz&#39;</span> <span class="k">if</span> <span class="n">compress_dumped_data</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span> <span class="p">)</span>
             <span class="n">globalized_dataset_dump_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">globalize_fname</span><span class="p">(</span><span class="n">dataset_dump_data</span><span class="p">)</span>
 
             <span class="n">xyzt</span> <span class="o">=</span> <span class="p">[</span>  <span class="n">x</span><span class="p">[:</span> <span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span> <span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="p">]</span>                   
