@@ -481,7 +481,8 @@ class AutoGnuplotFigure(object):
             , **kw
         )
         if dump_data:
-            print("DUMPING ALL!")
+            if self.verbose:
+                print("Dumping histogram raw data.")
             dataset_fname_hist = plot_out["dataset_fname"]
             dataset_dump_data = dataset_fname_hist + '.hist_compl_dump.dat' + ( '.gz' if compress_dumped_data else '' )
             globalized_dataset_dump_data = self.globalize_fname(dataset_dump_data)
