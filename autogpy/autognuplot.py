@@ -27,6 +27,12 @@ class AutoGnuplotFigure(object):
              (True) The Makefile of the generated figure will build a latex figure by default (in the first make statement)
         tikz_enabled: bool, optional
              (False) The Makefile of the generated figure will build a latex/tikz figure by default (in the first make statement). Disabled as the default tikz configuration has some issue. See method: `display_fixes`.
+        hostname: str, optional
+             (None) Allows to set an hostname different for the system one. This hostname is used for scp calls, so it should be changed to a reacheable hostname, if needed.
+        jpg_convert_density: int, optional
+             (100) dpi of the jpg image showed in a jupyter notebook. It is used for the conversion of the pdf image produced by gnuplot.
+        jpg_convert_quality: int, optional
+             (100) conversion quality of the jpg image showed in a jupyter notebook. It is used for the conversion of the pdf image produced by gnuplot.
 
         Returns
         --------------------
@@ -65,8 +71,20 @@ class AutoGnuplotFigure(object):
                  , autoescape = True
                  , latex_enabled = True
                  , tikz_enabled = False
-                 , allow_strings = False):
-        """ AutoGnuplotFigure
+                 , allow_strings = False
+                 , hostname = None
+                 , jpg_convert_density = 100
+                 , jpg_convert_quality = 100):
+        """ Creates an AutoGnuplotFigure object
+
+        :param folder_name: str
+        :param file_identifier: str
+        :param verbose: Bool
+        :param autoescape: Bool
+        :param latex_enabled: Bool
+        :param tikz_enabled: Bool
+        :param allow_strings: Bool
+        :param hostname: str
 
         """
         
@@ -85,8 +103,9 @@ class AutoGnuplotFigure(object):
         self.global_file_identifier = self.folder_name + '/' + self.file_identifier
         self.globalize_fname = lambda x : self.folder_name + '/' + x
 
-        # will get name of user/host... This allows to create the scp copy script 
-        self.__establish_ssh_info()
+        # will get name of user/host... This allows to create the scp copy script
+        self.__hostname = hostname
+        self.__establish_ssh_info(hostname=self.__hostname)
         
         self.__dataset_counter = 0 
 
@@ -101,8 +120,8 @@ class AutoGnuplotFigure(object):
         self.global_plotting_parameters = []
 
 
-        self.pdflatex_jpg_convert_density = 300
-        self.pdflatex_jpg_convert_quality = 90
+        self.pdflatex_jpg_convert_density = jpg_convert_density
+        self.pdflatex_jpg_convert_quality = jpg_convert_quality
         
         self.pdflatex_terminal_parameters = {
             "x_size" : "9.9cm"
@@ -885,12 +904,11 @@ class AutoGnuplotFigure(object):
             print (output)
             
         from IPython.core.display import Image, display
-        display(Image( image_to_display  ))
+        display(Image( image_to_display, height=height, width=width  ))
 
     
 
-    def jupyter_show(self
-                     
+    def jupyter_show(self                     
                      , show_stdout = False):
         from subprocess import Popen as _Popen, PIPE as _PIPE, call as _call
 
@@ -986,11 +1004,18 @@ class AutoGnuplotFigure(object):
 
         
 
-    def __establish_ssh_info(self):
+    def __establish_ssh_info(self
+                             , hostname= None):
+        """Generates the string containing the signifcant scp call for copying.
+
+        :param hostname: str
+        (None) Overrides the default hostname. Use in case the default hostname is unsuitable for scp copies.
+        """
         import socket
         import getpass
+        hostname = hostname if hostname is not None else socket.gethostname()
         self.__ssh_string = "{user}@{hostname}:{dir_}".format(user=getpass.getuser()
-                                                      , hostname=socket.gethostname()
+                                                      , hostname=hostname
                                                       , dir_=self.global_dir_whole_path )
 
         self.__scp_string = "scp -r " + self.__ssh_string + " ."
