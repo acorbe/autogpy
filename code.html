@@ -41,7 +41,7 @@
 
 <dl class="class">
 <dt id="autogpy.AutoGnuplotFigure">
-<em class="property">class </em><code class="sig-prename descclassname">autogpy.</code><code class="sig-name descname">AutoGnuplotFigure</code><span class="sig-paren">(</span><em class="sig-param">folder_name</em>, <em class="sig-param">file_identifier</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">autoescape=True</em>, <em class="sig-param">latex_enabled=True</em>, <em class="sig-param">tikz_enabled=False</em>, <em class="sig-param">allow_strings=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">autogpy.</code><code class="sig-name descname">AutoGnuplotFigure</code><span class="sig-paren">(</span><em class="sig-param">folder_name</em>, <em class="sig-param">file_identifier</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">autoescape=True</em>, <em class="sig-param">latex_enabled=True</em>, <em class="sig-param">tikz_enabled=False</em>, <em class="sig-param">allow_strings=False</em>, <em class="sig-param">hostname=None</em>, <em class="sig-param">jpg_convert_density=100</em>, <em class="sig-param">jpg_convert_quality=100</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an AutoGnuplotFigure object which wraps one gnuplot figure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -52,6 +52,15 @@
 <li><p><strong>autoescape</strong> (<em>bool</em><em>, </em><em>optional</em>) – (True) Autoescapes latex strings. It enables to use latex directly in raw strings without further escaping.</p></li>
 <li><p><strong>latex_enabled</strong> (<em>bool</em><em>, </em><em>optional</em>) – (True) The Makefile of the generated figure will build a latex figure by default (in the first make statement)</p></li>
 <li><p><strong>tikz_enabled</strong> (<em>bool</em><em>, </em><em>optional</em>) – (False) The Makefile of the generated figure will build a latex/tikz figure by default (in the first make statement). Disabled as the default tikz configuration has some issue. See method: <cite>display_fixes</cite>.</p></li>
+<li><p><strong>hostname</strong> (<em>str</em><em>, </em><em>optional</em>) – (None) Allows to set an hostname different for the system one. This hostname is used for scp calls, so it should be changed to a reacheable hostname, if needed.</p></li>
+<li><p><strong>jpg_convert_density</strong> (<em>int</em><em>, </em><em>optional</em>) – <ol class="arabic simple" start="100">
+<li><p>dpi of the jpg image showed in a jupyter notebook. It is used for the conversion of the pdf image produced by gnuplot.</p></li>
+</ol>
+</p></li>
+<li><p><strong>jpg_convert_quality</strong> (<em>int</em><em>, </em><em>optional</em>) – <ol class="arabic simple" start="100">
+<li><p>conversion quality of the jpg image showed in a jupyter notebook. It is used for the conversion of the pdf image produced by gnuplot.</p></li>
+</ol>
+</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

@@ -32,14 +32,14 @@
             
   <h1>Source code for autogpy.autognuplot</h1><div class="highlight"><pre>
 <span></span><span class="c1">### makes it easy to pass data to gnuplot - plotting tools - dumps data and generates one elementary plotting script</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">autognuplot_terms</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">plot_helpers</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">autognuplot_terms</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">plot_helpers</span>
 
 
 <div class="viewcode-block" id="AutoGnuplotFigure"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure">[docs]</a><span class="k">class</span> <span class="nc">AutoGnuplotFigure</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -60,6 +60,12 @@
 <span class="sd">             (True) The Makefile of the generated figure will build a latex figure by default (in the first make statement)</span>
 <span class="sd">        tikz_enabled: bool, optional</span>
 <span class="sd">             (False) The Makefile of the generated figure will build a latex/tikz figure by default (in the first make statement). Disabled as the default tikz configuration has some issue. See method: `display_fixes`.</span>
+<span class="sd">        hostname: str, optional</span>
+<span class="sd">             (None) Allows to set an hostname different for the system one. This hostname is used for scp calls, so it should be changed to a reacheable hostname, if needed.</span>
+<span class="sd">        jpg_convert_density: int, optional</span>
+<span class="sd">             (100) dpi of the jpg image showed in a jupyter notebook. It is used for the conversion of the pdf image produced by gnuplot.</span>
+<span class="sd">        jpg_convert_quality: int, optional</span>
+<span class="sd">             (100) conversion quality of the jpg image showed in a jupyter notebook. It is used for the conversion of the pdf image produced by gnuplot.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        --------------------</span>
@@ -91,15 +97,27 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span>
                  <span class="p">,</span> <span class="n">folder_name</span>
                  <span class="p">,</span> <span class="n">file_identifier</span>
                  <span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span>
                  <span class="p">,</span> <span class="n">autoescape</span> <span class="o">=</span> <span class="kc">True</span>
                  <span class="p">,</span> <span class="n">latex_enabled</span> <span class="o">=</span> <span class="kc">True</span>
                  <span class="p">,</span> <span class="n">tikz_enabled</span> <span class="o">=</span> <span class="kc">False</span>
-                 <span class="p">,</span> <span class="n">allow_strings</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; AutoGnuplotFigure</span>
+                 <span class="p">,</span> <span class="n">allow_strings</span> <span class="o">=</span> <span class="kc">False</span>
+                 <span class="p">,</span> <span class="n">hostname</span> <span class="o">=</span> <span class="kc">None</span>
+                 <span class="p">,</span> <span class="n">jpg_convert_density</span> <span class="o">=</span> <span class="mi">100</span>
+                 <span class="p">,</span> <span class="n">jpg_convert_quality</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates an AutoGnuplotFigure object</span>
+
+<span class="sd">        :param folder_name: str</span>
+<span class="sd">        :param file_identifier: str</span>
+<span class="sd">        :param verbose: Bool</span>
+<span class="sd">        :param autoescape: Bool</span>
+<span class="sd">        :param latex_enabled: Bool</span>
+<span class="sd">        :param tikz_enabled: Bool</span>
+<span class="sd">        :param allow_strings: Bool</span>
+<span class="sd">        :param hostname: str</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         
@@ -118,8 +136,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">global_file_identifier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_identifier</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">globalize_fname</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">x</span>
 
-        <span class="c1"># will get name of user/host... This allows to create the scp copy script </span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__establish_ssh_info</span><span class="p">()</span>
+        <span class="c1"># will get name of user/host... This allows to create the scp copy script</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__hostname</span> <span class="o">=</span> <span class="n">hostname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__establish_ssh_info</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__hostname</span><span class="p">)</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">__dataset_counter</span> <span class="o">=</span> <span class="mi">0</span> 
 
@@ -134,8 +153,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">global_plotting_parameters</span> <span class="o">=</span> <span class="p">[]</span>
 
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_jpg_convert_density</span> <span class="o">=</span> <span class="mi">300</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_jpg_convert_quality</span> <span class="o">=</span> <span class="mi">90</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_jpg_convert_density</span> <span class="o">=</span> <span class="n">jpg_convert_density</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_jpg_convert_quality</span> <span class="o">=</span> <span class="n">jpg_convert_quality</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_terminal_parameters</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;x_size&quot;</span> <span class="p">:</span> <span class="s2">&quot;9.9cm&quot;</span>
@@ -493,7 +512,7 @@
         
         
         <span class="k">if</span> <span class="n">kde</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">gaussian_kde</span>
+            <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">gaussian_kde</span>
             <span class="n">kernel</span> <span class="o">=</span> <span class="n">gaussian_kde</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="o">**</span><span class="n">kde_kw</span><span class="p">)</span>
 
             <span class="n">kde_vals</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">(</span><span class="n">edges_mid</span><span class="p">)</span>
@@ -768,14 +787,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">final_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__generate_gnuplot_file_content</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">highlight</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">pygments</span> <span class="k">import</span> <span class="n">highlight</span>
-            <span class="kn">from</span> <span class="nn">pygments.lexers</span> <span class="k">import</span> <span class="n">GnuplotLexer</span>
-            <span class="kn">from</span> <span class="nn">pygments.formatters</span> <span class="k">import</span> <span class="n">HtmlFormatter</span>
+            <span class="kn">from</span> <span class="nn">pygments</span> <span class="kn">import</span> <span class="n">highlight</span>
+            <span class="kn">from</span> <span class="nn">pygments.lexers</span> <span class="kn">import</span> <span class="n">GnuplotLexer</span>
+            <span class="kn">from</span> <span class="nn">pygments.formatters</span> <span class="kn">import</span> <span class="n">HtmlFormatter</span>
 
-            <span class="kn">from</span> <span class="nn">pygments.styles</span> <span class="k">import</span> <span class="n">get_style_by_name</span>
+            <span class="kn">from</span> <span class="nn">pygments.styles</span> <span class="kn">import</span> <span class="n">get_style_by_name</span>
              
 
-            <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="k">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span>
+            <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span>
             <span class="n">html__</span> <span class="o">=</span>  <span class="n">highlight</span><span class="p">(</span><span class="n">final_content</span><span class="p">,</span> <span class="n">GnuplotLexer</span><span class="p">(),</span> <span class="n">HtmlFormatter</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;colorful&#39;</span><span class="p">,</span> <span class="n">noclasses</span> <span class="o">=</span> <span class="kc">False</span><span class="p">))</span>
             <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">            &lt;style&gt;</span>
@@ -897,7 +916,7 @@
                                <span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="kc">None</span>
                                <span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         
-        <span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span> <span class="k">as</span> <span class="n">_Popen</span><span class="p">,</span> <span class="n">PIPE</span> <span class="k">as</span> <span class="n">_PIPE</span><span class="p">,</span> <span class="n">call</span> <span class="k">as</span> <span class="n">_call</span>
+        <span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">Popen</span> <span class="k">as</span> <span class="n">_Popen</span><span class="p">,</span> <span class="n">PIPE</span> <span class="k">as</span> <span class="n">_PIPE</span><span class="p">,</span> <span class="n">call</span> <span class="k">as</span> <span class="n">_call</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;trying call: &quot;</span><span class="p">,</span> <span class="n">command_to_call</span><span class="p">)</span>
@@ -917,15 +936,14 @@
             <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;===== stdout =====&quot;</span><span class="p">)</span>
             <span class="nb">print</span> <span class="p">(</span><span class="n">output</span><span class="p">)</span>
             
-        <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="k">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
-        <span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span> <span class="n">image_to_display</span>  <span class="p">))</span>
+        <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
+        <span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span> <span class="n">image_to_display</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span>  <span class="p">))</span>
 
     
 
-    <span class="k">def</span> <span class="nf">jupyter_show</span><span class="p">(</span><span class="bp">self</span>
-                     
+    <span class="k">def</span> <span class="nf">jupyter_show</span><span class="p">(</span><span class="bp">self</span>                     
                      <span class="p">,</span> <span class="n">show_stdout</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span> <span class="k">as</span> <span class="n">_Popen</span><span class="p">,</span> <span class="n">PIPE</span> <span class="k">as</span> <span class="n">_PIPE</span><span class="p">,</span> <span class="n">call</span> <span class="k">as</span> <span class="n">_call</span>
+        <span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">Popen</span> <span class="k">as</span> <span class="n">_Popen</span><span class="p">,</span> <span class="n">PIPE</span> <span class="k">as</span> <span class="n">_PIPE</span><span class="p">,</span> <span class="n">call</span> <span class="k">as</span> <span class="n">_call</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;trying call: &quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;gnuplot&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__jpg_gnuplot_file</span> <span class="p">])</span>
@@ -940,7 +958,7 @@
             <span class="nb">print</span> <span class="p">(</span><span class="n">output</span><span class="p">)</span>
 
 
-        <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="k">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
+        <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
         <span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__jpg_output</span>  <span class="p">))</span>
 
 <div class="viewcode-block" id="AutoGnuplotFigure.jupyter_show_pdflatex"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.jupyter_show_pdflatex">[docs]</a>    <span class="k">def</span> <span class="nf">jupyter_show_pdflatex</span><span class="p">(</span><span class="bp">self</span>
@@ -993,7 +1011,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="kn">from</span> <span class="nn">subprocess</span> <span class="k">import</span> <span class="n">Popen</span> <span class="k">as</span> <span class="n">_Popen</span><span class="p">,</span> <span class="n">PIPE</span> <span class="k">as</span> <span class="n">_PIPE</span><span class="p">,</span> <span class="n">call</span> <span class="k">as</span> <span class="n">_call</span>
+        <span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">Popen</span> <span class="k">as</span> <span class="n">_Popen</span><span class="p">,</span> <span class="n">PIPE</span> <span class="k">as</span> <span class="n">_PIPE</span><span class="p">,</span> <span class="n">call</span> <span class="k">as</span> <span class="n">_call</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;trying call: &quot;</span><span class="p">,</span> <span class="p">[</span>  <span class="bp">self</span><span class="o">.</span><span class="n">__local_tikz_compilesh_gnuplot_file</span>   <span class="p">])</span>
@@ -1011,7 +1029,7 @@
             <span class="nb">print</span> <span class="p">(</span><span class="n">output</span><span class="p">)</span>
             <span class="nb">print</span> <span class="p">(</span><span class="n">err</span><span class="p">)</span>
 
-        <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="k">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
+        <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;opening:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__tikz_output_jpg_convert</span><span class="p">)</span>
             
@@ -1019,11 +1037,18 @@
 
         
 
-    <span class="k">def</span> <span class="nf">__establish_ssh_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__establish_ssh_info</span><span class="p">(</span><span class="bp">self</span>
+                             <span class="p">,</span> <span class="n">hostname</span><span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generates the string containing the signifcant scp call for copying.</span>
+
+<span class="sd">        :param hostname: str</span>
+<span class="sd">        (None) Overrides the default hostname. Use in case the default hostname is unsuitable for scp copies.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">socket</span>
         <span class="kn">import</span> <span class="nn">getpass</span>
+        <span class="n">hostname</span> <span class="o">=</span> <span class="n">hostname</span> <span class="k">if</span> <span class="n">hostname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostname</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__ssh_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{user}</span><span class="s2">@</span><span class="si">{hostname}</span><span class="s2">:</span><span class="si">{dir_}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">user</span><span class="o">=</span><span class="n">getpass</span><span class="o">.</span><span class="n">getuser</span><span class="p">()</span>
-                                                      <span class="p">,</span> <span class="n">hostname</span><span class="o">=</span><span class="n">socket</span><span class="o">.</span><span class="n">gethostname</span><span class="p">()</span>
+                                                      <span class="p">,</span> <span class="n">hostname</span><span class="o">=</span><span class="n">hostname</span>
                                                       <span class="p">,</span> <span class="n">dir_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">global_dir_whole_path</span> <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">__scp_string</span> <span class="o">=</span> <span class="s2">&quot;scp -r &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ssh_string</span> <span class="o">+</span> <span class="s2">&quot; .&quot;</span>
