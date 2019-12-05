@@ -368,10 +368,27 @@ class AutoGnuplotFigure(object):
         else:
             self.alter_multiplot_state[self.multiplot_index].extend(args)
 
-
         return self
 
     def load_gnuplotting_palette(self, palette_name):
+        """Downloads a color palette https://github.com/Gnuplotting/gnuplot-palettes and return the loading string to be added in the preamble of the plot (see example).
+
+        Parameters
+        ------------------------
+        palette_name: string
+            name of the palette, e.g. 'moreland'
+
+        Returns
+        -----------------------
+        string 
+
+        Example
+        ----------------------
+        >>> # Loads moreland palette in the current figure
+        >>> fig.extend_global_plotting_parameters ( fig.load_gnuplotting_palette('moreland') )
+        >>> # colors need to be selected manually        
+        
+        """
         return plot_helpers.load_gnuplotting_palette(palette_name, self.folder_name)
 
     def __get_multiplot_current_dataset(self):
