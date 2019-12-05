@@ -301,6 +301,29 @@ end</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="autogpy.AutoGnuplotFigure.load_gnuplotting_palette">
+<code class="sig-name descname">load_gnuplotting_palette</code><span class="sig-paren">(</span><em class="sig-param">palette_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.load_gnuplotting_palette"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.load_gnuplotting_palette" title="Permalink to this definition">¶</a></dt>
+<dd><p>Downloads a color palette <a class="reference external" href="https://github.com/Gnuplotting/gnuplot-palettes">https://github.com/Gnuplotting/gnuplot-palettes</a> and return the loading string to be added in the preamble of the plot (see example).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>palette_name</strong> (<em>string</em>) – name of the palette, e.g. ‘moreland’</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>string</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Loads moreland palette in the current figure</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">extend_global_plotting_parameters</span> <span class="p">(</span> <span class="n">fig</span><span class="o">.</span><span class="n">load_gnuplotting_palette</span><span class="p">(</span><span class="s1">&#39;moreland&#39;</span><span class="p">)</span> <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># colors need to be selected manually</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
 <dt id="autogpy.AutoGnuplotFigure.next_multiplot_group">
 <code class="sig-name descname">next_multiplot_group</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.next_multiplot_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.next_multiplot_group" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shifts the state to the next plot in the multiplot sequence.</p>
@@ -438,7 +461,7 @@ end</p>
       &copy;2019, Alessandro Corbetta.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

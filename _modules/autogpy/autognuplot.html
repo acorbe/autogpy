@@ -401,11 +401,28 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">alter_multiplot_state</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">multiplot_index</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 
-
         <span class="k">return</span> <span class="bp">self</span></div>
 
-    <span class="k">def</span> <span class="nf">load_gnuplotting_palette</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">palette_name</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">plot_helpers</span><span class="o">.</span><span class="n">load_gnuplotting_palette</span><span class="p">(</span><span class="n">palette_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span><span class="p">)</span>
+<div class="viewcode-block" id="AutoGnuplotFigure.load_gnuplotting_palette"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.load_gnuplotting_palette">[docs]</a>    <span class="k">def</span> <span class="nf">load_gnuplotting_palette</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">palette_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Downloads a color palette https://github.com/Gnuplotting/gnuplot-palettes and return the loading string to be added in the preamble of the plot (see example).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ------------------------</span>
+<span class="sd">        palette_name: string</span>
+<span class="sd">            name of the palette, e.g. &#39;moreland&#39;</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -----------------------</span>
+<span class="sd">        string </span>
+
+<span class="sd">        Example</span>
+<span class="sd">        ----------------------</span>
+<span class="sd">        &gt;&gt;&gt; # Loads moreland palette in the current figure</span>
+<span class="sd">        &gt;&gt;&gt; fig.extend_global_plotting_parameters ( fig.load_gnuplotting_palette(&#39;moreland&#39;) )</span>
+<span class="sd">        &gt;&gt;&gt; # colors need to be selected manually        </span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">plot_helpers</span><span class="o">.</span><span class="n">load_gnuplotting_palette</span><span class="p">(</span><span class="n">palette_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">__get_multiplot_current_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasets_to_plot</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">multiplot_index</span><span class="p">]</span>
@@ -1161,7 +1178,7 @@
       &copy;2019, Alessandro Corbetta.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>
