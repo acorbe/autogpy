@@ -53,7 +53,21 @@ ps2eps --ignoreBB -f plot_out.ps
 ps2pdf plot_out.ps
 
 mv plot_out.pdf {FINAL_PDF_NAME}
-convert -density {pdflatex_jpg_convert_density} {FINAL_PDF_NAME} -quality {pdflatex_jpg_convert_quality} {FINAL_PDF_NAME_jpg_convert} 
+
+## this step converts in jpg for displaying the image in jupyter
+if convert -density {pdflatex_jpg_convert_density} {FINAL_PDF_NAME} -quality {pdflatex_jpg_convert_quality} {FINAL_PDF_NAME_jpg_convert} 
+then
+  echo "conversion successful"
+else
+  echo ""
+  echo "-ERROR: The convert command gave an error."
+  echo "-FIXES: Make sure imagemagick is installed"
+  echo "        Make sure imagemagick enables offline conversions:"
+  echo "          sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml   "
+  echo "        Ref:   https://stackoverflow.com/a/52661288"
+  echo ""
+fi
+
 
 rm *.aux || true
 rm *.dvi || true
@@ -91,7 +105,19 @@ pdflatex fig.latex.nice/tikz_out.tex
 # ps2pdf plot_out.ps
 
 mv tikz_out.pdf {FINAL_PDF_NAME}
-convert -density {pdflatex_jpg_convert_density} {FINAL_PDF_NAME} -quality {pdflatex_jpg_convert_quality} {FINAL_PDF_NAME_jpg_convert} 
+if convert -density {pdflatex_jpg_convert_density} {FINAL_PDF_NAME} -quality {pdflatex_jpg_convert_quality} {FINAL_PDF_NAME_jpg_convert} 
+then
+  echo "conversion successful"
+else
+  echo ""
+  echo "-ERROR: The convert command gave an error."
+  echo "-FIXES: Make sure imagemagick is installed"
+  echo "        Make sure imagemagick enables offline conversions:"
+  echo "          sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml   "
+  echo "        Ref:   https://stackoverflow.com/a/52661288"
+  echo ""
+fi
+
 
 rm *.aux || true
 rm *.log || true

@@ -1049,6 +1049,8 @@ To work it requires ImageMagick and authorization to render pdf to jpg.
 Should it fail:
 https://stackoverflow.com/a/52661288
 
+Concisely: sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml
+
 LUA compilation issue: https://tex.stackexchange.com/a/368194
 solution: 
 in /usr/share/gnuplot5/gnuplot/5.0/lua/gnuplot-tikz.lua, Replace:
