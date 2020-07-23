@@ -164,7 +164,16 @@ class AutoGnuplotFigure(object):
             )
             )
 
-                
+    def set_figure_size(self,x_size=None, y_size=None, **kw):
+        """Sets the terminal figure size and possibly more terminal parameters (string expected).
+        """
+        if x_size is not None:
+            self.pdflatex_terminal_parameters["x_size"] = x_size
+
+        if y_size is not None:
+            self.pdflatex_terminal_parameters["y_size"] = y_size
+
+        self.pdflatex_terminal_parameters.update(**kw)
 
     def extend_global_plotting_parameters(self, *args, **kw):
         """Extends the preamble of the gnuplot script to modify the plotting settings. 
@@ -809,6 +818,7 @@ class AutoGnuplotFigure(object):
         with open( self.__core_gnuplot_file  , 'w'  ) as f:            
             f.write(final_content)
 
+        
         ### JPG terminal
         self.__local_jpg_gnuplot_file = self.file_identifier + "__.jpg.gnu"
         self.__jpg_gnuplot_file = self.globalize_fname(self.__local_jpg_gnuplot_file)
@@ -823,6 +833,16 @@ class AutoGnuplotFigure(object):
                     OUTFILE = self.__local_jpg_output
                      , CORE =   self.__local_core_gnuplot_file   )
                 )
+
+        #### gitignore
+        self.__gitignore_file = self.globalize_fname(".gitignore")
+        with open( self.__gitignore_file, 'w' ) as f:
+            f.write(
+                autognuplot_terms.GITIGNORE_wrapper_file                
+            )
+        
+        
+        
 
         #### pdflatex terminal
         self.local_pdflatex_output = self.file_identifier + "__.pdf"

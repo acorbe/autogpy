@@ -132,6 +132,17 @@ load "{CORE}";
          
 """
 
+GITIGNORE_wrapper_file=\
+"""
+*.aux
+*.dvi
+*.log
+*.ps
+*~
+*.tex
+fig.latex.nice/*
+*converted*
+"""
 
 
 
