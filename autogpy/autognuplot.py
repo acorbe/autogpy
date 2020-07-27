@@ -135,18 +135,24 @@ class AutoGnuplotFigure(object):
 
         self.variables = OrderedDict()
 
-        self.terminals_enabled_by_default =[
+        
+
+        self.terminals_enabled_by_default = {
+            'latex' :
             {'type' : 'latex', 'is_enabled' : latex_enabled
              , 'makefile_string' : '$(latex_targets_pdf)'}
-            , {'type' : 'tikz', 'is_enabled' : tikz_enabled
-             , 'makefile_string' : '$(tikz_targets_pdf)'}
-        ]
+            ,
+            'tikz' : {'type' : 'tikz', 'is_enabled' : tikz_enabled
+                      , 'makefile_string' : '$(tikz_targets_pdf)'}
+        }
+
+        
 
 
         self.__Makefile_replacement_dict = { 
             'TAB' : "\t"  #ensure correct tab formatting
             , 'ALL_TARGETS' : "" + " ".join(
-                [ x['makefile_string'] for x in self.terminals_enabled_by_default if x['is_enabled'] ]
+                [ x['makefile_string'] for x in self.terminals_enabled_by_default.values() if x['is_enabled'] ]
             ) 
         }
 
@@ -244,6 +250,27 @@ class AutoGnuplotFigure(object):
             self.global_plotting_parameters.extend(args)
 
         return self
+
+    def set_parameters(self,*args,**kw):
+        """Proxies extend_global_plotting_parameters
+        """
+        return self.extend_global_plotting_parameters(**args,**kw)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        self.generate_gnuplot_file()
+        from IPython.display import display, HTML
+        try:
+            get_ipython
+            if self.terminals_enabled_by_default['tikz']['is_enabled']:
+                self.jupyter_show_tikz()
+            else:
+                self.jupyter_show_pdflatex()
+        except:
+            pass
+
 
     def set_multiplot(self, specifiers = ""):
         """Enables multiplot mode (use in combination with `next_multiplot_group`). 
@@ -379,6 +406,12 @@ class AutoGnuplotFigure(object):
 
         return self
 
+    def set_multiplot_parameters(self,*args,**kw):
+        """Proxies alter_current_multiplot_parameters
+        """
+        self.alter_current_multiplot_parameters(*args,**kw)
+        
+    
     def load_gnuplotting_palette(self, palette_name):
         """Downloads a color palette https://github.com/Gnuplotting/gnuplot-palettes and return the loading string to be added in the preamble of the plot (see example).
 
@@ -591,7 +624,7 @@ class AutoGnuplotFigure(object):
         #preserves some needed blocks
         command_line = command_line.replace("{{DS_FNAME}}","{DS_FNAME}" )
         return command_line
-
+    
     def p_generic(self, command_line, *args, **kw):
         """Central plotting primitive.
                 
@@ -628,6 +661,12 @@ class AutoGnuplotFigure(object):
         
         #prepend_parameters = kw.get("prepend_parameters",[""])
         #fname_specs = ""
+
+        ### allowing to plot even without the command_line arg
+        if not isinstance(command_line, str):
+            #prepending 'command_line', which should now contain data
+            args = command_line,*args
+            command_line = 't "data"'
 
         if len(args) == 0: #case an explicit function is plotted:
             
@@ -716,8 +755,15 @@ class AutoGnuplotFigure(object):
             self.__dataset_counter += 1
 
         return to_append
+    
+        
+    def plot(self, command_line, *args, **kw):
+        """Proxies p_generic
+        """
+        return self.p_generic(command_line,*args,**kw)
         
 
+    
     def add_variable_declaration(self,name,value,is_string = False):
         self.variables[name] = "'%s'"%str(value) if is_string else str(value)
         
@@ -848,7 +894,8 @@ class AutoGnuplotFigure(object):
         self.local_pdflatex_output = self.file_identifier + "__.pdf"
         self.pdflatex_output = self.globalize_fname( self.__local_jpg_output )
 
-        self.local_pdflatex_output_jpg_convert = self.local_pdflatex_output + "_converted_to.jpg"
+        ##used to be a jpg, yet png is much better
+        self.local_pdflatex_output_jpg_convert = self.local_pdflatex_output + "_converted_to.png" 
         self.pdflatex_output_jpg_convert = self.globalize_fname( self.local_pdflatex_output_jpg_convert )
         
 
