@@ -653,6 +653,18 @@ class AutoGnuplotFigure(object):
         else:
             for_prepend = ""
 
+
+        ### allowing to plot even without the command_line arg
+        if not isinstance(command_line, str): # \
+           #or isinstance(command_line, np.ndarray):
+            #prepending 'command_line', which should now contain data
+            #print("hijacking command_line")
+            args = command_line,*args
+            
+            command_line = ''
+
+        
+
         if autoescape:
             command_line = self.__autoescape_strings(command_line)
 
@@ -662,11 +674,6 @@ class AutoGnuplotFigure(object):
         #prepend_parameters = kw.get("prepend_parameters",[""])
         #fname_specs = ""
 
-        ### allowing to plot even without the command_line arg
-        if not isinstance(command_line, str):
-            #prepending 'command_line', which should now contain data
-            args = command_line,*args
-            command_line = 't "data"'
 
         if len(args) == 0: #case an explicit function is plotted:
             
@@ -729,16 +736,37 @@ class AutoGnuplotFigure(object):
                 if self.verbose:
                     print('Warning: "{DS_FNAME}" will be prepended to your string')
                 command_line = for_prepend + ' "{DS_FNAME}"' + " " + command_line
+
+            ### title assessment part
+            # 1. checks if it is in command line else
+            #   2. if label is provided  (as matplotlib) keeps else
+            #      3. if creates it from filename
+
+            if 'label' in kw:
+                if isinstance(kw['label'],str):                    
+                    title_guess = self.__autoescape_strings(kw['label'])
+                else:
+                    title_guess = str(kw['label'])
+            else:
+                title_guess = dataset_fname.split('/')[-1].replace("_","\\\_")
+                
             if " t " not in command_line \
                and " t\"" not in command_line\
                and " title " not in command_line\
                and " title\"" not in command_line:
 
-                command_line =  command_line + " " + """title "{TITLE}" """.format(TITLE = dataset_fname.split('/')[-1].replace("_","\\\_"))
+                command_line =  command_line + " " + """title "{TITLE}" """.format(TITLE = title_guess)
                 if self.verbose:
                     print('Warning: a title will be appended to avoid latex compilation problems')
                     print('the final command reads:')
                     print(command_line)
+
+            ### command forwarding part
+            kw_forward = ["ls", "ps", "lw","w"]
+
+            for k,v in kw.items():
+                if k in kw_forward:
+                    command_line = command_line + " " + k + " " + str(kw[k])
 
             to_append = {
                 'dataset_fname' : dataset_fname
@@ -1137,18 +1165,45 @@ end
 
         
     def get_folder_info(self):
+        from IPython.display import display, HTML
+
+        infos = [
+            ["(folder local):", self.folder_name ]
+            , ["(folder global):", self.global_dir_whole_path]
+            , ["(ssh):",  self.__ssh_string]
+            , ["(autosync):", "echo '{scp_string}' > retrieve_{fold_name}.sh ; bash retrieve_{fold_name}.sh ".format(
+                scp_string = self.__scp_string
+                , fold_name = self.folder_name.replace("/","__")
+            ) 
+            ]            
+        ]
         
-        print ("(folder local): ", self.folder_name)
-        print ("(folder global): ", self.global_dir_whole_path)
-        print ("(ssh): " + self.__ssh_string  )
+        try:
+            get_ipython
+            display(HTML(
+                '<table><tr>{}</tr></table>'.format(
+                    '</tr><tr>'.join(
+                        '<td>{}</td>'.format('</td><td>'.join(str(_) for _ in row)) for row in infos)
+                )
+            ))
+
+        except:
         
-        print ("(scp): " + self.__scp_string )
-        print ("(autosync): ")
-        print ("      echo '{scp_string}' > retrieve_{fold_name}.sh ; bash retrieve_{fold_name}.sh ".format(
-              scp_string = self.__scp_string
-            , fold_name = self.folder_name.replace("/","__")
-        )   )
-        
+            print ("(folder local): ", self.folder_name)
+            print ("(folder global): ", self.global_dir_whole_path)
+            print ("(ssh): " + self.__ssh_string  )
+
+            print ("(scp): " + self.__scp_string )
+            print ("(autosync): ")
+            print ("      echo '{scp_string}' > retrieve_{fold_name}.sh ; bash retrieve_{fold_name}.sh ".format(
+                  scp_string = self.__scp_string
+                , fold_name = self.folder_name.replace("/","__")
+            )   )
+
+    def print_folder_info(self):
+        """Proxy for get_folder_info
+        """
+        self.get_folder_info()
 
     
             
