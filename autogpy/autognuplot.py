@@ -66,7 +66,7 @@ class AutoGnuplotFigure(object):
 
     def __init__(self
                  , folder_name
-                 , file_identifier
+                 , file_identifier = "fig"
                  , verbose = False
                  , autoescape = True
                  , latex_enabled = True
@@ -254,7 +254,7 @@ class AutoGnuplotFigure(object):
     def set_parameters(self,*args,**kw):
         """Proxies extend_global_plotting_parameters
         """
-        return self.extend_global_plotting_parameters(**args,**kw)
+        return self.extend_global_plotting_parameters(*args,**kw)
 
     def __enter__(self):
         return self
