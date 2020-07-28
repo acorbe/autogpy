@@ -181,6 +181,14 @@ class AutoGnuplotFigure(object):
 
         self.pdflatex_terminal_parameters.update(**kw)
 
+    def __wrap_text_section(self,content,wrapper):
+
+        repl = dict(WRP=wrapper, CONTENT=content)
+        content.insert(0,"# BEGIN {WRP}".format(**repl) )
+        content.append("# END {WRP}".format(**repl))
+        
+        return content
+
     def extend_global_plotting_parameters(self, *args, **kw):
         """Extends the preamble of the gnuplot script to modify the plotting settings. 
         
@@ -241,14 +249,16 @@ class AutoGnuplotFigure(object):
 
         """
         autoescape = kw.get("autoescape", self._autoescape)
-        escaped_args = []
+        final_content = []
         if autoescape:
             for idx,a in enumerate(args):
-                escaped_args.append(self.__autoescape_strings(a))
-            self.global_plotting_parameters.extend(escaped_args)
+                final_content.append(self.__autoescape_strings(a))            
         else:
-            self.global_plotting_parameters.extend(args)
+            final_content = args
 
+        self.global_plotting_parameters.extend(
+            self.__wrap_text_section(final_content, "parameters"))
+        
         return self
 
     def set_parameters(self,*args,**kw):
@@ -260,9 +270,9 @@ class AutoGnuplotFigure(object):
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
-        self.generate_gnuplot_file()
-        from IPython.display import display, HTML
+        self.generate_gnuplot_file()        
         try:
+            from IPython.display import display, HTML
             get_ipython
             if self.terminals_enabled_by_default['tikz']['is_enabled']:
                 self.jupyter_show_tikz()
@@ -624,6 +634,88 @@ class AutoGnuplotFigure(object):
         #preserves some needed blocks
         command_line = command_line.replace("{{DS_FNAME}}","{DS_FNAME}" )
         return command_line
+
+    def __autoescape_if_string(self
+                               , el
+                               , add_quotes_if_necessary = False):
+        if isinstance(el,str):
+            escaped_str = self.__autoescape_strings(el)
+            Q = '"' if add_quotes_if_necessary else ""
+            return '{Q}{CONTENT}{Q}'.format(CONTENT=escaped_str,Q=Q)
+        else:
+            return str(el)
+
+    def __p_generic_kw_expansion(self,command_line,dataset_fname,kw_reserved,kw):
+        ### title assessment part
+        # 1. checks if it is in command line else
+        #   2. if label is provided  (as matplotlib) keeps else
+        #      3. if creates it from filename
+
+
+        ### command forwarding part
+        ## the negative logic has less exceptions
+        # kw_forward = ["ls", "ps", "lw","w"]
+        # for k,v in kw.items():
+        #     if k in kw_forward:
+        #         command_line = command_line + " " + k + " " + str(kw[k])
+
+        for k,v in kw.items():
+            if not k in kw_reserved:
+                if k.startswith('s__') \
+                   or k.endswith('__s'):
+                    # or k.startswith('str__') \
+                    # or k.startswith('__str') \
+                    # or k.startswith('S__') \
+                    # or k.endswith('__S'):
+                        
+                    needs_string = True
+                    # maybe it was not a string, but we asked for a string.
+                    v = str(v)
+                    k = k.replace('s__','').replace('__s','')
+                else:
+                    needs_string = False
+
+                command_line = command_line + " " \
+                    + k + " "\
+                    + self.__autoescape_if_string(v, add_quotes_if_necessary = needs_string)
+                    
+            
+
+        ## needs to go after the blind adding to the command line,
+        ## as this one only highjacks the title
+        user_defined_title = False
+        if 'label' in kw:
+            user_defined_title = True
+            if isinstance(kw['label'],str):                    
+                title_guess = self.__autoescape_strings(kw['label'])
+            else:
+                title_guess = str(kw['label'])
+                    
+        else:
+            ## two underscores reads bad, we just put one.
+            if dataset_fname is not None:
+                title_guess = dataset_fname.split('/')[-1].replace("__","_").replace("_","\\\_")
+            else:
+                title_guess = None
+                
+        if " t " not in command_line \
+           and " t\"" not in command_line\
+           and " title " not in command_line\
+           and " title\"" not in command_line\
+           and title_guess is not None:
+
+            command_line =  command_line + " " + """title "{TITLE}" """.format(TITLE = title_guess)
+            
+            if self.verbose and not user_defined_title:
+                print('Warning: a title will be appended to avoid latex compilation problems')
+                print('the final command reads:')
+                print(command_line)
+
+
+        return {'title_guess' : title_guess
+                , 'command_line' : command_line}
+
+        
     
     def p_generic(self, command_line, *args, **kw):
         """Central plotting primitive.
@@ -653,14 +745,17 @@ class AutoGnuplotFigure(object):
         else:
             for_prepend = ""
 
+        ## the following keywords are not blindly appended to the command line
+        kw_reserved = ["fname_specs", "autoescape", "allow_strings"
+                       , "column_names", "for_", "label"]
+
 
         ### allowing to plot even without the command_line arg
         if not isinstance(command_line, str): # \
            #or isinstance(command_line, np.ndarray):
             #prepending 'command_line', which should now contain data
-            #print("hijacking command_line")
-            args = command_line,*args
-            
+
+            args = command_line,*args            
             command_line = ''
 
         
@@ -676,12 +771,16 @@ class AutoGnuplotFigure(object):
 
 
         if len(args) == 0: #case an explicit function is plotted:
+            dataset_fname = None
+            kw_expansion_ret = self.__p_generic_kw_expansion(command_line,dataset_fname,kw_reserved,kw)
+            command_line = kw_expansion_ret['command_line']
             
             to_append = \
                 {'dataset_fname' : ""
                  , 'plottype' : 'expl_f'
                  , 'gnuplot_opt' : ""
-                 , 'gnuplot_command_template' : command_line
+                 ## initial spaces enable nice alignment
+                 , 'gnuplot_command_template' : "  " + command_line 
                  #, 'prepended_parameters' : prepend_parameters
                 }
             
@@ -734,7 +833,7 @@ class AutoGnuplotFigure(object):
 
             if '"{DS_FNAME}"' not in command_line:
                 if self.verbose:
-                    print('Warning: "{DS_FNAME}" will be prepended to your string')
+                    print('[%s] Warning: "{DS_FNAME}" will be prepended to your string' % command_line)
                 command_line = for_prepend + ' "{DS_FNAME}"' + " " + command_line
 
             ### title assessment part
@@ -742,31 +841,65 @@ class AutoGnuplotFigure(object):
             #   2. if label is provided  (as matplotlib) keeps else
             #      3. if creates it from filename
 
-            if 'label' in kw:
-                if isinstance(kw['label'],str):                    
-                    title_guess = self.__autoescape_strings(kw['label'])
-                else:
-                    title_guess = str(kw['label'])
-            else:
-                title_guess = dataset_fname.split('/')[-1].replace("_","\\\_")
-                
-            if " t " not in command_line \
-               and " t\"" not in command_line\
-               and " title " not in command_line\
-               and " title\"" not in command_line:
-
-                command_line =  command_line + " " + """title "{TITLE}" """.format(TITLE = title_guess)
-                if self.verbose:
-                    print('Warning: a title will be appended to avoid latex compilation problems')
-                    print('the final command reads:')
-                    print(command_line)
 
             ### command forwarding part
-            kw_forward = ["ls", "ps", "lw","w"]
+            ## the negative logic has less exceptions
+            # kw_forward = ["ls", "ps", "lw","w"]
+            # for k,v in kw.items():
+            #     if k in kw_forward:
+            #         command_line = command_line + " " + k + " " + str(kw[k])
 
-            for k,v in kw.items():
-                if k in kw_forward:
-                    command_line = command_line + " " + k + " " + str(kw[k])
+            # for k,v in kw.items():
+            #     if not k in kw_reserved:
+            #         if k.startswith('s__') \
+            #            or k.endswith('__s'):
+            #            # or k.startswith('str__') \
+            #            # or k.startswith('__str') \
+            #            # or k.startswith('S__') \
+            #            # or k.endswith('__S'):
+                        
+            #             needs_string = True
+            #             # maybe it was not a string, but we asked for a string.
+            #             v = str(v)
+            #             k = k.replace('s__','').replace('__s','')
+            #         else:
+            #             needs_string = False
+
+            #         command_line = command_line + " " \
+            #             + k + " "\
+            #             + self.__autoescape_if_string(v, add_quotes_if_necessary = needs_string)
+                    
+            
+
+            # ## needs to go after the blind adding to the command line,
+            # ## as this one only highjacks the title
+            # user_defined_title = False
+            # if 'label' in kw:
+            #     user_defined_title = True
+            #     if isinstance(kw['label'],str):                    
+            #         title_guess = self.__autoescape_strings(kw['label'])
+            #     else:
+            #         title_guess = str(kw['label'])
+                    
+            # else:
+            #     ## two underscores reads bad, we just put one.
+            #     title_guess = dataset_fname.split('/')[-1].replace("__","_").replace("_","\\\_")
+
+            kw_expansion_ret = self.__p_generic_kw_expansion(command_line,dataset_fname,kw_reserved,kw)            
+                
+            # if " t " not in command_line \
+            #    and " t\"" not in command_line\
+            #    and " title " not in command_line\
+            #    and " title\"" not in command_line\
+            #    and title_guess is not None:
+
+            #     command_line =  command_line + " " + """title "{TITLE}" """.format(TITLE = title_guess)
+            #     if self.verbose and not user_defined_title:
+            #         print('Warning: a title will be appended to avoid latex compilation problems')
+            #         print('the final command reads:')
+            #         print(command_line)
+
+            command_line = kw_expansion_ret['command_line']
 
             to_append = {
                 'dataset_fname' : dataset_fname
@@ -844,7 +977,7 @@ class AutoGnuplotFigure(object):
 
         return final_content
 
-    def print_gnuplot_file_content(self, highlight = True):
+    def print_gnuplot_file_content(self, highlight = True, linenos = 'inline'):
         """Displays the content of the gnuplot file generated. Intended for debug.
 
         Parameters
@@ -862,7 +995,7 @@ class AutoGnuplotFigure(object):
              
 
             from IPython.core.display import display, HTML
-            html__ =  highlight(final_content, GnuplotLexer(), HtmlFormatter(style='colorful', noclasses = False))
+            html__ =  highlight(final_content, GnuplotLexer(), HtmlFormatter(style='colorful', noclasses = False, linenos=linenos))
             display(HTML("""
             <style>
             {pygments_css}
@@ -916,8 +1049,6 @@ class AutoGnuplotFigure(object):
             )
         
         
-        
-
         #### pdflatex terminal
         self.local_pdflatex_output = self.file_identifier + "__.pdf"
         self.pdflatex_output = self.globalize_fname( self.__local_jpg_output )
@@ -1008,12 +1139,27 @@ class AutoGnuplotFigure(object):
                       , stderr=_PIPE)
         output, err = proc.communicate()
 
-        if show_stderr:
+        was_there_an_error = \
+            "error" in output or\
+            "Error" in output or\
+            "error" in err or\
+            "Error" in err
+        if was_there_an_error:
+            print("ERROR: an error was intercepted.")
+            print("     stderr and stdout reported below.")
+        
+        
+        if self.verbose:
+            print ("After running _Popen, was_there_an_error is", was_there_an_error)
+    
+        if show_stderr or self.verbose or was_there_an_error:
             print ("===== stderr =====")
             print (err)
-        if show_stdout:
+            print ("=== stderr end ===")
+        if show_stdout or self.verbose or was_there_an_error:
             print ("===== stdout =====")
             print (output)
+            print ("=== stdout end ===")
             
         from IPython.core.display import Image, display
         display(Image( image_to_display, height=height, width=width  ))
@@ -1063,7 +1209,10 @@ class AutoGnuplotFigure(object):
         )
 
     def jupyter_show_tikz(self
-                          , show_stdout = False ):
+                          , show_stderr = False
+                          , show_stdout = False                          
+                          , height = None
+                          , width = None):
 
         r"""Shows a pdflatex rendering within the current jupyter notebook.
 
@@ -1088,31 +1237,16 @@ class AutoGnuplotFigure(object):
         gp.write("%\\gpsetdashtype{"..dashtype.."}\n")
         end
 
-        """
+        """      
 
-        from subprocess import Popen as _Popen, PIPE as _PIPE, call as _call
-
-        if self.verbose:
-            print ("trying call: ", [  self.__local_tikz_compilesh_gnuplot_file   ])
-            print ("from folder_name: ", self.folder_name)
-
-        proc = _Popen(["bash", self.__local_tikz_compilesh_gnuplot_file  ]
-                      , shell=False
-                      ,  universal_newlines=True
-                      , cwd = self.folder_name
-                      , stdout=_PIPE
-                      , stderr=_PIPE)
-        output, err = proc.communicate()
-
-        if show_stdout:
-            print (output)
-            print (err)
-
-        from IPython.core.display import Image, display
-        if self.verbose:
-            print("opening:", self.__tikz_output_jpg_convert)
-            
-        display(Image( self.__tikz_output_jpg_convert  ))
+        self.__jupyter_show_generic(
+            [ "bash", self.__local_tikz_compilesh_gnuplot_file  ]
+            , self.__tikz_output_jpg_convert
+            , height = height
+            , width = width
+            , show_stderr = show_stderr 
+            , show_stdout = show_stdout 
+        )
 
         
 

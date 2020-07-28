@@ -27,6 +27,7 @@ tikz:  $(tikz_targets_pdf)
 
 clean:
 {TAB}rm -f *.pdf *.jpg
+{TAB}rm -Rf fig.latex.nice
 
 deepclean:
 {TAB}rm -rf *
@@ -106,9 +107,6 @@ mkdir fig.latex.nice
 gnuplot {TIKZ_TARGET_GNU}
 
 pdflatex fig.latex.nice/tikz_out.tex
-# dvips plot_out.dvi  -o plot_out.ps
-# ps2eps --ignoreBB -f plot_out.ps
-# ps2pdf plot_out.ps
 
 mv tikz_out.pdf {FINAL_PDF_NAME}
 
