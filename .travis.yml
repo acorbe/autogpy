@@ -1,7 +1,7 @@
 language: python
 
 install:
-  - pip install sphinx sphinxcontrib-napoleon m2r
+  - pip install sphinx sphinxcontrib-napoleon git+https://github.com/crossnox/m2r@dev#egg=m2r #m2r
 
 script:
   - cd doc
