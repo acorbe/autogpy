@@ -1,17 +1,18 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Content &#8212; Autogpy - AutoGnuplot.py  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Which problem does it solve?" href="index.html" />
@@ -33,15 +34,15 @@
             
   <div class="section" id="content">
 <h1>Content<a class="headerlink" href="#content" title="Permalink to this headline">¶</a></h1>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="autogpy.AutogpyFigure">
 <code class="sig-prename descclassname">autogpy.</code><code class="sig-name descname">AutogpyFigure</code><a class="headerlink" href="#autogpy.AutogpyFigure" title="Permalink to this definition">¶</a></dt>
 <dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">autogpy.autognuplot.AutoGnuplotFigure</span></code></p>
 </dd></dl>
 
-<dl class="class">
+<dl class="py class">
 <dt id="autogpy.AutoGnuplotFigure">
-<em class="property">class </em><code class="sig-prename descclassname">autogpy.</code><code class="sig-name descname">AutoGnuplotFigure</code><span class="sig-paren">(</span><em class="sig-param">folder_name</em>, <em class="sig-param">file_identifier</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">autoescape=True</em>, <em class="sig-param">latex_enabled=True</em>, <em class="sig-param">tikz_enabled=False</em>, <em class="sig-param">allow_strings=False</em>, <em class="sig-param">hostname=None</em>, <em class="sig-param">jpg_convert_density=100</em>, <em class="sig-param">jpg_convert_quality=100</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">autogpy.</code><code class="sig-name descname">AutoGnuplotFigure</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">folder_name</span></em>, <em class="sig-param"><span class="n">file_identifier</span><span class="o">=</span><span class="default_value">'fig'</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">autoescape</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">latex_enabled</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">tikz_enabled</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">allow_strings</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">hostname</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">jpg_convert_density</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">jpg_convert_quality</span><span class="o">=</span><span class="default_value">100</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an AutoGnuplotFigure object which wraps one gnuplot figure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -71,7 +72,7 @@
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">AutoGnuplotFigure</span><span class="p">(</span><span class="s1">&#39;folder&#39;</span><span class="p">,</span><span class="s1">&#39;id&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">AutoGnuplotFigure</span><span class="p">(</span><span class="s1">&#39;folder&#39;</span><span class="p">,</span><span class="s1">&#39;id&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># for some existing arrays x,y</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">p_generic</span><span class="p">(</span><span class="s1">&#39;u 1 : 2 t &quot;my title&quot; &#39;</span><span class="p">,</span> <span class="n">x</span> <span class="p">,</span><span class="n">y</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">generate_gnuplot_file</span><span class="p">()</span>
@@ -81,7 +82,7 @@
 </div>
 <p class="rubric">Notes</p>
 <p>Setting latex terminal sizes. Change parameters in the member dictionary <cite>pdflatex_terminal_parameters</cite></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">pdflatex_terminal_parameters</span> <span class="o">=</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">pdflatex_terminal_parameters</span> <span class="o">=</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">{</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="s2">&quot;x_size&quot;</span> <span class="p">:</span> <span class="s2">&quot;9.9cm&quot;</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">,</span> <span class="s2">&quot;y_size&quot;</span> <span class="p">:</span> <span class="s2">&quot;8.cm&quot;</span>
@@ -91,15 +92,15 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="p">}</span>
 </pre></div>
 </div>
-<dl class="method">
+<dl class="py method">
 <dt id="autogpy.AutoGnuplotFigure.add_xy_dataset">
-<code class="sig-name descname">add_xy_dataset</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">gnuplot_opt=''</em>, <em class="sig-param">fname_specs=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.add_xy_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.add_xy_dataset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_xy_dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">gnuplot_opt</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">fname_specs</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.add_xy_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.add_xy_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deprecated: Makes a x-y plot. Use <cite>p_generic</cite> instead.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="autogpy.AutoGnuplotFigure.alter_current_multiplot_parameters">
-<code class="sig-name descname">alter_current_multiplot_parameters</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.alter_current_multiplot_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.alter_current_multiplot_parameters" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">alter_current_multiplot_parameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kw</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.alter_current_multiplot_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.alter_current_multiplot_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allows to change state variables of current subplot.</p>
 <p>Works similarly to <cite>extend_global_plotting_parameters</cite>, but allows selective changes between one subplot and the next</p>
 <dl class="field-list simple">
@@ -122,7 +123,7 @@ Use gnuplot syntax. Raw strings are advised.</p></li>
 <p><a class="reference internal" href="#autogpy.AutoGnuplotFigure.extend_global_plotting_parameters" title="autogpy.AutoGnuplotFigure.extend_global_plotting_parameters"><code class="xref py py-meth docutils literal notranslate"><span class="pre">extend_global_plotting_parameters()</span></code></a>, <a class="reference internal" href="#autogpy.AutoGnuplotFigure.set_multiplot" title="autogpy.AutoGnuplotFigure.set_multiplot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_multiplot()</span></code></a>, <a class="reference internal" href="#autogpy.AutoGnuplotFigure.next_multiplot_group" title="autogpy.AutoGnuplotFigure.next_multiplot_group"><code class="xref py py-meth docutils literal notranslate"><span class="pre">next_multiplot_group()</span></code></a></p>
 </div>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># establishes multiplot mode with 2 rows and one column</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># establishes multiplot mode with 2 rows and one column</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">set_multiplot</span><span class="p">(</span><span class="s2">&quot;layout 2,1&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#sets logscale in y, globally</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">extend_global_plotting_parameters</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;set logscale y&quot;</span><span class="p">)</span>
@@ -139,7 +140,7 @@ Use gnuplot syntax. Raw strings are advised.</p></li>
 </pre></div>
 </div>
 <p>For inset plots</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">set_multiplot</span><span class="p">()</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">set_multiplot</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#sets logscale in y, globally</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">extend_global_plotting_parameters</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;set logscale y&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#sets xrange, globally</span>
@@ -160,9 +161,9 @@ Use gnuplot syntax. Raw strings are advised.</p></li>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="autogpy.AutoGnuplotFigure.extend_global_plotting_parameters">
-<code class="sig-name descname">extend_global_plotting_parameters</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.extend_global_plotting_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.extend_global_plotting_parameters" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">extend_global_plotting_parameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kw</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.extend_global_plotting_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.extend_global_plotting_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extends the preamble of the gnuplot script to modify the plotting settings.</p>
 <p>Expects one or more strings with gnuplot syntax.</p>
 <dl class="field-list simple">
@@ -181,7 +182,7 @@ Use gnuplot syntax. Raw strings are advised.</p></li>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">figure</span><span class="o">.</span><span class="n">extend_global_plotting_parameters</span><span class="p">(</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">figure</span><span class="o">.</span><span class="n">extend_global_plotting_parameters</span><span class="p">(</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="sd">set mxtics 2</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="sd">set mytics 1</span>
@@ -219,13 +220,13 @@ Use gnuplot syntax. Raw strings are advised.</p></li>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="autogpy.AutoGnuplotFigure.generate_gnuplot_file">
 <code class="sig-name descname">generate_gnuplot_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.generate_gnuplot_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.generate_gnuplot_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates the final gnuplot scripts without creating any figure. Inclides Makefiles</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="autogpy.AutoGnuplotFigure.hist_generic">
 <code class="sig-name descname">hist_generic</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">gnuplot_command_no_u</em>, <em class="sig-param">hist_kw={}</em>, <em class="sig-param">gnuplot_command_using='u 1:2'</em>, <em class="sig-param">normalization=None</em>, <em class="sig-param">kde=False</em>, <em class="sig-param">kde_kw={}</em>, <em class="sig-param">reweight=&lt;function AutoGnuplotFigure.&lt;lambda&gt;&gt;</em>, <em class="sig-param">dump_data=False</em>, <em class="sig-param">compress_dumped_data=True</em>, <em class="sig-param">**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.hist_generic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.hist_generic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Proxy function to generate histograms</p>
@@ -255,9 +256,9 @@ Note the number of bins is specified in the hist_kw dict.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="autogpy.AutoGnuplotFigure.hist_plthist">
-<code class="sig-name descname">hist_plthist</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">normalization=None</em>, <em class="sig-param">gnuplot_command_no_u_no_title=''</em>, <em class="sig-param">title=''</em>, <em class="sig-param">suppress_plt_figure=True</em>, <em class="sig-param">**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.hist_plthist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.hist_plthist" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">hist_plthist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">normalization</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">gnuplot_command_no_u_no_title</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">title</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">suppress_plt_figure</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kw</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.hist_plthist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.hist_plthist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Histogram function. Proxies the interface of plt.hist for a rapid call swap.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -273,18 +274,18 @@ Note the number of bins is specified in the hist_kw dict.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="autogpy.AutoGnuplotFigure.jupyter_show_pdflatex">
-<code class="sig-name descname">jupyter_show_pdflatex</code><span class="sig-paren">(</span><em class="sig-param">show_stdout=False</em>, <em class="sig-param">show_stderr=False</em>, <em class="sig-param">width=None</em>, <em class="sig-param">height=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.jupyter_show_pdflatex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.jupyter_show_pdflatex" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">jupyter_show_pdflatex</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">show_stdout</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">show_stderr</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">width</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">height</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.jupyter_show_pdflatex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.jupyter_show_pdflatex" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shows a pdflatex rendering within the current jupyter notebook.</p>
 <p>To work it requires ImageMagick and authorization to render pdf to jpg.
 Should it fail:
 <a class="reference external" href="https://stackoverflow.com/a/52661288">https://stackoverflow.com/a/52661288</a></p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="autogpy.AutoGnuplotFigure.jupyter_show_tikz">
-<code class="sig-name descname">jupyter_show_tikz</code><span class="sig-paren">(</span><em class="sig-param">show_stdout=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.jupyter_show_tikz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.jupyter_show_tikz" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">jupyter_show_tikz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">show_stderr</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">show_stdout</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">height</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">width</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.jupyter_show_tikz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.jupyter_show_tikz" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shows a pdflatex rendering within the current jupyter notebook.</p>
 <p>To work it requires ImageMagick and authorization to render pdf to jpg.
 Should it fail:
@@ -300,9 +301,9 @@ gp.write(“%\gpsetdashtype{“..dashtype..”}n”)
 end</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="autogpy.AutoGnuplotFigure.load_gnuplotting_palette">
-<code class="sig-name descname">load_gnuplotting_palette</code><span class="sig-paren">(</span><em class="sig-param">palette_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.load_gnuplotting_palette"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.load_gnuplotting_palette" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">load_gnuplotting_palette</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">palette_name</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.load_gnuplotting_palette"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.load_gnuplotting_palette" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downloads a color palette <a class="reference external" href="https://github.com/Gnuplotting/gnuplot-palettes">https://github.com/Gnuplotting/gnuplot-palettes</a> and return the loading string to be added in the preamble of the plot (see example).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -316,14 +317,14 @@ end</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Loads moreland palette in the current figure</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Loads moreland palette in the current figure</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">extend_global_plotting_parameters</span> <span class="p">(</span> <span class="n">fig</span><span class="o">.</span><span class="n">load_gnuplotting_palette</span><span class="p">(</span><span class="s1">&#39;moreland&#39;</span><span class="p">)</span> <span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># colors need to be selected manually</span>
 </pre></div>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="autogpy.AutoGnuplotFigure.next_multiplot_group">
 <code class="sig-name descname">next_multiplot_group</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.next_multiplot_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.next_multiplot_group" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shifts the state to the next plot in the multiplot sequence.</p>
@@ -341,9 +342,9 @@ end</p>
 </div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="autogpy.AutoGnuplotFigure.p_generic">
-<code class="sig-name descname">p_generic</code><span class="sig-paren">(</span><em class="sig-param">command_line</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kw</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.p_generic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.p_generic" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">p_generic</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">command_line</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kw</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.p_generic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.p_generic" title="Permalink to this definition">¶</a></dt>
 <dd><p>Central plotting primitive.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -358,9 +359,21 @@ end</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
+<dt id="autogpy.AutoGnuplotFigure.plot">
+<code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">command_line</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kw</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxies p_generic</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="autogpy.AutoGnuplotFigure.print_folder_info">
+<code class="sig-name descname">print_folder_info</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.print_folder_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.print_folder_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy for get_folder_info</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="autogpy.AutoGnuplotFigure.print_gnuplot_file_content">
-<code class="sig-name descname">print_gnuplot_file_content</code><span class="sig-paren">(</span><em class="sig-param">highlight=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.print_gnuplot_file_content"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.print_gnuplot_file_content" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">print_gnuplot_file_content</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">highlight</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">linenos</span><span class="o">=</span><span class="default_value">'inline'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.print_gnuplot_file_content"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.print_gnuplot_file_content" title="Permalink to this definition">¶</a></dt>
 <dd><p>Displays the content of the gnuplot file generated. Intended for debug.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -369,9 +382,15 @@ end</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
+<dt id="autogpy.AutoGnuplotFigure.set_figure_size">
+<code class="sig-name descname">set_figure_size</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x_size</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">y_size</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kw</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.set_figure_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.set_figure_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the terminal figure size and possibly more terminal parameters (string expected).</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="autogpy.AutoGnuplotFigure.set_multiplot">
-<code class="sig-name descname">set_multiplot</code><span class="sig-paren">(</span><em class="sig-param">specifiers=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.set_multiplot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.set_multiplot" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_multiplot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">specifiers</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.set_multiplot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.set_multiplot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Enables multiplot mode (use in combination with <cite>next_multiplot_group</cite>).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -389,7 +408,7 @@ end</p>
 <p><a class="reference internal" href="#autogpy.AutoGnuplotFigure.next_multiplot_group" title="autogpy.AutoGnuplotFigure.next_multiplot_group"><code class="xref py py-meth docutils literal notranslate"><span class="pre">next_multiplot_group()</span></code></a>, <a class="reference internal" href="#autogpy.AutoGnuplotFigure.alter_current_multiplot_parameters" title="autogpy.AutoGnuplotFigure.alter_current_multiplot_parameters"><code class="xref py py-meth docutils literal notranslate"><span class="pre">alter_current_multiplot_parameters()</span></code></a></p>
 </div>
 <p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># establishes multiplot mode with 2 rows and one column</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># establishes multiplot mode with 2 rows and one column</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">set_multiplot</span><span class="p">(</span><span class="s2">&quot;layout 2,1&quot;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1">#plot in position 1,1</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">p_generic</span><span class="p">(</span><span class="s1">&#39;u 1 : 2 t &quot;my title&quot; &#39;</span><span class="p">,</span> <span class="n">x</span> <span class="p">,</span><span class="n">y</span><span class="p">)</span>
@@ -399,6 +418,18 @@ end</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">p_generic</span><span class="p">(</span><span class="s1">&#39;u 1 : 2 t &quot;my title&quot; &#39;</span><span class="p">,</span> <span class="n">x</span> <span class="p">,</span><span class="n">z</span><span class="p">)</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="autogpy.AutoGnuplotFigure.set_multiplot_parameters">
+<code class="sig-name descname">set_multiplot_parameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kw</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.set_multiplot_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.set_multiplot_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxies alter_current_multiplot_parameters</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="autogpy.AutoGnuplotFigure.set_parameters">
+<code class="sig-name descname">set_parameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kw</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.set_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.set_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxies extend_global_plotting_parameters</p>
 </dd></dl>
 
 </dd></dl>
@@ -444,7 +475,7 @@ end</p>
     </form>
     </div>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<script>$('#searchbox').show(0);</script>
 
 
 
@@ -461,7 +492,7 @@ end</p>
       &copy;2019, Alessandro Corbetta.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.2</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
