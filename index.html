@@ -44,17 +44,17 @@
 <p><code class="docutils literal notranslate"><span class="pre">autogpy</span></code> eliminates annoying duplications of code/data when doing data analytics in python and publication figures in gnuplot. Using a syntax close to gnuplot, it automatically generates gnuplot scripts and dumps suitably the data.</p>
 <p>In the scientific community, <a class="reference external" href="http://www.gnuplot.info/">gnuplot</a> is a gold standard for publication-quality plots. While python comes with several options for plotting, often gnuplot is preferred in production.</p>
 </div>
-<div class="section" id="features">
-<h1>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="main-features">
+<h1>Main features<a class="headerlink" href="#main-features" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
 <li><p>anything that be obtained by the gnuplot command <code class="docutils literal notranslate"><span class="pre">plot</span></code> can be produced</p></li>
+<li><p>output figures are shipped in a folder that includes scripts, data and makefile</p></li>
 <li><p>any gnuplot state modification can be achieved</p></li>
+<li><p>terminals epslatex, tikz/pgfplot and jpg</p></li>
 <li><p>multiplots</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">plt.hist</span></code>-like gnuplot histogram figures generator</p></li>
 <li><p>jupyter notebook figure preview</p></li>
 <li><p>jupyter notebook gnuplot script inspection</p></li>
-<li><p>gnuplot terminals epslatex, tikz/pgfplot and jpg</p></li>
-<li><p>output figures are shipped in a folder that includes scripts, data and makefile</p></li>
 <li><p>easy scp-based synchronization between a machine in which the figures are generated (e.g. from even larger datasets) and the “paper writing” machine.</p></li>
 </ul>
 <p><strong>Works on</strong></p>
@@ -62,17 +62,10 @@
 <li><p>Linux/MacOs</p></li>
 <li><p>Python 3</p></li>
 </ul>
-<p><strong>KWONW ISSUES</strong></p>
-<ul class="simple">
-<li><p>Certain features require imagemagick and a working <code class="docutils literal notranslate"><span class="pre">gnuplot-tikz.lua</span></code>. Some versions of these might have bugs. Do <code class="docutils literal notranslate"><span class="pre">figure.display_fixes()</span></code> to show known fixes.</p></li>
-</ul>
-<div class="section" id="in-a-nutshell">
-<h2>In a nutshell<a class="headerlink" href="#in-a-nutshell" title="Permalink to this headline">¶</a></h2>
-</div>
 </div>
 <div class="section" id="getting-autogpy">
 <h1>Getting autogpy<a class="headerlink" href="#getting-autogpy" title="Permalink to this headline">¶</a></h1>
-<p>From <code class="docutils literal notranslate"><span class="pre">pip</span></code></p>
+<p>Via <code class="docutils literal notranslate"><span class="pre">pip</span></code></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install autogpy
 </pre></div>
 </div>
@@ -81,9 +74,12 @@
 pip install autogpy/
 </pre></div>
 </div>
-</div>
-<div class="section" id="usage">
-<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<p><strong>KWONW ISSUES</strong></p>
+<ul class="simple">
+<li><p>Certain features require imagemagick and a working <code class="docutils literal notranslate"><span class="pre">gnuplot-tikz.lua</span></code>. Some versions of these might have bugs. Do <code class="docutils literal notranslate"><span class="pre">figure.display_fixes()</span></code> to show known fixes.</p></li>
+</ul>
+<div class="section" id="in-a-nutshell">
+<h2>In a nutshell<a class="headerlink" href="#in-a-nutshell" title="Permalink to this headline">¶</a></h2>
 <p>Please see also the <a class="reference external" href="https://github.com/acorbe/autogpy/tree/master/examples">examples</a> and the <a class="reference external" href="https://acorbe.github.io/autogpy/">documentation</a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">autogpy</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -139,11 +135,15 @@ Notice that the input data has been formatted automatically.</p>
 <li class="toctree-l1"><a class="reference internal" href="code.html">Content</a></li>
 </ul>
 </div>
+<div class="section" id="indices-and-tables">
+<h3>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
+</div>
+</div>
 </div>
 
 
