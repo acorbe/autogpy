@@ -84,14 +84,13 @@ pip install autogpy/
 </div>
 <div class="section" id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
-<p>Please see also the (examples)[<a class="reference external" href="https://github.com/acorbe/autogpy/tree/master/examples">https://github.com/acorbe/autogpy/tree/master/examples</a>] and the (documentation)[<a class="reference external" href="https://acorbe.github.io/autogpy/">https://acorbe.github.io/autogpy/</a>].</p>
+<p>Please see also the <a class="reference external" href="https://github.com/acorbe/autogpy/tree/master/examples">examples</a> and the <a class="reference external" href="https://acorbe.github.io/autogpy/">documentation</a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">autogpy</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="n">xx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
 <span class="n">yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">xx</span><span class="p">)</span>
 <span class="n">zz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">xx</span><span class="p">)</span>
-
 
 <span class="k">with</span> <span class="n">autogpy</span><span class="o">.</span><span class="n">AutogpyFigure</span><span class="p">(</span><span class="s2">&quot;test_figure&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">figure</span><span class="p">:</span>
 
