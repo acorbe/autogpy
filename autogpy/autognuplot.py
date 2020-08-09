@@ -1143,7 +1143,9 @@ class AutoGnuplotFigure(object):
             "error" in output or\
             "Error" in output or\
             "error" in err or\
-            "Error" in err
+            "Error" in err or\
+            proc.returncode != 0
+        
         if was_there_an_error:
             print("ERROR: an error was intercepted.")
             print("     stderr and stdout reported below.")

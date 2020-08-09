@@ -45,8 +45,8 @@ SYNC_sc_template =\
 
 LATEX_compile_sh_template =\
 """
-mkdir fig.latex.nice
-gnuplot {LATEX_TARGET_GNU}
+mkdir -p fig.latex.nice
+gnuplot {LATEX_TARGET_GNU} || exit 1
 
 latex fig.latex.nice/plot_out.tex
 dvips plot_out.dvi  -o plot_out.ps
@@ -103,8 +103,8 @@ load "{CORE}";
 
 TIKZ_compile_sh_template =\
 """
-mkdir fig.latex.nice
-gnuplot {TIKZ_TARGET_GNU}
+mkdir -p fig.latex.nice
+gnuplot {TIKZ_TARGET_GNU} || exit 1
 
 pdflatex fig.latex.nice/tikz_out.tex
 

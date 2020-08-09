@@ -1,0 +1,9 @@
+
+*.aux
+*.dvi
+*.log
+*.ps
+*~
+*.tex
+fig.latex.nice/*
+*converted*
