@@ -154,8 +154,9 @@ GITIGNORE_wrapper_file=\
 *.ps
 *~
 *.tex
-fig.latex.nice/*
+**/fig.latex.nice/**
 *converted*
+plot_out.eps
 """
 
 
