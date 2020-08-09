@@ -11,7 +11,7 @@
 
 
 
-![build status](https://travis-ci.org/acorbe/autogpy.svg?branch=master) [![Downloads](https://pepy.tech/badge/autogpy)](https://pepy.tech/project/autogpy)
+[![build status](https://travis-ci.org/acorbe/autogpy.svg?branch=master)](https://travis-ci.org/github/acorbe/autogpy) [![Downloads](https://pepy.tech/badge/autogpy)](https://pepy.tech/project/autogpy)
 
 
 ### Which problem does it solve?
