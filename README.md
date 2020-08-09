@@ -5,15 +5,20 @@
 
 **Author:** [Alessandro Corbetta](http://corbetta.phys.tue.nl/), 2019  
 **Documentation:** https://acorbe.github.io/autogpy/  
+**Examples** [Link](https://github.com/acorbe/autogpy/tree/master/examples)  
+**Github** [Link](https://github.com/acorbe/autogpy)  
+**Pypi** [Link](https://pypi.org/project/autogpy/)  
 
-![build status](https://travis-ci.org/acorbe/autogpy.svg?branch=master)
+
+
+![build status](https://travis-ci.org/acorbe/autogpy.svg?branch=master) [![Downloads](https://pepy.tech/badge/autogpy)](https://pepy.tech/project/autogpy)
 
 
 ### Which problem does it solve?
 
 `autogpy` eliminates annoying duplications of code/data when doing data analytics in python and publication figures in gnuplot. Using a syntax close to gnuplot, it automatically generates gnuplot scripts and dumps suitably the data.  
 
-In the scientific community, [gnuplot](http://www.gnuplot.info/) is a gold standard for publication-quality plots. Python is quickly becoming a tool of choice for data analytics. While it comes with several options for plotting, often gnuplot is preferred in production.
+In the scientific community, [gnuplot](http://www.gnuplot.info/) is a gold standard for publication-quality plots. While python comes with several options for plotting, often gnuplot is preferred in production.
 
 
 ### Features
@@ -51,10 +56,12 @@ From source
 
 ```bash
 git clone git@github.com:acorbe/autogpy.git
-pip install ./autogpy
+pip install autogpy/
 ```
 
-### Usage
+### Usage 
+
+Please see also the (examples)[https://github.com/acorbe/autogpy/tree/master/examples] and the (documentation)[https://acorbe.github.io/autogpy/].
 
 ```python
 import autogpy
@@ -64,13 +71,14 @@ xx = np.linspace(0,6,100)
 yy = np.sin(xx)
 zz = np.cos(xx)
 
-figure = autogpy.AutogpyFigure("test_figure","test1")
 
-figure.p_generic(r'u 1:2 with lines t "sin"',xx,yy)
-figure.p_generic(r'u 1:2 with lines t "cos"',xx,zz)
-figure.generate_gnuplot_file()
+with autogpy.AutogpyFigure("test_figure") as figure: 
 
-figure.jupyter_show_pdflatex() # only in jupyter
+	# gnuplot syntax case
+	figure.plot(r'with lines t "sin"',xx,yy)
+	
+	# python style
+	figure.plot(xx,zz, u = '1:2', w='lines', label = 'cos')
 
 ```
 
@@ -85,32 +93,33 @@ will generate the following figure (also appearing in jupyter)
 ```bash
 $ ls test_figure
 
+.gitignore
 Makefile
 sync_me.sh
-test1__0__.dat
-test1__1__.dat
-test1__.core.gnu
-test1__.jpg.gnu
-test1__.pdflatex_compile.sh
-test1__.pdflatex.gnu
-test1__.tikz_compile.sh
-test1__.tikz.gnu
+fig__0__.dat
+fig__1__.dat
+fig__.core.gnu
+fig__.jpg.gnu
+fig__.pdflatex_compile.sh
+fig__.pdflatex.gnu
+fig__.tikz_compile.sh
+fig__.tikz.gnu
 ```
 
 With `make` one can obtain jpg, epslatex, and tikz/pgfplot versions of the figure.
 Notice that the input data has been formatted automatically.
 
-Inspecting `test1__.pdflatex.gnu`, responsible of the epslatex version of the figure, one gets:
+Inspecting `fig__.pdflatex.gnu`, responsible of the epslatex version of the figure, one gets:
 ```gnuplot
 set terminal epslatex size 9.9cm,8.cm color colortext standalone      'phv,12 '  linewidth 2
 set output 'fig.latex.nice/plot_out.tex'
 
-load "test1__.core.gnu"; 
+load "fig__.core.gnu"; 
 ```
-while `test1__.core.gnu` reads:
+while `fig__.core.gnu` reads:
 ```gnuplot
-p "test1__0__.dat" u 1:2 with lines t "sin",\
-"test1__1__.dat" u 1:2 with lines t "cos"
+p "fig__0__.dat" with lines t "sin",\
+"fig__1__.dat" u 1:2 with lines t "cos"
 
 ```
 
