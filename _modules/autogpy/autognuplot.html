@@ -751,23 +751,35 @@
 
         
     
-<div class="viewcode-block" id="AutoGnuplotFigure.p_generic"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.p_generic">[docs]</a>    <span class="k">def</span> <span class="nf">p_generic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_line</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+<div class="viewcode-block" id="AutoGnuplotFigure.plot"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_line_or_data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Central plotting primitive.</span>
 <span class="sd">                </span>
 <span class="sd">        Arguments</span>
 <span class="sd">        ----------</span>
-<span class="sd">        command_line: string</span>
-<span class="sd">             gnuplot command, without the explicit call to plot and the filename of the content</span>
+<span class="sd">        command_line_or_data: string, list or np.array</span>
+<span class="sd">             gnuplot command, without the explicit call to plot and the filename of the content.</span>
+<span class="sd">             Alternatively, can be a list or np.array containing data (see *args)</span>
 <span class="sd">        *args: lists or np.array, optional</span>
 <span class="sd">             columns with the data, one or more columns can contain strings (e.g. for labels). In this case &#39;allow_strings&#39; must be True.</span>
 <span class="sd">        fname_specs: string, optional</span>
 <span class="sd">             (&quot;&quot;) allows to specify a filename for the data different for the default one.</span>
 <span class="sd">        autoescape: bool, optional</span>
-<span class="sd">             (as set in by the constructor) allows to selectively modify the class setting for autoescaping</span>
+<span class="sd">             (as set in by the constructor) allows to selectively modify the class setting for autoescaping.</span>
 <span class="sd">        allow_strings: bool, optional</span>
-<span class="sd">             (False) set to True to allows columns with strings. This requires pandas. Might become True by default in the future.             </span>
+<span class="sd">             (False) set to True to allows columns with strings. This requires pandas. Might become True by default in the future.</span>
+<span class="sd">        column_names: list of strings, optional</span>
+<span class="sd">             (None) set the names of the columns. Considered only if `allow_strings=True`.</span>
+<span class="sd">        for_: string, optional</span>
+<span class="sd">             (None) allows to use the `for` gnuplot keyword.</span>
+<span class="sd">        label: string, optional</span>
+<span class="sd">             (None) proxies the gnuplot `title` keyword.</span>
+<span class="sd">        **generic_gnuplot_command: kw and value, optional</span>
+<span class="sd">             ({}) allows to pass any gnuplot argument ex `ls`, `linewidth`, etc.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># aliasing the variable, the rest of the code considers the old naming</span>
+        <span class="n">command_line</span> <span class="o">=</span> <span class="n">command_line_or_data</span>
+        
         <span class="n">fname_specs</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fname_specs&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="n">autoescape</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;autoescape&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_autoescape</span><span class="p">)</span>
         <span class="n">allow_strings</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;allow_strings&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_allow_strings</span><span class="p">)</span>
@@ -870,68 +882,7 @@
                     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;[</span><span class="si">%s</span><span class="s1">] Warning: &quot;</span><span class="si">{DS_FNAME}</span><span class="s1">&quot; will be prepended to your string&#39;</span> <span class="o">%</span> <span class="n">command_line</span><span class="p">)</span>
                 <span class="n">command_line</span> <span class="o">=</span> <span class="n">for_prepend</span> <span class="o">+</span> <span class="s1">&#39; &quot;</span><span class="si">{DS_FNAME}</span><span class="s1">&quot;&#39;</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">command_line</span>
 
-            <span class="c1">### title assessment part</span>
-            <span class="c1"># 1. checks if it is in command line else</span>
-            <span class="c1">#   2. if label is provided  (as matplotlib) keeps else</span>
-            <span class="c1">#      3. if creates it from filename</span>
-
-
-            <span class="c1">### command forwarding part</span>
-            <span class="c1">## the negative logic has less exceptions</span>
-            <span class="c1"># kw_forward = [&quot;ls&quot;, &quot;ps&quot;, &quot;lw&quot;,&quot;w&quot;]</span>
-            <span class="c1"># for k,v in kw.items():</span>
-            <span class="c1">#     if k in kw_forward:</span>
-            <span class="c1">#         command_line = command_line + &quot; &quot; + k + &quot; &quot; + str(kw[k])</span>
-
-            <span class="c1"># for k,v in kw.items():</span>
-            <span class="c1">#     if not k in kw_reserved:</span>
-            <span class="c1">#         if k.startswith(&#39;s__&#39;) \</span>
-            <span class="c1">#            or k.endswith(&#39;__s&#39;):</span>
-            <span class="c1">#            # or k.startswith(&#39;str__&#39;) \</span>
-            <span class="c1">#            # or k.startswith(&#39;__str&#39;) \</span>
-            <span class="c1">#            # or k.startswith(&#39;S__&#39;) \</span>
-            <span class="c1">#            # or k.endswith(&#39;__S&#39;):</span>
-                        
-            <span class="c1">#             needs_string = True</span>
-            <span class="c1">#             # maybe it was not a string, but we asked for a string.</span>
-            <span class="c1">#             v = str(v)</span>
-            <span class="c1">#             k = k.replace(&#39;s__&#39;,&#39;&#39;).replace(&#39;__s&#39;,&#39;&#39;)</span>
-            <span class="c1">#         else:</span>
-            <span class="c1">#             needs_string = False</span>
-
-            <span class="c1">#         command_line = command_line + &quot; &quot; \</span>
-            <span class="c1">#             + k + &quot; &quot;\</span>
-            <span class="c1">#             + self.__autoescape_if_string(v, add_quotes_if_necessary = needs_string)</span>
-                    
-            
-
-            <span class="c1"># ## needs to go after the blind adding to the command line,</span>
-            <span class="c1"># ## as this one only highjacks the title</span>
-            <span class="c1"># user_defined_title = False</span>
-            <span class="c1"># if &#39;label&#39; in kw:</span>
-            <span class="c1">#     user_defined_title = True</span>
-            <span class="c1">#     if isinstance(kw[&#39;label&#39;],str):                    </span>
-            <span class="c1">#         title_guess = self.__autoescape_strings(kw[&#39;label&#39;])</span>
-            <span class="c1">#     else:</span>
-            <span class="c1">#         title_guess = str(kw[&#39;label&#39;])</span>
-                    
-            <span class="c1"># else:</span>
-            <span class="c1">#     ## two underscores reads bad, we just put one.</span>
-            <span class="c1">#     title_guess = dataset_fname.split(&#39;/&#39;)[-1].replace(&quot;__&quot;,&quot;_&quot;).replace(&quot;_&quot;,&quot;\\\_&quot;)</span>
-
             <span class="n">kw_expansion_ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__p_generic_kw_expansion</span><span class="p">(</span><span class="n">command_line</span><span class="p">,</span><span class="n">dataset_fname</span><span class="p">,</span><span class="n">kw_reserved</span><span class="p">,</span><span class="n">kw</span><span class="p">)</span>            
-                
-            <span class="c1"># if &quot; t &quot; not in command_line \</span>
-            <span class="c1">#    and &quot; t\&quot;&quot; not in command_line\</span>
-            <span class="c1">#    and &quot; title &quot; not in command_line\</span>
-            <span class="c1">#    and &quot; title\&quot;&quot; not in command_line\</span>
-            <span class="c1">#    and title_guess is not None:</span>
-
-            <span class="c1">#     command_line =  command_line + &quot; &quot; + &quot;&quot;&quot;title &quot;{TITLE}&quot; &quot;&quot;&quot;.format(TITLE = title_guess)</span>
-            <span class="c1">#     if self.verbose and not user_defined_title:</span>
-            <span class="c1">#         print(&#39;Warning: a title will be appended to avoid latex compilation problems&#39;)</span>
-            <span class="c1">#         print(&#39;the final command reads:&#39;)</span>
-            <span class="c1">#         print(command_line)</span>
 
             <span class="n">command_line</span> <span class="o">=</span> <span class="n">kw_expansion_ret</span><span class="p">[</span><span class="s1">&#39;command_line&#39;</span><span class="p">]</span>
 
@@ -952,10 +903,10 @@
         <span class="k">return</span> <span class="n">to_append</span></div>
     
         
-<div class="viewcode-block" id="AutoGnuplotFigure.plot"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_line</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Proxies p_generic</span>
+<div class="viewcode-block" id="AutoGnuplotFigure.p_generic"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.p_generic">[docs]</a>    <span class="k">def</span> <span class="nf">p_generic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_line</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxies plot for backwards compatibility</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_generic</span><span class="p">(</span><span class="n">command_line</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">command_line</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
         
 
     
