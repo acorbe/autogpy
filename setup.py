@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setup(name='autogpy',
       description = "autogpy: AutoGnuplot.py - automatic generation of gnuplot figures (including script and data) from python",
-      version='0.2',
+      version='0.2.1',
       author='Alessandro Corbetta',
       author_email='a.corbetta@tue.nl',
       url='https://github.com/acorbe/autogpy',
