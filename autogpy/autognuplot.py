@@ -717,23 +717,35 @@ class AutoGnuplotFigure(object):
 
         
     
-    def p_generic(self, command_line, *args, **kw):
+    def plot(self, command_line_or_data, *args, **kw):
         """Central plotting primitive.
                 
         Arguments
         ----------
-        command_line: string
-             gnuplot command, without the explicit call to plot and the filename of the content
+        command_line_or_data: string, list or np.array
+             gnuplot command, without the explicit call to plot and the filename of the content.
+             Alternatively, can be a list or np.array containing data (see *args)
         *args: lists or np.array, optional
              columns with the data, one or more columns can contain strings (e.g. for labels). In this case 'allow_strings' must be True.
         fname_specs: string, optional
              ("") allows to specify a filename for the data different for the default one.
         autoescape: bool, optional
-             (as set in by the constructor) allows to selectively modify the class setting for autoescaping
+             (as set in by the constructor) allows to selectively modify the class setting for autoescaping.
         allow_strings: bool, optional
-             (False) set to True to allows columns with strings. This requires pandas. Might become True by default in the future.             
+             (False) set to True to allows columns with strings. This requires pandas. Might become True by default in the future.
+        column_names: list of strings, optional
+             (None) set the names of the columns. Considered only if `allow_strings=True`.
+        for_: string, optional
+             (None) allows to use the `for` gnuplot keyword.
+        label: string, optional
+             (None) proxies the gnuplot `title` keyword.
+        **generic_gnuplot_command: kw and value, optional
+             ({}) allows to pass any gnuplot argument ex `ls`, `linewidth`, etc.
 
         """
+        # aliasing the variable, the rest of the code considers the old naming
+        command_line = command_line_or_data
+        
         fname_specs = kw.get("fname_specs","")
         autoescape = kw.get("autoescape",self._autoescape)
         allow_strings = kw.get("allow_strings",self._allow_strings)
@@ -836,68 +848,7 @@ class AutoGnuplotFigure(object):
                     print('[%s] Warning: "{DS_FNAME}" will be prepended to your string' % command_line)
                 command_line = for_prepend + ' "{DS_FNAME}"' + " " + command_line
 
-            ### title assessment part
-            # 1. checks if it is in command line else
-            #   2. if label is provided  (as matplotlib) keeps else
-            #      3. if creates it from filename
-
-
-            ### command forwarding part
-            ## the negative logic has less exceptions
-            # kw_forward = ["ls", "ps", "lw","w"]
-            # for k,v in kw.items():
-            #     if k in kw_forward:
-            #         command_line = command_line + " " + k + " " + str(kw[k])
-
-            # for k,v in kw.items():
-            #     if not k in kw_reserved:
-            #         if k.startswith('s__') \
-            #            or k.endswith('__s'):
-            #            # or k.startswith('str__') \
-            #            # or k.startswith('__str') \
-            #            # or k.startswith('S__') \
-            #            # or k.endswith('__S'):
-                        
-            #             needs_string = True
-            #             # maybe it was not a string, but we asked for a string.
-            #             v = str(v)
-            #             k = k.replace('s__','').replace('__s','')
-            #         else:
-            #             needs_string = False
-
-            #         command_line = command_line + " " \
-            #             + k + " "\
-            #             + self.__autoescape_if_string(v, add_quotes_if_necessary = needs_string)
-                    
-            
-
-            # ## needs to go after the blind adding to the command line,
-            # ## as this one only highjacks the title
-            # user_defined_title = False
-            # if 'label' in kw:
-            #     user_defined_title = True
-            #     if isinstance(kw['label'],str):                    
-            #         title_guess = self.__autoescape_strings(kw['label'])
-            #     else:
-            #         title_guess = str(kw['label'])
-                    
-            # else:
-            #     ## two underscores reads bad, we just put one.
-            #     title_guess = dataset_fname.split('/')[-1].replace("__","_").replace("_","\\\_")
-
             kw_expansion_ret = self.__p_generic_kw_expansion(command_line,dataset_fname,kw_reserved,kw)            
-                
-            # if " t " not in command_line \
-            #    and " t\"" not in command_line\
-            #    and " title " not in command_line\
-            #    and " title\"" not in command_line\
-            #    and title_guess is not None:
-
-            #     command_line =  command_line + " " + """title "{TITLE}" """.format(TITLE = title_guess)
-            #     if self.verbose and not user_defined_title:
-            #         print('Warning: a title will be appended to avoid latex compilation problems')
-            #         print('the final command reads:')
-            #         print(command_line)
 
             command_line = kw_expansion_ret['command_line']
 
@@ -918,10 +869,10 @@ class AutoGnuplotFigure(object):
         return to_append
     
         
-    def plot(self, command_line, *args, **kw):
-        """Proxies p_generic
+    def p_generic(self, command_line, *args, **kw):
+        """Proxies plot for backwards compatibility
         """
-        return self.p_generic(command_line,*args,**kw)
+        return self.plot(command_line,*args,**kw)
         
 
     
