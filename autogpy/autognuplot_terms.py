@@ -28,6 +28,7 @@ tikz:  $(tikz_targets_pdf)
 clean:
 {TAB}rm -f *.pdf *.jpg
 {TAB}rm -Rf fig.latex.nice
+{TAB}rm -Rf fig.tikz.nice
 
 deepclean:
 {TAB}rm -rf *
@@ -80,6 +81,7 @@ rm *.aux || true
 rm *.dvi || true
 rm *.log || true
 rm *.ps || true
+rm -Rf fig.latex.nice || true
 """
 
 LATEX_wrapper_file=\
@@ -96,17 +98,17 @@ TIKZ_wrapper_file=\
 """
 set terminal tikz size {x_size},{y_size} color colortext standalone \
      '{font}'  linewidth {linewidth} {other}
-set output 'fig.latex.nice/tikz_out.tex'
+set output 'fig.tikz.nice/tikz_out.tex'
 
 load "{CORE}"; 
 """
 
 TIKZ_compile_sh_template =\
 """
-mkdir -p fig.latex.nice
+mkdir -p fig.tikz.nice
 gnuplot {TIKZ_TARGET_GNU} || exit 1
 
-pdflatex fig.latex.nice/tikz_out.tex
+pdflatex fig.tikz.nice/tikz_out.tex
 
 mv tikz_out.pdf {FINAL_PDF_NAME}
 
@@ -135,6 +137,7 @@ fi
 
 rm *.aux || true
 rm *.log || true
+rm -Rf fig.tikz.nice || true
 """
 
 
@@ -155,6 +158,7 @@ GITIGNORE_wrapper_file=\
 *~
 *.tex
 **/fig.latex.nice/**
+**/fig.tikz.nice/**
 *converted*
 plot_out.eps
 """
