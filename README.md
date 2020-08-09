@@ -49,11 +49,6 @@ git clone git@github.com:acorbe/autogpy.git
 pip install autogpy/
 ```
 
-**KWONW ISSUES**
-+ Certain features require imagemagick and a working `gnuplot-tikz.lua`. Some versions of these might have bugs. Do `figure.display_fixes()` to show known fixes.
-
-
-
 ## In a nutshell
 
 Please see also the [examples](https://github.com/acorbe/autogpy/tree/master/examples) and the [documentation](https://acorbe.github.io/autogpy/).
@@ -115,4 +110,6 @@ p "fig__0__.dat" with lines t "sin",\
 
 ```
 
+**KWONW ISSUES**
++ Certain features require imagemagick and a working `gnuplot-tikz.lua`. Some versions of these might have bugs. Call `figure.display_fixes()` to show known fixes.
 
