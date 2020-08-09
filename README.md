@@ -77,7 +77,7 @@ with autogpy.AutogpyFigure("test_figure") as figure:
 	figure.plot(r'with lines t "sin"',xx,yy)
 	
 	# python style
-	figure.plot(xx,zz, u = '1:2', w='lines', label = 'cos')
+	figure.plot(xx,zz,u = '1:2',w='lines',label = 'cos')
 
 ```
 
