@@ -21,20 +21,33 @@
 In the scientific community, [gnuplot](http://www.gnuplot.info/) is a gold standard for publication-quality plots. While python comes with several options for plotting, often gnuplot is preferred in production.
 
 
-### Features
+### Main features
 + anything that be obtained by the gnuplot command `plot` can be produced
++ output figures are shipped in a folder that includes scripts, data and makefile
 + any gnuplot state modification can be achieved
++ terminals epslatex, tikz/pgfplot and jpg
 + multiplots
 + `plt.hist`-like gnuplot histogram figures generator
 + jupyter notebook figure preview
 + jupyter notebook gnuplot script inspection
-+ gnuplot terminals epslatex, tikz/pgfplot and jpg
-+ output figures are shipped in a folder that includes scripts, data and makefile
 + easy scp-based synchronization between a machine in which the figures are generated (e.g. from even larger datasets) and the "paper writing" machine.
 
 **Works on**
 + Linux/MacOs
 + Python 3
+
+### Getting autogpy
+
+Via `pip`
+```bash
+pip install autogpy
+
+```
+From source
+```bash
+git clone git@github.com:acorbe/autogpy.git
+pip install autogpy/
+```
 
 **KWONW ISSUES**
 + Certain features require imagemagick and a working `gnuplot-tikz.lua`. Some versions of these might have bugs. Do `figure.display_fixes()` to show known fixes.
@@ -42,24 +55,6 @@ In the scientific community, [gnuplot](http://www.gnuplot.info/) is a gold stand
 
 
 ## In a nutshell
-
-### Getting autogpy
-
-From `pip`
-
-```bash
-pip install autogpy
-
-```
-
-From source
-
-```bash
-git clone git@github.com:acorbe/autogpy.git
-pip install autogpy/
-```
-
-### Usage 
 
 Please see also the [examples](https://github.com/acorbe/autogpy/tree/master/examples) and the [documentation](https://acorbe.github.io/autogpy/).
 
@@ -78,7 +73,6 @@ with autogpy.AutogpyFigure("test_figure") as figure:
 	
 	# python style
 	figure.plot(xx,zz,u = '1:2',w='lines',label = 'cos')
-
 ```
 
 will generate the following figure (also appearing in jupyter)
