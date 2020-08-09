@@ -61,7 +61,7 @@ pip install autogpy/
 
 ### Usage 
 
-Please see also the (examples)[https://github.com/acorbe/autogpy/tree/master/examples] and the (documentation)[https://acorbe.github.io/autogpy/].
+Please see also the [examples](https://github.com/acorbe/autogpy/tree/master/examples) and the [documentation](https://acorbe.github.io/autogpy/).
 
 ```python
 import autogpy
@@ -70,7 +70,6 @@ import numpy as np
 xx = np.linspace(0,6,100)
 yy = np.sin(xx)
 zz = np.cos(xx)
-
 
 with autogpy.AutogpyFigure("test_figure") as figure: 
 
@@ -81,7 +80,6 @@ with autogpy.AutogpyFigure("test_figure") as figure:
 	figure.plot(xx,zz, u = '1:2', w='lines', label = 'cos')
 
 ```
-
 
 will generate the following figure (also appearing in jupyter)
 
