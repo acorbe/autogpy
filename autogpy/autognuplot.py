@@ -735,7 +735,7 @@ class AutoGnuplotFigure(object):
              (False) set to True to allows columns with strings. This requires pandas. Might become True by default in the future.
         column_names: list of strings, optional
              (None) set the names of the columns. Considered only if `allow_strings=True`.
-        for_: string, optional
+        `for_`: string, optional
              (None) allows to use the `for` gnuplot keyword.
         label: string, optional
              (None) proxies the gnuplot `title` keyword.
@@ -875,7 +875,7 @@ class AutoGnuplotFigure(object):
     
         
     def p_generic(self, command_line, *args, **kw):
-        """Proxies plot for backwards compatibility
+        """Proxies plot for backwards compatibility.
         """
         return self.plot(command_line,*args,**kw)
 
