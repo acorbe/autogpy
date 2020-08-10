@@ -72,9 +72,10 @@
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">AutoGnuplotFigure</span><span class="p">(</span><span class="s1">&#39;folder&#39;</span><span class="p">,</span><span class="s1">&#39;id&#39;</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Usage case: no context manager, gnuplot syntax.</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">AutoGnuplotFigure</span><span class="p">(</span><span class="s1">&#39;folder&#39;</span><span class="p">,</span><span class="s1">&#39;id&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># for some existing arrays x,y</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">p_generic</span><span class="p">(</span><span class="s1">&#39;u 1 : 2 t &quot;my title&quot; &#39;</span><span class="p">,</span> <span class="n">x</span> <span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="s1">&#39;u 1 : 2 t &quot;my title&quot; &#39;</span><span class="p">,</span> <span class="n">x</span> <span class="p">,</span><span class="n">y</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">generate_gnuplot_file</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># only jupyter</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="o">.</span><span class="n">jupyter_show_pdflatex</span><span class="p">(</span><span class="n">show_stdout</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -92,6 +93,21 @@
 <span class="gp">&gt;&gt;&gt; </span><span class="p">}</span>
 </pre></div>
 </div>
+<dl class="py method">
+<dt id="autogpy.AutoGnuplotFigure.add_variable_declaration">
+<code class="sig-name descname">add_variable_declaration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">is_string</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.add_variable_declaration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.add_variable_declaration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add functions and variables declaration in the script preamble.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>string</em>) – Variable or function name. In case of a function needs to read like <cite>“f(x)”</cite></p></li>
+<li><p><strong>value</strong> (<em>value</em><em> or </em><em>string</em>) – </p></li>
+<li><p><strong>is_string</strong> (<em>bool</em><em>, </em><em>optional</em>) – (False) If <cite>True</cite> wraps value in double-quote signs.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt id="autogpy.AutoGnuplotFigure.add_xy_dataset">
 <code class="sig-name descname">add_xy_dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">gnuplot_opt</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">fname_specs</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.add_xy_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.add_xy_dataset" title="Permalink to this definition">¶</a></dt>

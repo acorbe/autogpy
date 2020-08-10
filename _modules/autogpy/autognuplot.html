@@ -76,9 +76,10 @@
 <span class="sd">        Examples</span>
 <span class="sd">        ----------------</span>
 
+<span class="sd">        &gt;&gt;&gt; # Usage case: no context manager, gnuplot syntax.</span>
 <span class="sd">        &gt;&gt;&gt; fig = AutoGnuplotFigure(&#39;folder&#39;,&#39;id&#39;)</span>
 <span class="sd">        &gt;&gt;&gt; # for some existing arrays x,y</span>
-<span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,y) </span>
+<span class="sd">        &gt;&gt;&gt; fig.plot(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,y) </span>
 <span class="sd">        &gt;&gt;&gt; fig.generate_gnuplot_file() </span>
 <span class="sd">        &gt;&gt;&gt; # only jupyter</span>
 <span class="sd">        &gt;&gt;&gt; fig.jupyter_show_pdflatex(show_stdout=False) </span>
@@ -880,7 +881,6 @@
                     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">WARNING: You got this exception likely beacuse you have columns with strings.</span><span class="se">\n</span><span class="s2">&quot;</span>
                           <span class="s2">&quot;Please set &#39;allow_strings&#39; to True.&quot;</span><span class="p">)</span>
                     <span class="k">raise</span>
-                
 
             <span class="k">if</span> <span class="s1">&#39;&quot;</span><span class="si">{DS_FNAME}</span><span class="s1">&quot;&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">command_line</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
@@ -899,7 +899,6 @@
                  <span class="c1">#, &#39;prepended_parameters&#39; : prepend_parameters</span>
                 <span class="p">}</span>
 
-
             <span class="bp">self</span><span class="o">.</span><span class="n">__append_to_multiplot_current_dataset</span><span class="p">(</span>
                 <span class="n">to_append</span>
             <span class="p">)</span>
@@ -914,8 +913,20 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">command_line</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
 
     
-    <span class="k">def</span> <span class="nf">add_variable_declaration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">,</span><span class="n">is_string</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span><span class="o">%</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">if</span> <span class="n">is_string</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+<div class="viewcode-block" id="AutoGnuplotFigure.add_variable_declaration"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.add_variable_declaration">[docs]</a>    <span class="k">def</span> <span class="nf">add_variable_declaration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">,</span><span class="n">is_string</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add functions and variables declaration in the script preamble.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ------------------------</span>
+<span class="sd">        name: string</span>
+<span class="sd">            Variable or function name. In case of a function needs to read like `&quot;f(x)&quot;`</span>
+<span class="sd">        value: value or string</span>
+
+<span class="sd">        is_string: bool, optional</span>
+<span class="sd">            (False) If `True` wraps value in double-quote signs. </span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span><span class="o">%</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">if</span> <span class="n">is_string</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
         
 
     <span class="k">def</span> <span class="nf">__render_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
