@@ -6,8 +6,8 @@ with open("README.md", "r") as fh:
         long_description = fh.read()
 
 setup(name='autogpy',
-      description = "autogpy: AutoGnuplot.py - automatic generation of gnuplot figures (including script and data) from python",
-      version='0.2.1',
+      description = "autogpy: AutoGnuplot.py - automatic generation of gnuplot figures from python, including scripts and data.",
+      version='0.2.2',
       author='Alessandro Corbetta',
       author_email='a.corbetta@tue.nl',
       url='https://github.com/acorbe/autogpy',

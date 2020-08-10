@@ -62,13 +62,14 @@ then
     pdftoppm -png {FINAL_PDF_NAME} > {FINAL_PDF_NAME_jpg_convert}
 
 else
-## this step converts in jpg for displaying the image in jupyter
+## this step converts in png for displaying the image in jupyter
 if convert -density {pdflatex_jpg_convert_density} {FINAL_PDF_NAME} -quality {pdflatex_jpg_convert_quality} {FINAL_PDF_NAME_jpg_convert} 
 then
   echo "conversion successful"
 else
   echo ""
   echo "-ERROR: The convert command gave an error."
+  echo "        This means that pdftoppm also gave an error or it is not installed."
   echo "-FIXES: Make sure imagemagick is installed"
   echo "        Make sure imagemagick enables offline conversions:"
   echo "          sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml   "
@@ -125,6 +126,7 @@ then
 else
   echo ""
   echo "-ERROR: The convert command gave an error."
+  echo "        This means that pdftoppm also gave an error or it is not installed."
   echo "-FIXES: Make sure imagemagick is installed"
   echo "        Make sure imagemagick enables offline conversions:"
   echo "          sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml   "

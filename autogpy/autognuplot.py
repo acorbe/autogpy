@@ -750,16 +750,28 @@ class AutoGnuplotFigure(object):
         autoescape = kw.get("autoescape",self._autoescape)
         allow_strings = kw.get("allow_strings",self._allow_strings)
         column_names = kw.get("column_names",None)
-        for_enabled = kw.get("for_",None)
+        for_enabled = kw.get("for_",None)        
         if for_enabled is not None:
             allow_strings = False
             for_prepend = "for " + for_enabled
         else:
             for_prepend = ""
 
+
+        ## auto-wrapping the title with a string allowing to use t, ti, tit, titl, title kws.
+        title_kw = 'title'
+        title_kw_provided = False
+        for idx in range(len(title_kw)):
+            title_kw_attempt = kw.get(title_kw[0:idx+1],False)
+            if title_kw_attempt is not False:
+                title_kw_provided = True
+                kw['label'] = title_kw_attempt
+                break
+
         ## the following keywords are not blindly appended to the command line
         kw_reserved = ["fname_specs", "autoescape", "allow_strings"
-                       , "column_names", "for_", "label"]
+                       , "column_names", "for_", "label"
+                       , "t", "ti", "tit", "titl", "title"]
 
 
         ### allowing to plot even without the command_line arg
@@ -770,17 +782,11 @@ class AutoGnuplotFigure(object):
             args = command_line,*args            
             command_line = ''
 
-        
-
         if autoescape:
             command_line = self.__autoescape_strings(command_line)
 
             if self.verbose:
                 print("autoescaping -- processing:", command_line)
-        
-        #prepend_parameters = kw.get("prepend_parameters",[""])
-        #fname_specs = ""
-
 
         if len(args) == 0: #case an explicit function is plotted:
             dataset_fname = None
@@ -827,7 +833,6 @@ class AutoGnuplotFigure(object):
                     print(xyzt)
 
                 ##########
-
             else:
                 # numpy way
                 try:
@@ -873,13 +878,12 @@ class AutoGnuplotFigure(object):
         """Proxies plot for backwards compatibility
         """
         return self.plot(command_line,*args,**kw)
-        
 
     
     def add_variable_declaration(self,name,value,is_string = False):
-        self.variables[name] = "'%s'"%str(value) if is_string else str(value)
+        self.variables[name] = '"%s"'%str(value) if is_string else str(value)
         
-        #self.global_plotting_parameters.append(  "{NAME}={VALUE}".format(NAME = name, VALUE = "'%s'"%str(value) if is_string else str(value) ) )
+
     def __render_variables(self):
 
         return "\n".join(
@@ -905,22 +909,12 @@ class AutoGnuplotFigure(object):
             calls.append(alterations_t + plt_call)
             mp_count += 1
 
-        return "\n\n".join(calls)
+        return "\n".join(calls)
 
     def __generate_gnuplot_file_content(self):
         redended_variables = self.__render_variables()
-        parameters_string = "\n".join(self.global_plotting_parameters) + "\n\n"
-        
+        parameters_string = "\n".join(self.global_plotting_parameters) + "\n\n"        
 
-        
-
-        # plotting_string =  "p {ST}".format(ST = ",\\\n".join(
-        #     map(
-        #         lambda x : x[ 'gnuplot_command_template' ].format( DS_FNAME = x[ 'dataset_fname' ] , OPTS =  x[ 'gnuplot_opt' ]  )
-        #         , self.datasets_to_plot
-        #     )
-        # )
-        # )
 
         plotting_string = self.__generate_gnuplot_plotting_calls()
 
@@ -934,8 +928,11 @@ class AutoGnuplotFigure(object):
         Parameters
         ----------------
         highlight: bool, optional
-             (False) Uses `pygaments` to color the gnuplot script
+             (True) Uses `pygaments` to color the gnuplot script. 
+        linenos: string, optional
+             ("inline") Parameter `linenos` forwarded to the `pygaments` `HtmlFormatter` object.  
         """
+        
         final_content = self.__generate_gnuplot_file_content()
         if highlight:
             from pygments import highlight
@@ -955,16 +952,12 @@ class AutoGnuplotFigure(object):
             
             display(HTML( html__ ) )
             #print(html__)
-        else:
-        
-            
-            print (final_content)
-
-        
+        else:            
+            print (final_content)        
     
 
     def generate_gnuplot_file(self):
-        """Generates the final gnuplot scripts without creating any figure. Inclides Makefiles
+        """Generates the final gnuplot scripts without creating any figure. Includes: `Makefile`, `.gitignore` and synchronization scripts.
         """
 
         final_content = self.__generate_gnuplot_file_content()
@@ -1033,6 +1026,7 @@ class AutoGnuplotFigure(object):
                     , pdflatex_jpg_convert_quality = self.pdflatex_jpg_convert_quality
                 )
             )
+        ## the tikz part is refactored into a dedicated function
         self.__generate_gnuplot_files_tikz()
         
 
@@ -1121,6 +1115,14 @@ class AutoGnuplotFigure(object):
 
     def jupyter_show(self                     
                      , show_stdout = False):
+        """Generates a figure via the jpg terminal and opens it in jupyter.
+        The more advanced `jupyter_show_pdflatex` and `jupyter_show_tikz` are advised. This call is left for debug.
+
+        Parameters
+        ----------------
+        show_stdout: bool, optional
+             (False) outputs `stdout` and `stderr` to screen.
+        """
         from subprocess import Popen as _Popen, PIPE as _PIPE, call as _call
 
         if self.verbose:
@@ -1177,14 +1179,12 @@ class AutoGnuplotFigure(object):
         solution: 
         in `/usr/share/gnuplot5/gnuplot/5.0/lua/gnuplot-tikz.lua`, replace:
 
-
         
         pgf.set_dashtype = function(dashtype)
         gp.write("\\gpsetdashtype{"..dashtype.."}\n")
         end
         
-
-
+        with
         
         pgf.set_dashtype = function(dashtype)
         gp.write("%\\gpsetdashtype{"..dashtype.."}\n")
@@ -1221,6 +1221,8 @@ class AutoGnuplotFigure(object):
         self.__scp_string_nofolder = "scp -r " + self.__ssh_string +"/*" + " ."
 
     def display_fixes(self):
+        """displays relevant fixes in case the `convert` call does not work or to solve a known gnuplot/luatex bug. 
+        """
         fixes_ =\
 """
 These are some fixes found for imagemagick and gnuplot tikz terminal
@@ -1274,8 +1276,7 @@ end
                 )
             ))
 
-        except:
-        
+        except:        
             print ("(folder local): ", self.folder_name)
             print ("(folder global): ", self.global_dir_whole_path)
             print ("(ssh): " + self.__ssh_string  )
