@@ -784,16 +784,28 @@
         <span class="n">autoescape</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;autoescape&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_autoescape</span><span class="p">)</span>
         <span class="n">allow_strings</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;allow_strings&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_allow_strings</span><span class="p">)</span>
         <span class="n">column_names</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;column_names&quot;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
-        <span class="n">for_enabled</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;for_&quot;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">for_enabled</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;for_&quot;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>        
         <span class="k">if</span> <span class="n">for_enabled</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">allow_strings</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="n">for_prepend</span> <span class="o">=</span> <span class="s2">&quot;for &quot;</span> <span class="o">+</span> <span class="n">for_enabled</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">for_prepend</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
+
+        <span class="c1">## auto-wrapping the title with a string allowing to use t, ti, tit, titl, title kws.</span>
+        <span class="n">title_kw</span> <span class="o">=</span> <span class="s1">&#39;title&#39;</span>
+        <span class="n">title_kw_provided</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">title_kw</span><span class="p">)):</span>
+            <span class="n">title_kw_attempt</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">title_kw</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">title_kw_attempt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="n">title_kw_provided</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">title_kw_attempt</span>
+                <span class="k">break</span>
+
         <span class="c1">## the following keywords are not blindly appended to the command line</span>
         <span class="n">kw_reserved</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;fname_specs&quot;</span><span class="p">,</span> <span class="s2">&quot;autoescape&quot;</span><span class="p">,</span> <span class="s2">&quot;allow_strings&quot;</span>
-                       <span class="p">,</span> <span class="s2">&quot;column_names&quot;</span><span class="p">,</span> <span class="s2">&quot;for_&quot;</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">]</span>
+                       <span class="p">,</span> <span class="s2">&quot;column_names&quot;</span><span class="p">,</span> <span class="s2">&quot;for_&quot;</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span>
+                       <span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">,</span> <span class="s2">&quot;ti&quot;</span><span class="p">,</span> <span class="s2">&quot;tit&quot;</span><span class="p">,</span> <span class="s2">&quot;titl&quot;</span><span class="p">,</span> <span class="s2">&quot;title&quot;</span><span class="p">]</span>
 
 
         <span class="c1">### allowing to plot even without the command_line arg</span>
@@ -804,17 +816,11 @@
             <span class="n">args</span> <span class="o">=</span> <span class="n">command_line</span><span class="p">,</span><span class="o">*</span><span class="n">args</span>            
             <span class="n">command_line</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
-        
-
         <span class="k">if</span> <span class="n">autoescape</span><span class="p">:</span>
             <span class="n">command_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__autoescape_strings</span><span class="p">(</span><span class="n">command_line</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;autoescaping -- processing:&quot;</span><span class="p">,</span> <span class="n">command_line</span><span class="p">)</span>
-        
-        <span class="c1">#prepend_parameters = kw.get(&quot;prepend_parameters&quot;,[&quot;&quot;])</span>
-        <span class="c1">#fname_specs = &quot;&quot;</span>
-
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1">#case an explicit function is plotted:</span>
             <span class="n">dataset_fname</span> <span class="o">=</span> <span class="kc">None</span>
@@ -861,7 +867,6 @@
                     <span class="nb">print</span><span class="p">(</span><span class="n">xyzt</span><span class="p">)</span>
 
                 <span class="c1">##########</span>
-
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># numpy way</span>
                 <span class="k">try</span><span class="p">:</span>
@@ -907,13 +912,12 @@
         <span class="sd">&quot;&quot;&quot;Proxies plot for backwards compatibility</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">command_line</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
-        
 
     
     <span class="k">def</span> <span class="nf">add_variable_declaration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">value</span><span class="p">,</span><span class="n">is_string</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span><span class="o">%</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">if</span> <span class="n">is_string</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span><span class="o">%</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">if</span> <span class="n">is_string</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         
-        <span class="c1">#self.global_plotting_parameters.append(  &quot;{NAME}={VALUE}&quot;.format(NAME = name, VALUE = &quot;&#39;%s&#39;&quot;%str(value) if is_string else str(value) ) )</span>
+
     <span class="k">def</span> <span class="nf">__render_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
@@ -939,22 +943,12 @@
             <span class="n">calls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">alterations_t</span> <span class="o">+</span> <span class="n">plt_call</span><span class="p">)</span>
             <span class="n">mp_count</span> <span class="o">+=</span> <span class="mi">1</span>
 
-        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">calls</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">calls</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__generate_gnuplot_file_content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">redended_variables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__render_variables</span><span class="p">()</span>
-        <span class="n">parameters_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_plotting_parameters</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
-        
+        <span class="n">parameters_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_plotting_parameters</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>        
 
-        
-
-        <span class="c1"># plotting_string =  &quot;p {ST}&quot;.format(ST = &quot;,\\\n&quot;.join(</span>
-        <span class="c1">#     map(</span>
-        <span class="c1">#         lambda x : x[ &#39;gnuplot_command_template&#39; ].format( DS_FNAME = x[ &#39;dataset_fname&#39; ] , OPTS =  x[ &#39;gnuplot_opt&#39; ]  )</span>
-        <span class="c1">#         , self.datasets_to_plot</span>
-        <span class="c1">#     )</span>
-        <span class="c1"># )</span>
-        <span class="c1"># )</span>
 
         <span class="n">plotting_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__generate_gnuplot_plotting_calls</span><span class="p">()</span>
 
@@ -968,8 +962,11 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------------</span>
 <span class="sd">        highlight: bool, optional</span>
-<span class="sd">             (False) Uses `pygaments` to color the gnuplot script</span>
+<span class="sd">             (True) Uses `pygaments` to color the gnuplot script. </span>
+<span class="sd">        linenos: string, optional</span>
+<span class="sd">             (&quot;inline&quot;) Parameter `linenos` forwarded to the `pygaments` `HtmlFormatter` object.  </span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        
         <span class="n">final_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__generate_gnuplot_file_content</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">highlight</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">pygments</span> <span class="kn">import</span> <span class="n">highlight</span>
@@ -989,16 +986,12 @@
             
             <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span> <span class="n">html__</span> <span class="p">)</span> <span class="p">)</span>
             <span class="c1">#print(html__)</span>
-        <span class="k">else</span><span class="p">:</span>
-        
-            
-            <span class="nb">print</span> <span class="p">(</span><span class="n">final_content</span><span class="p">)</span></div>
-
-        
+        <span class="k">else</span><span class="p">:</span>            
+            <span class="nb">print</span> <span class="p">(</span><span class="n">final_content</span><span class="p">)</span>        </div>
     
 
 <div class="viewcode-block" id="AutoGnuplotFigure.generate_gnuplot_file"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.generate_gnuplot_file">[docs]</a>    <span class="k">def</span> <span class="nf">generate_gnuplot_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Generates the final gnuplot scripts without creating any figure. Inclides Makefiles</span>
+        <span class="sd">&quot;&quot;&quot;Generates the final gnuplot scripts without creating any figure. Includes: `Makefile`, `.gitignore` and synchronization scripts.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">final_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__generate_gnuplot_file_content</span><span class="p">()</span>
@@ -1067,6 +1060,7 @@
                     <span class="p">,</span> <span class="n">pdflatex_jpg_convert_quality</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_jpg_convert_quality</span>
                 <span class="p">)</span>
             <span class="p">)</span>
+        <span class="c1">## the tikz part is refactored into a dedicated function</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__generate_gnuplot_files_tikz</span><span class="p">()</span></div>
         
 
@@ -1153,8 +1147,16 @@
 
     
 
-    <span class="k">def</span> <span class="nf">jupyter_show</span><span class="p">(</span><span class="bp">self</span>                     
+<div class="viewcode-block" id="AutoGnuplotFigure.jupyter_show"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.jupyter_show">[docs]</a>    <span class="k">def</span> <span class="nf">jupyter_show</span><span class="p">(</span><span class="bp">self</span>                     
                      <span class="p">,</span> <span class="n">show_stdout</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generates a figure via the jpg terminal and opens it in jupyter.</span>
+<span class="sd">        The more advanced `jupyter_show_pdflatex` and `jupyter_show_tikz` are advised. This call is left for debug.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------------</span>
+<span class="sd">        show_stdout: bool, optional</span>
+<span class="sd">             (False) outputs `stdout` and `stderr` to screen.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">Popen</span> <span class="k">as</span> <span class="n">_Popen</span><span class="p">,</span> <span class="n">PIPE</span> <span class="k">as</span> <span class="n">_PIPE</span><span class="p">,</span> <span class="n">call</span> <span class="k">as</span> <span class="n">_call</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
@@ -1171,7 +1173,7 @@
 
 
         <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
-        <span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__jpg_output</span>  <span class="p">))</span>
+        <span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">__jpg_output</span>  <span class="p">))</span></div>
 
 <div class="viewcode-block" id="AutoGnuplotFigure.jupyter_show_pdflatex"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.jupyter_show_pdflatex">[docs]</a>    <span class="k">def</span> <span class="nf">jupyter_show_pdflatex</span><span class="p">(</span><span class="bp">self</span>
                               <span class="p">,</span> <span class="n">show_stdout</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1211,14 +1213,12 @@
 <span class="sd">        solution: </span>
 <span class="sd">        in `/usr/share/gnuplot5/gnuplot/5.0/lua/gnuplot-tikz.lua`, replace:</span>
 
-
 <span class="sd">        </span>
 <span class="sd">        pgf.set_dashtype = function(dashtype)</span>
 <span class="sd">        gp.write(&quot;\\gpsetdashtype{&quot;..dashtype..&quot;}\n&quot;)</span>
 <span class="sd">        end</span>
 <span class="sd">        </span>
-
-
+<span class="sd">        with</span>
 <span class="sd">        </span>
 <span class="sd">        pgf.set_dashtype = function(dashtype)</span>
 <span class="sd">        gp.write(&quot;%\\gpsetdashtype{&quot;..dashtype..&quot;}\n&quot;)</span>
@@ -1254,7 +1254,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__scp_string</span> <span class="o">=</span> <span class="s2">&quot;scp -r &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ssh_string</span> <span class="o">+</span> <span class="s2">&quot; .&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__scp_string_nofolder</span> <span class="o">=</span> <span class="s2">&quot;scp -r &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ssh_string</span> <span class="o">+</span><span class="s2">&quot;/*&quot;</span> <span class="o">+</span> <span class="s2">&quot; .&quot;</span>
 
-    <span class="k">def</span> <span class="nf">display_fixes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AutoGnuplotFigure.display_fixes"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.display_fixes">[docs]</a>    <span class="k">def</span> <span class="nf">display_fixes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;displays relevant fixes in case the `convert` call does not work or to solve a known gnuplot/luatex bug. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">fixes_</span> <span class="o">=</span>\
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">These are some fixes found for imagemagick and gnuplot tikz terminal</span>
@@ -1282,7 +1284,7 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
         <span class="nb">print</span> <span class="p">(</span><span class="n">fixes_</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">fixes_</span>
+        <span class="k">return</span> <span class="n">fixes_</span></div>
 
         
     <span class="k">def</span> <span class="nf">get_folder_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1308,8 +1310,7 @@
                 <span class="p">)</span>
             <span class="p">))</span>
 
-        <span class="k">except</span><span class="p">:</span>
-        
+        <span class="k">except</span><span class="p">:</span>        
             <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;(folder local): &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span><span class="p">)</span>
             <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;(folder global): &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_dir_whole_path</span><span class="p">)</span>
             <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;(ssh): &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ssh_string</span>  <span class="p">)</span>
