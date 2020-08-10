@@ -42,9 +42,10 @@ class AutoGnuplotFigure(object):
         Examples
         ----------------
 
+        >>> # Usage case: no context manager, gnuplot syntax.
         >>> fig = AutoGnuplotFigure('folder','id')
         >>> # for some existing arrays x,y
-        >>> fig.p_generic('u 1 : 2 t "my title" ', x ,y) 
+        >>> fig.plot('u 1 : 2 t "my title" ', x ,y) 
         >>> fig.generate_gnuplot_file() 
         >>> # only jupyter
         >>> fig.jupyter_show_pdflatex(show_stdout=False) 
@@ -846,7 +847,6 @@ class AutoGnuplotFigure(object):
                     print("\nWARNING: You got this exception likely beacuse you have columns with strings.\n"
                           "Please set 'allow_strings' to True.")
                     raise
-                
 
             if '"{DS_FNAME}"' not in command_line:
                 if self.verbose:
@@ -865,7 +865,6 @@ class AutoGnuplotFigure(object):
                  #, 'prepended_parameters' : prepend_parameters
                 }
 
-
             self.__append_to_multiplot_current_dataset(
                 to_append
             )
@@ -881,6 +880,18 @@ class AutoGnuplotFigure(object):
 
     
     def add_variable_declaration(self,name,value,is_string = False):
+        """Add functions and variables declaration in the script preamble.
+
+        Parameters
+        ------------------------
+        name: string
+            Variable or function name. In case of a function needs to read like `"f(x)"`
+        value: value or string
+
+        is_string: bool, optional
+            (False) If `True` wraps value in double-quote signs. 
+        
+        """
         self.variables[name] = '"%s"'%str(value) if is_string else str(value)
         
 
