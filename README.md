@@ -3,7 +3,7 @@
 <h2>Automatic generation of gnuplot figures/scripts/data from python.</h2>
 
 
-**Author:** [Alessandro Corbetta](http://corbetta.phys.tue.nl/), 2019-2020__
+**Author:** [Alessandro Corbetta](http://corbetta.phys.tue.nl/), 2019-2020 __
 **Documentation:** https://acorbe.github.io/autogpy/  
 **Examples** [Link](https://github.com/acorbe/autogpy/tree/master/examples)  
 **Github** [Link](https://github.com/acorbe/autogpy) 
