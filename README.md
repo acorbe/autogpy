@@ -3,15 +3,13 @@
 <h2>Automatic generation of gnuplot figures/scripts/data from python.</h2>
 
 
-**Author:** [Alessandro Corbetta](http://corbetta.phys.tue.nl/), 2019  
+**Author:** [Alessandro Corbetta](http://corbetta.phys.tue.nl/), 2019-2020__
 **Documentation:** https://acorbe.github.io/autogpy/  
 **Examples** [Link](https://github.com/acorbe/autogpy/tree/master/examples)  
-**Github** [Link](https://github.com/acorbe/autogpy)  
-**Pypi** [Link](https://pypi.org/project/autogpy/)  
+**Github** [Link](https://github.com/acorbe/autogpy) ![PyPI](https://img.shields.io/pypi/v/autogpy)  
 
 
-
-[![build status](https://travis-ci.org/acorbe/autogpy.svg?branch=master)](https://travis-ci.org/github/acorbe/autogpy) [![Downloads](https://pepy.tech/badge/autogpy)](https://pepy.tech/project/autogpy)
+[![build status](https://travis-ci.org/acorbe/autogpy.svg?branch=master)](https://travis-ci.org/github/acorbe/autogpy) [![Downloads](https://pepy.tech/badge/autogpy)](https://pepy.tech/project/autogpy)![PyPI - Downloads](https://img.shields.io/pypi/dm/autogpy)
 
 
 ### Which problem does it solve?
