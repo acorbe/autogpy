@@ -1,4 +1,9 @@
-### makes it easy to pass data to gnuplot - plotting tools - dumps data and generates one elementary plotting script
+"""
+This file is part of autogpy.
+
+"""
+
+
 from __future__ import print_function
 
 import os
@@ -89,7 +94,6 @@ class AutoGnuplotFigure(object):
 
         """
         
-
         self.verbose = verbose
         
         self.folder_name = folder_name
@@ -99,7 +103,7 @@ class AutoGnuplotFigure(object):
         if not os.path.exists(self.folder_name):
             os.makedirs(self.folder_name)
             if self.verbose:
-                print( "created folder:", self.folder_name )
+                print("created folder:", self.folder_name)
 
         self.global_file_identifier = self.folder_name + '/' + self.file_identifier
         self.globalize_fname = lambda x : self.folder_name + '/' + x
@@ -265,7 +269,7 @@ class AutoGnuplotFigure(object):
     def set_parameters(self,*args,**kw):
         """Proxies extend_global_plotting_parameters
         """
-        return self.extend_global_plotting_parameters(*args,**kw)
+        return self.alter_current_multiplot_parameters(*args,**kw)
 
     def __enter__(self):
         return self
