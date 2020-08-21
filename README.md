@@ -14,7 +14,7 @@
 
 ### Which problem does it solve?
 
-`autogpy` eliminates annoying code and data duplications when doing data analytics in python and publication figures in [gnuplot](http://www.gnuplot.info/). Using a syntax close to gnuplot, `autogpy` automatically generates gnuplot scripts and dumps suitably the data.  
+`autogpy` eliminates annoying code and data duplications when employing python for data analysis and [gnuplot](http://www.gnuplot.info/) for publication figures. Providing a gnuplot-like or a matplotlib-like syntax, `autogpy` automatically generates gnuplot scripts and dumps suitably the data.  
 
 
 
