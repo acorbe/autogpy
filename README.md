@@ -14,14 +14,13 @@
 
 ### Which problem does it solve?
 
-`autogpy` eliminates annoying duplications of code/data when doing data analytics in python and publication figures in gnuplot. Using a syntax close to gnuplot, it automatically generates gnuplot scripts and dumps suitably the data.  
+`autogpy` eliminates annoying code and data duplications when doing data analytics in python and publication figures in [gnuplot](http://www.gnuplot.info/). Using a syntax close to gnuplot, `autogpy` automatically generates gnuplot scripts and dumps suitably the data.  
 
-In the scientific community, [gnuplot](http://www.gnuplot.info/) is a gold standard for publication-quality plots. While python comes with several options for plotting, often gnuplot is preferred in production.
 
 
 ### Main features
 + anything that be obtained by the gnuplot command `plot` can be produced
-+ output figures are shipped in a folder that includes scripts, data and makefile
++ output figures are shipped in a folder which includes scripts, data and makefile
 + any gnuplot state modification can be achieved
 + terminals epslatex, tikz/pgfplot and jpg
 + multiplots
@@ -61,19 +60,19 @@ zz = np.cos(xx)
 
 with autogpy.AutogpyFigure("test_figure") as figure: 
 
-	# gnuplot syntax case
+	# gnuplot-like syntax
 	figure.plot(r'with lines t "sin"',xx,yy)
 	
-	# python style
+	# matplotlib-like syntax
 	figure.plot(xx,zz,u='1:2',w='lines',label='cos')
 ```
 
-will generate the following figure (also appearing in jupyter)
+generates the following figure (also appearing in jupyter)
 
 <img src="https://github.com/acorbe/autogpy/raw/master/example_fig.jpeg" alt="example figure" width="500px" >
 
 
-**Most importantly**, the following source and data will be created in the folder `test_figure` 
+**Most importantly**, the following source and data are created in the folder `test_figure` 
 
 ```bash
 $ ls test_figure
@@ -91,8 +90,7 @@ fig__.tikz_compile.sh
 fig__.tikz.gnu
 ```
 
-With `make` one can obtain jpg, epslatex, and tikz/pgfplot versions of the figure.
-Notice that the input data has been formatted automatically.
+With `make` one can obtain jpg, epslatex, and tikz/pgfplot versions of the figure. Notice that the input data has been formatted automatically and dumped in the `.dat` files.
 
 Inspecting `fig__.pdflatex.gnu`, responsible of the epslatex version of the figure, one gets:
 ```gnuplot
