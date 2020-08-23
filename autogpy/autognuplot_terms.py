@@ -27,6 +27,8 @@ tikz:  $(tikz_targets_pdf)
 
 clean:
 {TAB}rm -f *.pdf *.jpg
+{TAB}rm -Rf fig.latex.nice
+{TAB}rm -Rf fig.tikz.nice
 
 deepclean:
 {TAB}rm -rf *
@@ -44,8 +46,8 @@ SYNC_sc_template =\
 
 LATEX_compile_sh_template =\
 """
-mkdir fig.latex.nice
-gnuplot {LATEX_TARGET_GNU}
+mkdir -p fig.latex.nice
+gnuplot {LATEX_TARGET_GNU} || exit 1
 
 latex fig.latex.nice/plot_out.tex
 dvips plot_out.dvi  -o plot_out.ps
@@ -53,12 +55,34 @@ ps2eps --ignoreBB -f plot_out.ps
 ps2pdf plot_out.ps
 
 mv plot_out.pdf {FINAL_PDF_NAME}
-convert -density {pdflatex_jpg_convert_density} {FINAL_PDF_NAME} -quality {pdflatex_jpg_convert_quality} {FINAL_PDF_NAME_jpg_convert} 
+
+if command -v pdftoppm &> /dev/null
+then
+
+    pdftoppm -png {FINAL_PDF_NAME} > {FINAL_PDF_NAME_jpg_convert}
+
+else
+## this step converts in png for displaying the image in jupyter
+if convert -density {pdflatex_jpg_convert_density} {FINAL_PDF_NAME} -quality {pdflatex_jpg_convert_quality} {FINAL_PDF_NAME_jpg_convert} 
+then
+  echo "conversion successful"
+else
+  echo ""
+  echo "-ERROR: The convert command gave an error."
+  echo "        This means that pdftoppm also gave an error or it is not installed."
+  echo "-FIXES: Make sure imagemagick is installed"
+  echo "        Make sure imagemagick enables offline conversions:"
+  echo "          sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml   "
+  echo "        Ref:   https://stackoverflow.com/a/52661288"
+  echo ""
+fi
+fi
 
 rm *.aux || true
 rm *.dvi || true
 rm *.log || true
 rm *.ps || true
+rm -Rf fig.latex.nice || true
 """
 
 LATEX_wrapper_file=\
@@ -75,26 +99,47 @@ TIKZ_wrapper_file=\
 """
 set terminal tikz size {x_size},{y_size} color colortext standalone \
      '{font}'  linewidth {linewidth} {other}
-set output 'fig.latex.nice/tikz_out.tex'
+set output 'fig.tikz.nice/tikz_out.tex'
 
 load "{CORE}"; 
 """
 
 TIKZ_compile_sh_template =\
 """
-mkdir fig.latex.nice
-gnuplot {TIKZ_TARGET_GNU}
+mkdir -p fig.tikz.nice
+gnuplot {TIKZ_TARGET_GNU} || exit 1
 
-pdflatex fig.latex.nice/tikz_out.tex
-# dvips plot_out.dvi  -o plot_out.ps
-# ps2eps --ignoreBB -f plot_out.ps
-# ps2pdf plot_out.ps
+pdflatex fig.tikz.nice/tikz_out.tex
 
 mv tikz_out.pdf {FINAL_PDF_NAME}
-convert -density {pdflatex_jpg_convert_density} {FINAL_PDF_NAME} -quality {pdflatex_jpg_convert_quality} {FINAL_PDF_NAME_jpg_convert} 
+
+## check if pdftoppm exists, usually gives better results
+if command -v pdftoppm &> /dev/null
+then
+
+    pdftoppm -png {FINAL_PDF_NAME} > {FINAL_PDF_NAME_jpg_convert}
+
+else
+if convert -density {pdflatex_jpg_convert_density} {FINAL_PDF_NAME} -quality {pdflatex_jpg_convert_quality} {FINAL_PDF_NAME_jpg_convert} 
+then
+  echo "conversion successful"
+else
+  echo ""
+  echo "-ERROR: The convert command gave an error."
+  echo "        This means that pdftoppm also gave an error or it is not installed."
+  echo "-FIXES: Make sure imagemagick is installed"
+  echo "        Make sure imagemagick enables offline conversions:"
+  echo "          sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml   "
+  echo "        Ref:   https://stackoverflow.com/a/52661288"
+  echo ""
+fi
+
+fi
+
 
 rm *.aux || true
 rm *.log || true
+rm -Rf fig.tikz.nice || true
 """
 
 
@@ -106,6 +151,19 @@ load "{CORE}";
          
 """
 
+GITIGNORE_wrapper_file=\
+"""
+*.aux
+*.dvi
+*.log
+*.ps
+*~
+*.tex
+**/fig.latex.nice/**
+**/fig.tikz.nice/**
+*converted*
+plot_out.eps
+"""
 
 
 

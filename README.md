@@ -3,28 +3,30 @@
 <h2>Automatic generation of gnuplot figures/scripts/data from python.</h2>
 
 
-**Author:** [Alessandro Corbetta](http://corbetta.phys.tue.nl/), 2019  
+**Author:** [Alessandro Corbetta](http://corbetta.phys.tue.nl/), 2019-2020   
 **Documentation:** https://acorbe.github.io/autogpy/  
+**Examples** [Link](https://github.com/acorbe/autogpy/tree/master/examples)  
+**Github** [Link](https://github.com/acorbe/autogpy) 
 
-![build status](https://travis-ci.org/acorbe/autogpy.svg?branch=master)
+
+[![PyPI](https://img.shields.io/pypi/v/autogpy)](https://pypi.org/project/autogpy/) [![build status](https://travis-ci.org/acorbe/autogpy.svg?branch=master)](https://travis-ci.org/github/acorbe/autogpy) [![Downloads](https://pepy.tech/badge/autogpy)](https://pepy.tech/project/autogpy)![PyPI - Downloads](https://img.shields.io/pypi/dm/autogpy)
 
 
 ### Which problem does it solve?
 
-`autogpy` eliminates annoying duplications of code/data when doing data analytics in python and publication figures in gnuplot. Using a syntax close to gnuplot, it automatically generates gnuplot scripts and dumps suitably the data.  
-
-In the scientific community, [gnuplot](http://www.gnuplot.info/) is a gold standard for publication-quality plots. Python is quickly becoming a tool of choice for data analytics. While it comes with several options for plotting, often gnuplot is preferred in production.
+`autogpy` eliminates annoying code and data duplications when employing python for data analysis and [gnuplot](http://www.gnuplot.info/) for publication figures. Providing a gnuplot-like or a matplotlib-like syntax, `autogpy` automatically generates gnuplot scripts and dumps suitably the data.  
 
 
-### Features
+
+### Main features
 + anything that be obtained by the gnuplot command `plot` can be produced
++ output figures are shipped in a folder which includes scripts, data and makefile
 + any gnuplot state modification can be achieved
++ terminals epslatex, tikz/pgfplot and jpg
 + multiplots
 + `plt.hist`-like gnuplot histogram figures generator
 + jupyter notebook figure preview
 + jupyter notebook gnuplot script inspection
-+ gnuplot terminals epslatex, tikz/pgfplot and jpg
-+ output figures are shipped in a folder that includes scripts, data and makefile
 + easy scp-based synchronization between a machine in which the figures are generated (e.g. from even larger datasets) and the "paper writing" machine.
 
 **Requirements**
@@ -35,30 +37,22 @@ In the scientific community, [gnuplot](http://www.gnuplot.info/) is a gold stand
 + `pdftoppm` or `imagemagick` to convert the output pdf figures in png for jupyter notebook embedding 
 
 
-**KWONW ISSUES**
-+ Certain features require imagemagick and a working `gnuplot-tikz.lua`. Some versions of these might have bugs. Do `figure.display_fixes()` to show known fixes.
-
-
-
-## In a nutshell
-
 ### Getting autogpy
 
-From `pip`
-
+Via `pip`
 ```bash
 pip install autogpy
 
 ```
-
 From source
-
 ```bash
 git clone git@github.com:acorbe/autogpy.git
-pip install ./autogpy
+pip install autogpy/
 ```
 
-### Usage
+## In a nutshell
+
+Please see also the [examples](https://github.com/acorbe/autogpy/tree/master/examples) and the [documentation](https://acorbe.github.io/autogpy/).
 
 ```python
 import autogpy
@@ -68,54 +62,54 @@ xx = np.linspace(0,6,100)
 yy = np.sin(xx)
 zz = np.cos(xx)
 
-figure = autogpy.AutogpyFigure("test_figure","test1")
+with autogpy.AutogpyFigure("test_figure") as figure: 
 
-figure.p_generic(r'u 1:2 with lines t "sin"',xx,yy)
-figure.p_generic(r'u 1:2 with lines t "cos"',xx,zz)
-figure.generate_gnuplot_file()
-
-figure.jupyter_show_pdflatex() # only in jupyter
-
+	# gnuplot-like syntax
+	figure.plot(r'with lines t "sin"',xx,yy)
+	
+	# matplotlib-like syntax
+	figure.plot(xx,zz,u='1:2',w='lines',label='cos')
 ```
 
-
-will generate the following figure (also appearing in jupyter)
+generates the following figure (also appearing in jupyter)
 
 <img src="https://github.com/acorbe/autogpy/raw/master/example_fig.jpeg" alt="example figure" width="500px" >
 
 
-**Most importantly**, the following source and data will be created in the folder `test_figure` 
+**Most importantly**, the following source and data are created in the folder `test_figure` 
 
 ```bash
 $ ls test_figure
 
+.gitignore
 Makefile
 sync_me.sh
-test1__0__.dat
-test1__1__.dat
-test1__.core.gnu
-test1__.jpg.gnu
-test1__.pdflatex_compile.sh
-test1__.pdflatex.gnu
-test1__.tikz_compile.sh
-test1__.tikz.gnu
+fig__0__.dat
+fig__1__.dat
+fig__.core.gnu
+fig__.jpg.gnu
+fig__.pdflatex_compile.sh
+fig__.pdflatex.gnu
+fig__.tikz_compile.sh
+fig__.tikz.gnu
 ```
 
-With `make` one can obtain jpg, epslatex, and tikz/pgfplot versions of the figure.
-Notice that the input data has been formatted automatically.
+With `make` one can obtain jpg, epslatex, and tikz/pgfplot versions of the figure. Notice that the input data has been formatted automatically and dumped in the `.dat` files.
 
-Inspecting `test1__.pdflatex.gnu`, responsible of the epslatex version of the figure, one gets:
+Inspecting `fig__.pdflatex.gnu`, responsible of the epslatex version of the figure, one gets:
 ```gnuplot
 set terminal epslatex size 9.9cm,8.cm color colortext standalone      'phv,12 '  linewidth 2
 set output 'fig.latex.nice/plot_out.tex'
 
-load "test1__.core.gnu"; 
+load "fig__.core.gnu"; 
 ```
-while `test1__.core.gnu` reads:
+while `fig__.core.gnu` reads:
 ```gnuplot
-p "test1__0__.dat" u 1:2 with lines t "sin",\
-"test1__1__.dat" u 1:2 with lines t "cos"
+p "fig__0__.dat" with lines t "sin",\
+"fig__1__.dat" u 1:2 with lines t "cos"
 
 ```
 
+**KWONW ISSUES**
++ Certain features require imagemagick and a working `gnuplot-tikz.lua`. Some versions of these might have bugs. Call `figure.display_fixes()` to show known fixes.
 
