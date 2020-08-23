@@ -27,9 +27,13 @@ In the scientific community, [gnuplot](http://www.gnuplot.info/) is a gold stand
 + output figures are shipped in a folder that includes scripts, data and makefile
 + easy scp-based synchronization between a machine in which the figures are generated (e.g. from even larger datasets) and the "paper writing" machine.
 
-**Works on**
-+ Linux/MacOs
+**Requirements**
++ Linux/MacOs (could work on Windows, yet it has not been adjusted for)
 + Python 3
++ Working latex distribution
++ Gnuplot, optionally with tikz terminal
++ `pdftoppm` or `imagemagick` to convert the output pdf figures in png for jupyter notebook embedding 
+
 
 **KWONW ISSUES**
 + Certain features require imagemagick and a working `gnuplot-tikz.lua`. Some versions of these might have bugs. Do `figure.display_fixes()` to show known fixes.
