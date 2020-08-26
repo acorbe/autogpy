@@ -2,8 +2,6 @@
 This file is part of autogpy.
 
 """
-
-
 from __future__ import print_function
 
 import os
@@ -462,7 +460,6 @@ class AutoGnuplotFigure(object):
         >>> fig.p_generic('u 1 : 2 t "my title" ', x ,z)        
         """
         
-        
         autoescape = kw.get("autoescape", self._autoescape)
         escaped_args = []
         if autoescape:
@@ -851,7 +848,7 @@ class AutoGnuplotFigure(object):
                     series = args[0]
                     args = series.index, series.values
                     if not title_kw_provided:
-                        kw['label'] = str(series.name).replace("_","")
+                        kw['label'] = str(series.name).replace("_"," ")
                         title_kw_provided = True
 
 
