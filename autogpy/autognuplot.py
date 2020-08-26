@@ -13,6 +13,14 @@ from collections import OrderedDict
 from . import autognuplot_terms
 from . import plot_helpers
 
+try:
+    import pandas as pd
+    import pandas
+    pandas_support_enabled = True
+    # print("pandas support enabled")
+except:
+    pandas_support_enabled = False
+
 
 class AutoGnuplotFigure(object):
     """Creates an AutoGnuplotFigure object which wraps one gnuplot figure.
@@ -773,7 +781,7 @@ class AutoGnuplotFigure(object):
                 
         Arguments
         ----------
-        command_line_or_data: string, list or np.array
+        command_line_or_data: string, list, `np.array` or `pd.Series`
              gnuplot command, without the explicit call to plot and the filename of the content.
              Alternatively, can be a list or np.array containing data (see *args)
         *args: lists or np.array, optional
@@ -810,14 +818,17 @@ class AutoGnuplotFigure(object):
 
 
         ## auto-wrapping the title with a string allowing to use t, ti, tit, titl, title kws.
+        # true if a title is provided for the plot, it any form
+        title_kw_provided = 'label' in kw
+
         title_kw = 'title'
-        title_kw_provided = False
-        for idx in range(len(title_kw)):
-            title_kw_attempt = kw.get(title_kw[0:idx+1],False)
-            if title_kw_attempt is not False:
-                title_kw_provided = True
-                kw['label'] = title_kw_attempt
-                break
+        if not title_kw_provided:
+            for idx in range(len(title_kw)):
+                title_kw_attempt = kw.get(title_kw[0:idx+1],False)
+                if title_kw_attempt is not False:
+                    title_kw_provided = True
+                    kw['label'] = title_kw_attempt
+                    break
 
         ## the following keywords are not blindly appended to the command line
         kw_reserved = ["fname_specs", "autoescape", "allow_strings"
@@ -832,6 +843,17 @@ class AutoGnuplotFigure(object):
 
             args = command_line,*args            
             command_line = ''
+
+        # autosupport for pandas series
+        if pandas_support_enabled:
+            if len(args) == 1: #pd.core.series.Series
+                if isinstance(args[0],pandas.core.series.Series):
+                    series = args[0]
+                    args = series.index, series.values
+                    if not title_kw_provided:
+                        kw['label'] = str(series.name).replace("_","")
+                        title_kw_provided = True
+
 
         if autoescape:
             command_line = self.__autoescape_strings(command_line)
