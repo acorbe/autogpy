@@ -29,9 +29,13 @@
 + jupyter notebook gnuplot script inspection
 + easy scp-based synchronization between a machine in which the figures are generated (e.g. from even larger datasets) and the "paper writing" machine.
 
-**Works on**
-+ Linux/MacOs
+**Requirements**
++ Linux/MacOs (could work on Windows, yet it has not been adjusted for)
 + Python 3
++ Working latex distribution
++ Gnuplot, optionally with tikz terminal
++ `pdftoppm` or `imagemagick` to convert the output pdf figures in png for jupyter notebook embedding 
+
 
 ### Getting autogpy
 
