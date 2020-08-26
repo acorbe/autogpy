@@ -271,6 +271,51 @@ class AutoGnuplotFigure(object):
         """
         return self.alter_current_multiplot_parameters(*args,**kw)
 
+    def set(self,*args,**kw):
+        """expands to preamble param in each subplot, prepends the set command
+        """
+
+        add_set_statement = lambda x : "set " + x
+        if len(args):
+            args_with_set_in_front = [add_set_statement(str(x)) for x in args]
+            args_with_set_in_front_txt = "\n".join(args_with_set_in_front)
+        else:
+            args_with_set_in_front_txt = ""
+
+        if len(kw):
+            kw_with_set_in_front = []
+            for k,v in kw.items():
+                k,v = self.__v_in_kw_needs_string(k,v)
+                kw_with_set_in_front.append("set " + str(k) + " " + str(v))
+
+            kw_with_set_in_front_txt = "\n".join(kw_with_set_in_front)
+            
+        else:
+            kw_with_set_in_front_txt = ""
+
+        self.set_parameters(args_with_set_in_front_txt,kw_with_set_in_front_txt)        
+
+        
+    def __v_in_kw_needs_string(self,k,v):
+        if k.startswith('s__') \
+           or k.endswith('__s'):
+            # or k.startswith('str__') \
+            # or k.startswith('__str') \
+            # or k.startswith('S__') \
+            # or k.endswith('__S'):
+                        
+            needs_string = True
+            # maybe it was not a string, but we asked for a string.
+            v = str(v)
+            k = k.replace('s__','').replace('__s','')
+        else:
+            needs_string = False
+
+        if needs_string:
+            return k, self.__autoescape_if_string(v, add_quotes_if_necessary = needs_string)
+        else:
+            return k,v
+
     def __enter__(self):
         return self
 
@@ -666,6 +711,7 @@ class AutoGnuplotFigure(object):
 
         for k,v in kw.items():
             if not k in kw_reserved:
+                ## to replace with function __v_in_kw_needs_string
                 if k.startswith('s__') \
                    or k.endswith('__s'):
                     # or k.startswith('str__') \
@@ -881,6 +927,29 @@ class AutoGnuplotFigure(object):
         """Proxies plot for backwards compatibility.
         """
         return self.plot(command_line,*args,**kw)
+
+    def fplot(self,foo,xsampling=None,**kw):
+        """Mimicks matlab fplot function. 
+
+        Matlab ref: https://www.mathworks.com/help/matlab/ref/fplot.html
+
+        Parameters
+        ----------------
+        foo: scalar function
+            foo(n) must be evaluable.
+
+        xsampling: iterable, optional
+            (`np.linspace(-5,5)`) contains the x samples on which foo is evaluated.
+
+        **kw: same as in `plot`        
+        """
+
+        if xsampling is None:
+            xsampling = np.linspace(-5,5,100)
+
+        yval = [foo(x) for x in xsampling]
+
+        return self.plot(xsampling,yval,**kw)
 
     
     def add_variable_declaration(self,name,value,is_string = False):
