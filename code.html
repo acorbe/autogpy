@@ -243,6 +243,22 @@ Use gnuplot syntax. Raw strings are advised.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="autogpy.AutoGnuplotFigure.fplot">
+<code class="sig-name descname">fplot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">foo</span></em>, <em class="sig-param"><span class="n">xsampling</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kw</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.fplot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.fplot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mimicks matlab fplot function.</p>
+<p>Matlab ref: <a class="reference external" href="https://www.mathworks.com/help/matlab/ref/fplot.html">https://www.mathworks.com/help/matlab/ref/fplot.html</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>foo</strong> (<em>scalar function</em>) – foo(n) must be evaluable.</p></li>
+<li><p><strong>xsampling</strong> (<em>iterable</em><em>, </em><em>optional</em>) – (<cite>np.linspace(-5,5)</cite>) contains the x samples on which foo is evaluated.</p></li>
+<li><p><strong>**kw</strong> (same as in <cite>plot</cite>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="autogpy.AutoGnuplotFigure.generate_gnuplot_file">
 <code class="sig-name descname">generate_gnuplot_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.generate_gnuplot_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.generate_gnuplot_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generates the final gnuplot scripts without creating any figure. Includes: <cite>Makefile</cite>, <cite>.gitignore</cite> and synchronization scripts.</p>
@@ -423,6 +439,12 @@ Alternatively, can be a list or np.array containing data (see <a href="#id1"><sp
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="autogpy.AutoGnuplotFigure.set">
+<code class="sig-name descname">set</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kw</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>expands to preamble param in each subplot, prepends the set command</p>
 </dd></dl>
 
 <dl class="py method">
