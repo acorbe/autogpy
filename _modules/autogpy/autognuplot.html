@@ -36,8 +36,6 @@
 <span class="sd">This file is part of autogpy.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-
-
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">os</span>
@@ -496,7 +494,6 @@
 <span class="sd">        &gt;&gt;&gt; fig.p_generic(&#39;u 1 : 2 t &quot;my title&quot; &#39;, x ,z)        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
-        
         <span class="n">autoescape</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;autoescape&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_autoescape</span><span class="p">)</span>
         <span class="n">escaped_args</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="n">autoescape</span><span class="p">:</span>
@@ -885,7 +882,7 @@
                     <span class="n">series</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                     <span class="n">args</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">series</span><span class="o">.</span><span class="n">values</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">title_kw_provided</span><span class="p">:</span>
-                        <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+                        <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
                         <span class="n">title_kw_provided</span> <span class="o">=</span> <span class="kc">True</span>
 
 
