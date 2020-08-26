@@ -47,6 +47,14 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">autognuplot_terms</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">plot_helpers</span>
 
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+    <span class="kn">import</span> <span class="nn">pandas</span>
+    <span class="n">pandas_support_enabled</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># print(&quot;pandas support enabled&quot;)</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">pandas_support_enabled</span> <span class="o">=</span> <span class="kc">False</span>
+
 
 <div class="viewcode-block" id="AutoGnuplotFigure"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure">[docs]</a><span class="k">class</span> <span class="nc">AutoGnuplotFigure</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Creates an AutoGnuplotFigure object which wraps one gnuplot figure.</span>
@@ -807,7 +815,7 @@
 <span class="sd">                </span>
 <span class="sd">        Arguments</span>
 <span class="sd">        ----------</span>
-<span class="sd">        command_line_or_data: string, list or np.array</span>
+<span class="sd">        command_line_or_data: string, list, `np.array` or `pd.Series`</span>
 <span class="sd">             gnuplot command, without the explicit call to plot and the filename of the content.</span>
 <span class="sd">             Alternatively, can be a list or np.array containing data (see *args)</span>
 <span class="sd">        *args: lists or np.array, optional</span>
@@ -844,14 +852,17 @@
 
 
         <span class="c1">## auto-wrapping the title with a string allowing to use t, ti, tit, titl, title kws.</span>
+        <span class="c1"># true if a title is provided for the plot, it any form</span>
+        <span class="n">title_kw_provided</span> <span class="o">=</span> <span class="s1">&#39;label&#39;</span> <span class="ow">in</span> <span class="n">kw</span>
+
         <span class="n">title_kw</span> <span class="o">=</span> <span class="s1">&#39;title&#39;</span>
-        <span class="n">title_kw_provided</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">title_kw</span><span class="p">)):</span>
-            <span class="n">title_kw_attempt</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">title_kw</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span><span class="kc">False</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">title_kw_attempt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span>
-                <span class="n">title_kw_provided</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">title_kw_attempt</span>
-                <span class="k">break</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">title_kw_provided</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">title_kw</span><span class="p">)):</span>
+                <span class="n">title_kw_attempt</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">title_kw</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">idx</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span><span class="kc">False</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">title_kw_attempt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span>
+                    <span class="n">title_kw_provided</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">title_kw_attempt</span>
+                    <span class="k">break</span>
 
         <span class="c1">## the following keywords are not blindly appended to the command line</span>
         <span class="n">kw_reserved</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;fname_specs&quot;</span><span class="p">,</span> <span class="s2">&quot;autoescape&quot;</span><span class="p">,</span> <span class="s2">&quot;allow_strings&quot;</span>
@@ -866,6 +877,17 @@
 
             <span class="n">args</span> <span class="o">=</span> <span class="n">command_line</span><span class="p">,</span><span class="o">*</span><span class="n">args</span>            
             <span class="n">command_line</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="c1"># autosupport for pandas series</span>
+        <span class="k">if</span> <span class="n">pandas_support_enabled</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1">#pd.core.series.Series</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
+                    <span class="n">series</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">args</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">series</span><span class="o">.</span><span class="n">values</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">title_kw_provided</span><span class="p">:</span>
+                        <span class="n">kw</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+                        <span class="n">title_kw_provided</span> <span class="o">=</span> <span class="kc">True</span>
+
 
         <span class="k">if</span> <span class="n">autoescape</span><span class="p">:</span>
             <span class="n">command_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__autoescape_strings</span><span class="p">(</span><span class="n">command_line</span><span class="p">)</span>
