@@ -339,7 +339,15 @@ class AutoGnuplotFigure(object):
             # maybe it was not a string, but we asked for a string.
             v = str(v)
             k = k.replace('s__','').replace('__s','')
-        
+            
+        elif k.startswith('e__') \
+           or k.endswith('__e'):
+
+            needs_string = True
+            # maybe it was not a string, but we asked for a string.
+            v = "$" + str(v) + "$"  
+            k = k.replace('e__','').replace('__e','')
+            
         else:
             needs_string = False
 
@@ -743,25 +751,20 @@ class AutoGnuplotFigure(object):
         for k,v in kw.items():
             if not k in kw_reserved:
                 ## to replace with function __v_in_kw_needs_string
-                if k.startswith('s__') \
-                   or k.endswith('__s'):
-                    # or k.startswith('str__') \
-                    # or k.startswith('__str') \
-                    # or k.startswith('S__') \
-                    # or k.endswith('__S'):
-                        
-                    needs_string = True
-                    # maybe it was not a string, but we asked for a string.
-                    v = str(v)
-                    k = k.replace('s__','').replace('__s','')
-                else:
-                    needs_string = False
+                # if k.startswith('s__') \
+                #    or k.endswith('__s'):                        
+                #     needs_string = True
+                #     # maybe it was not a string, but we asked for a string.
+                #     v = str(v)
+                #     k = k.replace('s__','').replace('__s','')
+                # else:
+                #     needs_string = False
+                k,v = self.__v_in_kw_needs_string(k,v)
 
                 command_line = command_line + " " \
                     + k + " "\
                     + self.__autoescape_if_string(v, add_quotes_if_necessary = needs_string)
-                    
-            
+                                
 
         ## needs to go after the blind adding to the command line,
         ## as this one only highjacks the title
