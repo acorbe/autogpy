@@ -328,6 +328,11 @@ class AutoGnuplotFigure(object):
 
         
     def __v_in_kw_needs_string(self,k,v):
+        """determines wheter v needs to be wrapped in quotes ("<v>") or in dollars and quotes ("$<v>$").
+
+        prepending `s__` or appending `__s` to `k` yields stringification;  
+        prepending `s__` or appending `__s` to `k` yields stringification and wrapping in `$` signs.
+        """
         if k.startswith('s__') \
            or k.endswith('__s'):
             # or k.startswith('str__') \
@@ -354,7 +359,7 @@ class AutoGnuplotFigure(object):
         if needs_string:
             return k, self.__autoescape_if_string(v, add_quotes_if_necessary = needs_string)
         else:
-            return k,v
+            return k,str(v)
 
     def __enter__(self):
         return self
@@ -763,7 +768,7 @@ class AutoGnuplotFigure(object):
 
                 command_line = command_line + " " \
                     + k + " "\
-                    + self.__autoescape_if_string(v, add_quotes_if_necessary = needs_string)
+                    + v #self.__autoescape_if_string(v, add_quotes_if_necessary = needs_string)
                                 
 
         ## needs to go after the blind adding to the command line,
@@ -969,6 +974,12 @@ class AutoGnuplotFigure(object):
             self.__dataset_counter += 1
 
         return to_append
+
+    def get_txt_dataset(self,ds_path):
+        """loads a txt dataset (proxies `np.loadtxt`)
+        """
+        ds = np.loadtxt(ds_path)
+        return ds
     
         
     def p_generic(self, command_line, *args, **kw):
