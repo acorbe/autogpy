@@ -57,4 +57,21 @@ def load_gnuplotting_palette(palette_name, folder_dest):
     return "load '%s'" % final_name
 
 
-    
+def latex_document_include_figure_statement(latex_fig_fname
+                                            , tikz_fig_fname
+                                            , latex_enabled = True
+                                            , tikz_enabled = False):
+    text =\
+r"""\begin{figure}[t]
+  \centering
+  $%_LATEX\includegraphics[width=1.0\textwidth]{{$LATEX_FIG_NAME}.pdf}
+  $%_TIKZ\includegraphics[width=1.0\textwidth]{{$TIKZ_FIG_NAME}.pdf}
+  \caption{ \label{fig:label} }
+\end{figure}
+"""\
+    .replace("$LATEX_FIG_NAME",latex_fig_fname)\
+    .replace("$TIKZ_FIG_NAME",tikz_fig_fname)\
+    .replace("$%_LATEX", "%" if tikz_enabled else "")\
+    .replace("$%_TIKZ", "" if tikz_enabled else "%")
+
+    return text

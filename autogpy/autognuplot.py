@@ -192,6 +192,10 @@ class AutoGnuplotFigure(object):
 
         self.pdflatex_terminal_parameters.update(**kw)
 
+    def set_figure_linewidth(self,lw):
+        """Sets the global linewidth parameter for latex/tikz figures."""
+        self.pdflatex_terminal_parameters.update({'linewidth' : lw})
+
     def __wrap_text_section(self,content,wrapper):
 
         repl = dict(WRP=wrapper, CONTENT=content)
@@ -288,18 +292,21 @@ class AutoGnuplotFigure(object):
         else:
             args_with_set_in_front_txt = ""
 
+        ## never needs autoescaping. The args branches is easy.
+        self.set_parameters(args_with_set_in_front_txt)
+        
+        ## for some arguments autoescape is applied by self.__v_in_kw_needs_string, we should not apply it twice.
         if len(kw):
             kw_with_set_in_front = []
             for k,v in kw.items():
                 k,v = self.__v_in_kw_needs_string(k,v)
-                kw_with_set_in_front.append("set " + str(k) + " " + str(v))
-
-            kw_with_set_in_front_txt = "\n".join(kw_with_set_in_front)
-            
-        else:
-            kw_with_set_in_front_txt = ""
-
-        self.set_parameters(args_with_set_in_front_txt,kw_with_set_in_front_txt)
+                self.set_parameters("set " + str(k) + " " + str(v), autoescape = False)
+                
+        #         kw_with_set_in_front.append("set " + str(k) + " " + str(v))
+        #     kw_with_set_in_front_txt = "\n".join(kw_with_set_in_front)            
+        # else:
+        #     kw_with_set_in_front_txt = ""
+        # self.set_parameters(args_with_set_in_front_txt,kw_with_set_in_front_txt)
 
 
     def unset(self,*args,**kw):
@@ -357,7 +364,14 @@ class AutoGnuplotFigure(object):
             needs_string = False
 
         if needs_string:
-            return k, self.__autoescape_if_string(v, add_quotes_if_necessary = needs_string)
+            new_v = self.__autoescape_if_string(v
+                                                , add_quotes_if_necessary=True
+                                                # in this case we expect not to perform
+                                                # any string.format operation,
+                                                # thus we avoid to double curly brackets
+                                                , double_curly_brackets=False)
+            # print(new_v)
+            return k, new_v
         else:
             return k,str(v)
 
@@ -720,22 +734,34 @@ class AutoGnuplotFigure(object):
         )        
         
         
-    def __autoescape_strings(self, command_line):
+    def __autoescape_strings(self, command_line, double_curly_brackets=True):
+        """autoescapes backslashes. Additionally, by default doubles the the curly brackets, to prevent them to disturb the a forthcoming string.format call.
+        """
         command_line = command_line.replace("\\","\\\\")
-        command_line = command_line.replace("{","{{")
-        command_line = command_line.replace("}","}}")
+        if double_curly_brackets:
+            command_line = command_line.replace("{","{{")
+            command_line = command_line.replace("}","}}")
 
         #preserves some needed blocks
         command_line = command_line.replace("{{DS_FNAME}}","{DS_FNAME}" )
         return command_line
 
+    def __quote_argument(self, v):
+        return '"%s"' % str(v)
+
     def __autoescape_if_string(self
                                , el
-                               , add_quotes_if_necessary = False):
+                               , add_quotes_if_necessary = False
+                               , double_curly_brackets = True):
         if isinstance(el,str):
-            escaped_str = self.__autoescape_strings(el)
-            Q = '"' if add_quotes_if_necessary else ""
-            return '{Q}{CONTENT}{Q}'.format(CONTENT=escaped_str,Q=Q)
+            escaped_str = self.__autoescape_strings(el
+                                                    , double_curly_brackets = double_curly_brackets)
+            if add_quotes_if_necessary:
+                return self.__quote_argument(escaped_str)
+            else:
+                return escaped_str
+            # Q = '"' if add_quotes_if_necessary else ""
+            # return '{Q}{CONTENT}{Q}'.format(CONTENT=escaped_str,Q=Q)
         else:
             return str(el)
 
@@ -1435,6 +1461,22 @@ end
         """Proxy for get_folder_info
         """
         self.get_folder_info()
+
+    def print_latex_fig_inclusion_code(self):
+        """Propts latex code that can be used to include the figure.
+        
+        For the moment requires a call to self.generate_gnuplot_file()
+        """
+
+        self.generate_gnuplot_file()
+        
+        latex_incl_statement = plot_helpers.latex_document_include_figure_statement(
+            self.folder_name + '/' + self.local_pdflatex_output.replace(".pdf","") #strips out extension
+            , self.folder_name + '/' + self.__local_tikz_output.replace(".pdf","")
+            , tikz_enabled = self.terminals_enabled_by_default['tikz']['is_enabled']
+        )
+
+        print(latex_incl_statement)
 
     
             
