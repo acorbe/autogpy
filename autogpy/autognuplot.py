@@ -299,6 +299,31 @@ class AutoGnuplotFigure(object):
         else:
             kw_with_set_in_front_txt = ""
 
+        self.set_parameters(args_with_set_in_front_txt,kw_with_set_in_front_txt)
+
+
+    def unset(self,*args,**kw):
+        """expands to preamble param in each subplot, prepends the unset command. For the kws the argument is ignored.
+        """
+
+        add_set_statement = lambda x : "unset " + x
+        if len(args):
+            args_with_set_in_front = [add_set_statement(str(x)) for x in args]
+            args_with_set_in_front_txt = "\n".join(args_with_set_in_front)
+        else:
+            args_with_set_in_front_txt = ""
+
+        if len(kw):
+            kw_with_set_in_front = []
+            for k,v in kw.items():
+                k,v = self.__v_in_kw_needs_string(k,v)
+                kw_with_set_in_front.append("unset " + str(k))
+
+            kw_with_set_in_front_txt = "\n".join(kw_with_set_in_front)
+            
+        else:
+            kw_with_set_in_front_txt = ""
+
         self.set_parameters(args_with_set_in_front_txt,kw_with_set_in_front_txt)        
 
         
@@ -314,6 +339,7 @@ class AutoGnuplotFigure(object):
             # maybe it was not a string, but we asked for a string.
             v = str(v)
             k = k.replace('s__','').replace('__s','')
+        
         else:
             needs_string = False
 
