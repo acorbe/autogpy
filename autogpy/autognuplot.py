@@ -1122,7 +1122,12 @@ class AutoGnuplotFigure(object):
             display(HTML( html__ ) )
             #print(html__)
         else:            
-            print (final_content)        
+            print (final_content)
+
+    def get_gnuplot_file_content(self):
+        """returns the gnuplot core file content as a string
+        """
+        return self.__generate_gnuplot_file_content()
     
 
     def generate_gnuplot_file(self):
