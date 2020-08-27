@@ -362,6 +362,11 @@
 
         
     <span class="k">def</span> <span class="nf">__v_in_kw_needs_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;determines wheter v needs to be wrapped in quotes (&quot;&lt;v&gt;&quot;) or in dollars and quotes (&quot;$&lt;v&gt;$&quot;).</span>
+
+<span class="sd">        prepending `s__` or appending `__s` to `k` yields stringification;  </span>
+<span class="sd">        prepending `s__` or appending `__s` to `k` yields stringification and wrapping in `$` signs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;s__&#39;</span><span class="p">)</span> \
            <span class="ow">or</span> <span class="n">k</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;__s&#39;</span><span class="p">):</span>
             <span class="c1"># or k.startswith(&#39;str__&#39;) \</span>
@@ -388,7 +393,7 @@
         <span class="k">if</span> <span class="n">needs_string</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__autoescape_if_string</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">add_quotes_if_necessary</span> <span class="o">=</span> <span class="n">needs_string</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span>
+            <span class="k">return</span> <span class="n">k</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span>
@@ -797,7 +802,7 @@
 
                 <span class="n">command_line</span> <span class="o">=</span> <span class="n">command_line</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> \
                     <span class="o">+</span> <span class="n">k</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span>\
-                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__autoescape_if_string</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">add_quotes_if_necessary</span> <span class="o">=</span> <span class="n">needs_string</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="n">v</span> <span class="c1">#self.__autoescape_if_string(v, add_quotes_if_necessary = needs_string)</span>
                                 
 
         <span class="c1">## needs to go after the blind adding to the command line,</span>
@@ -1003,6 +1008,12 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">__dataset_counter</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="k">return</span> <span class="n">to_append</span></div>
+
+<div class="viewcode-block" id="AutoGnuplotFigure.get_txt_dataset"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.get_txt_dataset">[docs]</a>    <span class="k">def</span> <span class="nf">get_txt_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ds_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;loads a txt dataset (proxies `np.loadtxt`)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">ds_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ds</span></div>
     
         
 <div class="viewcode-block" id="AutoGnuplotFigure.p_generic"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.p_generic">[docs]</a>    <span class="k">def</span> <span class="nf">p_generic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_line</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
