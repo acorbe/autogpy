@@ -917,7 +917,7 @@ class AutoGnuplotFigure(object):
 
             globalized_dataset_fname = self.globalize_fname(dataset_fname)
 
-            if allow_strings:
+            if allow_strings and pandas_support_enabled:
                 # pandas way. need to import
                 import pandas as pd
                 if column_names is None:
