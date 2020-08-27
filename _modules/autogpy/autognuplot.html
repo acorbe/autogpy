@@ -333,6 +333,31 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">kw_with_set_in_front_txt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_parameters</span><span class="p">(</span><span class="n">args_with_set_in_front_txt</span><span class="p">,</span><span class="n">kw_with_set_in_front_txt</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AutoGnuplotFigure.unset"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.unset">[docs]</a>    <span class="k">def</span> <span class="nf">unset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;expands to preamble param in each subplot, prepends the unset command. For the kws the argument is ignored.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">add_set_statement</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="s2">&quot;unset &quot;</span> <span class="o">+</span> <span class="n">x</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+            <span class="n">args_with_set_in_front</span> <span class="o">=</span> <span class="p">[</span><span class="n">add_set_statement</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
+            <span class="n">args_with_set_in_front_txt</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args_with_set_in_front</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">args_with_set_in_front_txt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">kw</span><span class="p">):</span>
+            <span class="n">kw_with_set_in_front</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">kw</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__v_in_kw_needs_string</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span>
+                <span class="n">kw_with_set_in_front</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;unset &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+
+            <span class="n">kw_with_set_in_front_txt</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">kw_with_set_in_front</span><span class="p">)</span>
+            
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">kw_with_set_in_front_txt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">set_parameters</span><span class="p">(</span><span class="n">args_with_set_in_front_txt</span><span class="p">,</span><span class="n">kw_with_set_in_front_txt</span><span class="p">)</span>        </div>
 
         
@@ -348,6 +373,7 @@
             <span class="c1"># maybe it was not a string, but we asked for a string.</span>
             <span class="n">v</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
             <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;s__&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;__s&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        
         <span class="k">else</span><span class="p">:</span>
             <span class="n">needs_string</span> <span class="o">=</span> <span class="kc">False</span>
 
