@@ -951,7 +951,7 @@
 
             <span class="n">globalized_dataset_fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">globalize_fname</span><span class="p">(</span><span class="n">dataset_fname</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">allow_strings</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">allow_strings</span> <span class="ow">and</span> <span class="n">pandas_support_enabled</span><span class="p">:</span>
                 <span class="c1"># pandas way. need to import</span>
                 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
                 <span class="k">if</span> <span class="n">column_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
