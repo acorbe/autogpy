@@ -226,6 +226,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_terminal_parameters</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="AutoGnuplotFigure.set_figure_linewidth"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.set_figure_linewidth">[docs]</a>    <span class="k">def</span> <span class="nf">set_figure_linewidth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">lw</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the global linewidth parameter for latex/tikz figures.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pdflatex_terminal_parameters</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;linewidth&#39;</span> <span class="p">:</span> <span class="n">lw</span><span class="p">})</span></div>
+
     <span class="k">def</span> <span class="nf">__wrap_text_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">content</span><span class="p">,</span><span class="n">wrapper</span><span class="p">):</span>
 
         <span class="n">repl</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">WRP</span><span class="o">=</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">CONTENT</span><span class="o">=</span><span class="n">content</span><span class="p">)</span>
@@ -322,18 +326,21 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">args_with_set_in_front_txt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
+        <span class="c1">## never needs autoescaping. The args branches is easy.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_parameters</span><span class="p">(</span><span class="n">args_with_set_in_front_txt</span><span class="p">)</span>
+        
+        <span class="c1">## for some arguments autoescape is applied by self.__v_in_kw_needs_string, we should not apply it twice.</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">kw</span><span class="p">):</span>
             <span class="n">kw_with_set_in_front</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">kw</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__v_in_kw_needs_string</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span>
-                <span class="n">kw_with_set_in_front</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;set &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
-
-            <span class="n">kw_with_set_in_front_txt</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">kw_with_set_in_front</span><span class="p">)</span>
-            
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">kw_with_set_in_front_txt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_parameters</span><span class="p">(</span><span class="n">args_with_set_in_front_txt</span><span class="p">,</span><span class="n">kw_with_set_in_front_txt</span><span class="p">)</span></div>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_parameters</span><span class="p">(</span><span class="s2">&quot;set &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">autoescape</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span></div>
+                
+        <span class="c1">#         kw_with_set_in_front.append(&quot;set &quot; + str(k) + &quot; &quot; + str(v))</span>
+        <span class="c1">#     kw_with_set_in_front_txt = &quot;\n&quot;.join(kw_with_set_in_front)            </span>
+        <span class="c1"># else:</span>
+        <span class="c1">#     kw_with_set_in_front_txt = &quot;&quot;</span>
+        <span class="c1"># self.set_parameters(args_with_set_in_front_txt,kw_with_set_in_front_txt)</span>
 
 
 <div class="viewcode-block" id="AutoGnuplotFigure.unset"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.unset">[docs]</a>    <span class="k">def</span> <span class="nf">unset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kw</span><span class="p">):</span>
@@ -391,7 +398,14 @@
             <span class="n">needs_string</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="k">if</span> <span class="n">needs_string</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__autoescape_if_string</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">add_quotes_if_necessary</span> <span class="o">=</span> <span class="n">needs_string</span><span class="p">)</span>
+            <span class="n">new_v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__autoescape_if_string</span><span class="p">(</span><span class="n">v</span>
+                                                <span class="p">,</span> <span class="n">add_quotes_if_necessary</span><span class="o">=</span><span class="kc">True</span>
+                                                <span class="c1"># in this case we expect not to perform</span>
+                                                <span class="c1"># any string.format operation,</span>
+                                                <span class="c1"># thus we avoid to double curly brackets</span>
+                                                <span class="p">,</span> <span class="n">double_curly_brackets</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="c1"># print(new_v)</span>
+            <span class="k">return</span> <span class="n">k</span><span class="p">,</span> <span class="n">new_v</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">k</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
 
@@ -754,22 +768,34 @@
         <span class="p">)</span>        </div>
         
         
-    <span class="k">def</span> <span class="nf">__autoescape_strings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_line</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__autoescape_strings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_line</span><span class="p">,</span> <span class="n">double_curly_brackets</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;autoescapes backslashes. Additionally, by default doubles the the curly brackets, to prevent them to disturb the a forthcoming string.format call.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">command_line</span> <span class="o">=</span> <span class="n">command_line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span><span class="s2">&quot;</span><span class="se">\\\\</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">command_line</span> <span class="o">=</span> <span class="n">command_line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span><span class="s2">&quot;{{&quot;</span><span class="p">)</span>
-        <span class="n">command_line</span> <span class="o">=</span> <span class="n">command_line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span><span class="s2">&quot;}}&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">double_curly_brackets</span><span class="p">:</span>
+            <span class="n">command_line</span> <span class="o">=</span> <span class="n">command_line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">,</span><span class="s2">&quot;{{&quot;</span><span class="p">)</span>
+            <span class="n">command_line</span> <span class="o">=</span> <span class="n">command_line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">,</span><span class="s2">&quot;}}&quot;</span><span class="p">)</span>
 
         <span class="c1">#preserves some needed blocks</span>
         <span class="n">command_line</span> <span class="o">=</span> <span class="n">command_line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;{{DS_FNAME}}&quot;</span><span class="p">,</span><span class="s2">&quot;</span><span class="si">{DS_FNAME}</span><span class="s2">&quot;</span> <span class="p">)</span>
         <span class="k">return</span> <span class="n">command_line</span>
 
+    <span class="k">def</span> <span class="nf">__quote_argument</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;&quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">__autoescape_if_string</span><span class="p">(</span><span class="bp">self</span>
                                <span class="p">,</span> <span class="n">el</span>
-                               <span class="p">,</span> <span class="n">add_quotes_if_necessary</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+                               <span class="p">,</span> <span class="n">add_quotes_if_necessary</span> <span class="o">=</span> <span class="kc">False</span>
+                               <span class="p">,</span> <span class="n">double_curly_brackets</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">el</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
-            <span class="n">escaped_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__autoescape_strings</span><span class="p">(</span><span class="n">el</span><span class="p">)</span>
-            <span class="n">Q</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span> <span class="k">if</span> <span class="n">add_quotes_if_necessary</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
-            <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{Q}{CONTENT}{Q}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">CONTENT</span><span class="o">=</span><span class="n">escaped_str</span><span class="p">,</span><span class="n">Q</span><span class="o">=</span><span class="n">Q</span><span class="p">)</span>
+            <span class="n">escaped_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__autoescape_strings</span><span class="p">(</span><span class="n">el</span>
+                                                    <span class="p">,</span> <span class="n">double_curly_brackets</span> <span class="o">=</span> <span class="n">double_curly_brackets</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">add_quotes_if_necessary</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__quote_argument</span><span class="p">(</span><span class="n">escaped_str</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">escaped_str</span>
+            <span class="c1"># Q = &#39;&quot;&#39; if add_quotes_if_necessary else &quot;&quot;</span>
+            <span class="c1"># return &#39;{Q}{CONTENT}{Q}&#39;.format(CONTENT=escaped_str,Q=Q)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">el</span><span class="p">)</span>
 
@@ -1468,7 +1494,23 @@
 <div class="viewcode-block" id="AutoGnuplotFigure.print_folder_info"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.print_folder_info">[docs]</a>    <span class="k">def</span> <span class="nf">print_folder_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Proxy for get_folder_info</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">get_folder_info</span><span class="p">()</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_folder_info</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AutoGnuplotFigure.print_latex_fig_inclusion_code"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.print_latex_fig_inclusion_code">[docs]</a>    <span class="k">def</span> <span class="nf">print_latex_fig_inclusion_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Propts latex code that can be used to include the figure.</span>
+<span class="sd">        </span>
+<span class="sd">        For the moment requires a call to self.generate_gnuplot_file()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_gnuplot_file</span><span class="p">()</span>
+        
+        <span class="n">latex_incl_statement</span> <span class="o">=</span> <span class="n">plot_helpers</span><span class="o">.</span><span class="n">latex_document_include_figure_statement</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_pdflatex_output</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.pdf&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="c1">#strips out extension</span>
+            <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__local_tikz_output</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.pdf&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="p">,</span> <span class="n">tikz_enabled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminals_enabled_by_default</span><span class="p">[</span><span class="s1">&#39;tikz&#39;</span><span class="p">][</span><span class="s1">&#39;is_enabled&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">latex_incl_statement</span><span class="p">)</span></div></div>
 
     
             
