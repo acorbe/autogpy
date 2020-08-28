@@ -9,4 +9,6 @@ from .autognuplot import AutoGnuplotFigure
 
 AutogpyFigure = AutoGnuplotFigure
 Figure = AutoGnuplotFigure
-AnonymousFigureF = lambda *args,**kw: AutoGnuplotFigure('autogpy_anonymous_figure', *args, **kw)
+AnonymousFigureF = lambda *args, **kw: AutoGnuplotFigure('.autogpy_anonymous_figure',
+                                                         anonymous=True,
+                                                         *args, **kw)

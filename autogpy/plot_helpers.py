@@ -64,8 +64,8 @@ def latex_document_include_figure_statement(latex_fig_fname
     text =\
 r"""\begin{figure}[t]
   \centering
-  $%_LATEX\includegraphics[width=1.0\textwidth]{{$LATEX_FIG_NAME}.pdf}
-  $%_TIKZ\includegraphics[width=1.0\textwidth]{{$TIKZ_FIG_NAME}.pdf}
+  $%_LATEX\includegraphics[width=0.8\textwidth]{{$LATEX_FIG_NAME}.pdf}
+  $%_TIKZ\includegraphics[width=0.8\textwidth]{{$TIKZ_FIG_NAME}.pdf}
   \caption{ \label{fig:label} }
 \end{figure}
 """\

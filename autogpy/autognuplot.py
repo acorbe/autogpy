@@ -19,6 +19,12 @@ try:
 except:
     pandas_support_enabled = False
 
+try:
+    import pygments
+    pygments_support_enabled = True
+except:
+    pygments_support_enabled = False
+
 
 class AutoGnuplotFigure(object):
     """Creates an AutoGnuplotFigure object which wraps one gnuplot figure.
@@ -44,6 +50,8 @@ class AutoGnuplotFigure(object):
              (100) dpi of the jpg image showed in a jupyter notebook. It is used for the conversion of the pdf image produced by gnuplot.
         jpg_convert_quality: int, optional
              (100) conversion quality of the jpg image showed in a jupyter notebook. It is used for the conversion of the pdf image produced by gnuplot.
+        anonymous: bool, optional
+             (False) Specifies if a figure is generated in an anonymous folder. (Options as ssh sync and latex inclusion are turned off).
 
         Returns
         --------------------
@@ -86,7 +94,8 @@ class AutoGnuplotFigure(object):
                  , allow_strings = False
                  , hostname = None
                  , jpg_convert_density = 100
-                 , jpg_convert_quality = 100):
+                 , jpg_convert_quality = 100
+                 , anonymous = False):
         """ Creates an AutoGnuplotFigure object
 
         :param folder_name: str
@@ -97,6 +106,7 @@ class AutoGnuplotFigure(object):
         :param tikz_enabled: Bool
         :param allow_strings: Bool
         :param hostname: str
+        :oaran anonymous: Bool
 
         """
         
@@ -180,6 +190,8 @@ class AutoGnuplotFigure(object):
                 SYNC_SCP_CALL = self.__scp_string_nofolder
             )
             )
+
+        self.is_anonymous = anonymous
 
     def set_figure_size(self,x_size=None, y_size=None, **kw):
         """Sets the terminal figure size and possibly more terminal parameters (string expected).
@@ -1097,13 +1109,20 @@ class AutoGnuplotFigure(object):
         Parameters
         ----------------
         highlight: bool, optional
-             (True) Uses `pygaments` to color the gnuplot script. 
+             (True) Uses `pygments` to color the gnuplot script. 
         linenos: string, optional
-             ("inline") Parameter `linenos` forwarded to the `pygaments` `HtmlFormatter` object.  
+             ("inline") Parameter `linenos` forwarded to the `pygments` `HtmlFormatter` object.  
         """
         
         final_content = self.__generate_gnuplot_file_content()
-        if highlight:
+        try:
+            from IPython.display import display, HTML
+            get_ipython
+        except:
+            # jupyter seems not there..
+            highlight = False
+        
+        if highlight and pygments_support_enabled:
             from pygments import highlight
             from pygments.lexers import GnuplotLexer
             from pygments.formatters import HtmlFormatter
@@ -1112,7 +1131,11 @@ class AutoGnuplotFigure(object):
              
 
             from IPython.core.display import display, HTML
-            html__ =  highlight(final_content, GnuplotLexer(), HtmlFormatter(style='colorful', noclasses = False, linenos=linenos))
+            html__ =  highlight(final_content,
+                                GnuplotLexer(),
+                                HtmlFormatter(style='colorful',
+                                              noclasses = False,
+                                              linenos=linenos))
             display(HTML("""
             <style>
             {pygments_css}
@@ -1430,6 +1453,9 @@ end
     def get_folder_info(self):
         from IPython.display import display, HTML
 
+        if self.is_anonymous:
+            raise Exception("get_folder_info disabled for anonymous figures.")
+
         infos = [
             ["(folder local):", self.folder_name ]
             , ["(folder global):", self.global_dir_whole_path]
@@ -1473,15 +1499,48 @@ end
         For the moment requires a call to self.generate_gnuplot_file()
         """
 
-        self.generate_gnuplot_file()
+        if self.is_anonymous:
+            raise Exception("print_latex_fig_inclusion_code disabled for anonymous figures.")
         
+        self.generate_gnuplot_file()
+
         latex_incl_statement = plot_helpers.latex_document_include_figure_statement(
             self.folder_name + '/' + self.local_pdflatex_output.replace(".pdf","") #strips out extension
             , self.folder_name + '/' + self.__local_tikz_output.replace(".pdf","")
             , tikz_enabled = self.terminals_enabled_by_default['tikz']['is_enabled']
         )
 
-        print(latex_incl_statement)
+
+        try:
+            from IPython.display import display, HTML
+            get_ipython
+            highlight = True
+        except:
+            # jupyter seems not there..
+            highlight = False
+        
+        if pygments_support_enabled and highlight:            
+            from pygments import highlight
+            from pygments.lexers import TexLexer
+            from pygments.formatters import HtmlFormatter
+
+            from pygments.styles import get_style_by_name
+
+            html__ =  highlight(latex_incl_statement,
+                                TexLexer(),
+                                HtmlFormatter(style='colorful',
+                                              noclasses = False,
+                                              linenos=False))
+            display(HTML("""
+            <style>
+            {pygments_css}
+            </style>
+            """.format(pygments_css=HtmlFormatter().get_style_defs('.highlight'))))
+            
+            display(HTML( html__ ) )
+            
+        else:
+            print(latex_incl_statement)
 
     
             
