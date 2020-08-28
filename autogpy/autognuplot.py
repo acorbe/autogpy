@@ -6,6 +6,7 @@ from __future__ import print_function
 
 import os
 import numpy as np
+import warnings
 from collections import OrderedDict
 
 from . import autognuplot_terms
@@ -19,7 +20,10 @@ try:
 except:
     pandas_support_enabled = False
 
+warnings.simplefilter('once', UserWarning)
 
+
+    
 class AutoGnuplotFigure(object):
     """Creates an AutoGnuplotFigure object which wraps one gnuplot figure.
 
@@ -1266,8 +1270,18 @@ class AutoGnuplotFigure(object):
             proc.returncode != 0
         
         if was_there_an_error:
-            print("ERROR: an error was intercepted.")
-            print("     stderr and stdout reported below.")
+            
+            # diagnosing pdflatex installation problem
+            if "pdflatex: command not found" in err:
+                print("ERROR: PDFLATEX is NOT installed.\n")
+            elif "gnuplot: command not found" in err:
+                print("ERROR: GNUPLOT is NOT installed.\n")
+            else:
+                print("ERROR: an error was intercepted.")
+            
+            
+            print("  stderr and stdout reported below for diagnostics.")
+            print("")
         
         
         if self.verbose:
@@ -1281,9 +1295,10 @@ class AutoGnuplotFigure(object):
             print ("===== stdout =====")
             print (output)
             print ("=== stdout end ===")
-            
-        from IPython.core.display import Image, display
-        display(Image( image_to_display, height=height, width=width  ))
+
+        if not was_there_an_error:
+            from IPython.core.display import Image, display
+            display(Image( image_to_display, height=height, width=width  ))
 
     
 
