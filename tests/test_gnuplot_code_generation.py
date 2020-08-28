@@ -6,7 +6,7 @@ XX_test_linspace = np.linspace(0, 1, 50)
 
 
 def test_plot_1_arg_nparray():
-    with autogpy.Figure("test_plot_1_arg_nparray",
+    with autogpy.Figure("test_plot",
                         file_identifier="figtest") as fig:
         fig.plot(XX_test_linspace)
 
@@ -60,7 +60,7 @@ def test_plot_generic_nonstring_argument_passed_as_string():
 
 
 def test_plot_generic_nonstring_argument_passed_as_int():
-    with autogpy.Figure("test_print()lot", file_identifier="figtest") as fig:
+    with autogpy.Figure("test_plot", file_identifier="figtest") as fig:
         fig.plot(XX_test_linspace, test_arg=2)
 
     fcontent = fig.get_gnuplot_file_content()
