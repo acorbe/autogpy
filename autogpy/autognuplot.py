@@ -1,5 +1,5 @@
 """
-This file is part of autogpy.
+This file is part of Autognuplotpy, autogpy.
 
 """
 from __future__ import print_function
@@ -1028,7 +1028,9 @@ class AutoGnuplotFigure(object):
         """
         return self.plot(command_line,*args,**kw)
 
-    def fplot(self,foo,xsampling=None,**kw):
+    def fplot(self,foo,xsampling=None,
+              xsampling_N=100,
+              **kw):
         """Mimicks matlab fplot function. 
 
         Matlab ref: https://www.mathworks.com/help/matlab/ref/fplot.html
@@ -1045,7 +1047,9 @@ class AutoGnuplotFigure(object):
         """
 
         if xsampling is None:
-            xsampling = np.linspace(-5,5,100)
+            xsampling = np.linspace(-5,5,xsampling_N)
+        elif isinstance(xsampling,tuple):
+            xsampling = np.linspace(xsampling[0],xsampling[1],xsampling_N)
 
         yval = [foo(x) for x in xsampling]
 
@@ -1097,7 +1101,7 @@ class AutoGnuplotFigure(object):
 
     def __generate_gnuplot_file_content(self):
         redended_variables = self.__render_variables()
-        parameters_string = "\n".join(self.global_plotting_parameters) + "\n\n"        
+        parameters_string = "\n".join(self.global_plotting_parameters) + "\n"        
 
 
         plotting_string = self.__generate_gnuplot_plotting_calls()
@@ -1126,6 +1130,8 @@ class AutoGnuplotFigure(object):
             highlight = False
         
         if highlight and pygments_support_enabled:
+            warnings.warn("This function benefits from pygments when installed.")
+            
             from pygments import highlight
             from pygments.lexers import GnuplotLexer
             from pygments.formatters import HtmlFormatter
@@ -1508,13 +1514,16 @@ end
         self.get_folder_info()
 
     def print_latex_fig_inclusion_code(self):
+        return self.print_latex_snippet()
+
+    def print_latex_snippet(self):
         """Propts latex code that can be used to include the figure.
         
         For the moment requires a call to self.generate_gnuplot_file()
         """
 
         if self.is_anonymous:
-            raise Exception("print_latex_fig_inclusion_code disabled for anonymous figures.")
+            raise Exception("print_latex_snippet disabled for anonymous figures.")
         
         self.generate_gnuplot_file()
 
