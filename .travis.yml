@@ -3,13 +3,14 @@ language: python
 install:
   ## current m2r fix from https://github.com/sphinx-doc/sphinx/issues/7420#issuecomment-610958327
   - pip install sphinx sphinxcontrib-napoleon git+https://github.com/crossnox/m2r@dev#egg=m2r #m2r
+  - pip install -e ../autogpy/
 
-script:
-  - cd doc
+script:  
+  - pytest
   # Use Sphinx to make the html docs
-  - make html
+  - make -C doc/ html
   # Tell GitHub not to use jekyll to compile the docs 
-  - touch _build/html/.nojekyll
+  - touch doc/_build/html/.nojekyll
 
 # Tell Travis CI to copy the documentation to the gh-pages branch of
 # your GitHub repository.
