@@ -53,6 +53,12 @@
 <span class="k">except</span><span class="p">:</span>
     <span class="n">pandas_support_enabled</span> <span class="o">=</span> <span class="kc">False</span>
 
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">pygments</span>
+    <span class="n">pygments_support_enabled</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">pygments_support_enabled</span> <span class="o">=</span> <span class="kc">False</span>
+
 
 <div class="viewcode-block" id="AutoGnuplotFigure"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure">[docs]</a><span class="k">class</span> <span class="nc">AutoGnuplotFigure</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Creates an AutoGnuplotFigure object which wraps one gnuplot figure.</span>
@@ -78,6 +84,8 @@
 <span class="sd">             (100) dpi of the jpg image showed in a jupyter notebook. It is used for the conversion of the pdf image produced by gnuplot.</span>
 <span class="sd">        jpg_convert_quality: int, optional</span>
 <span class="sd">             (100) conversion quality of the jpg image showed in a jupyter notebook. It is used for the conversion of the pdf image produced by gnuplot.</span>
+<span class="sd">        anonymous: bool, optional</span>
+<span class="sd">             (False) Specifies if a figure is generated in an anonymous folder. (Options as ssh sync and latex inclusion are turned off).</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        --------------------</span>
@@ -120,7 +128,8 @@
                  <span class="p">,</span> <span class="n">allow_strings</span> <span class="o">=</span> <span class="kc">False</span>
                  <span class="p">,</span> <span class="n">hostname</span> <span class="o">=</span> <span class="kc">None</span>
                  <span class="p">,</span> <span class="n">jpg_convert_density</span> <span class="o">=</span> <span class="mi">100</span>
-                 <span class="p">,</span> <span class="n">jpg_convert_quality</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
+                 <span class="p">,</span> <span class="n">jpg_convert_quality</span> <span class="o">=</span> <span class="mi">100</span>
+                 <span class="p">,</span> <span class="n">anonymous</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates an AutoGnuplotFigure object</span>
 
 <span class="sd">        :param folder_name: str</span>
@@ -131,6 +140,7 @@
 <span class="sd">        :param tikz_enabled: Bool</span>
 <span class="sd">        :param allow_strings: Bool</span>
 <span class="sd">        :param hostname: str</span>
+<span class="sd">        :oaran anonymous: Bool</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         
@@ -214,6 +224,8 @@
                 <span class="n">SYNC_SCP_CALL</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__scp_string_nofolder</span>
             <span class="p">)</span>
             <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_anonymous</span> <span class="o">=</span> <span class="n">anonymous</span>
 
 <div class="viewcode-block" id="AutoGnuplotFigure.set_figure_size"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.set_figure_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_figure_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets the terminal figure size and possibly more terminal parameters (string expected).</span>
@@ -1131,13 +1143,20 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------------</span>
 <span class="sd">        highlight: bool, optional</span>
-<span class="sd">             (True) Uses `pygaments` to color the gnuplot script. </span>
+<span class="sd">             (True) Uses `pygments` to color the gnuplot script. </span>
 <span class="sd">        linenos: string, optional</span>
-<span class="sd">             (&quot;inline&quot;) Parameter `linenos` forwarded to the `pygaments` `HtmlFormatter` object.  </span>
+<span class="sd">             (&quot;inline&quot;) Parameter `linenos` forwarded to the `pygments` `HtmlFormatter` object.  </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="n">final_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__generate_gnuplot_file_content</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">highlight</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span>
+            <span class="n">get_ipython</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="c1"># jupyter seems not there..</span>
+            <span class="n">highlight</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="k">if</span> <span class="n">highlight</span> <span class="ow">and</span> <span class="n">pygments_support_enabled</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">pygments</span> <span class="kn">import</span> <span class="n">highlight</span>
             <span class="kn">from</span> <span class="nn">pygments.lexers</span> <span class="kn">import</span> <span class="n">GnuplotLexer</span>
             <span class="kn">from</span> <span class="nn">pygments.formatters</span> <span class="kn">import</span> <span class="n">HtmlFormatter</span>
@@ -1146,7 +1165,11 @@
              
 
             <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span>
-            <span class="n">html__</span> <span class="o">=</span>  <span class="n">highlight</span><span class="p">(</span><span class="n">final_content</span><span class="p">,</span> <span class="n">GnuplotLexer</span><span class="p">(),</span> <span class="n">HtmlFormatter</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;colorful&#39;</span><span class="p">,</span> <span class="n">noclasses</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">linenos</span><span class="o">=</span><span class="n">linenos</span><span class="p">))</span>
+            <span class="n">html__</span> <span class="o">=</span>  <span class="n">highlight</span><span class="p">(</span><span class="n">final_content</span><span class="p">,</span>
+                                <span class="n">GnuplotLexer</span><span class="p">(),</span>
+                                <span class="n">HtmlFormatter</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;colorful&#39;</span><span class="p">,</span>
+                                              <span class="n">noclasses</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                                              <span class="n">linenos</span><span class="o">=</span><span class="n">linenos</span><span class="p">))</span>
             <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">            &lt;style&gt;</span>
 <span class="s2">            </span><span class="si">{pygments_css}</span><span class="s2"></span>
@@ -1464,6 +1487,9 @@
     <span class="k">def</span> <span class="nf">get_folder_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span>
 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_anonymous</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;get_folder_info disabled for anonymous figures.&quot;</span><span class="p">)</span>
+
         <span class="n">infos</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">[</span><span class="s2">&quot;(folder local):&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span> <span class="p">]</span>
             <span class="p">,</span> <span class="p">[</span><span class="s2">&quot;(folder global):&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_dir_whole_path</span><span class="p">]</span>
@@ -1507,15 +1533,48 @@
 <span class="sd">        For the moment requires a call to self.generate_gnuplot_file()</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">generate_gnuplot_file</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_anonymous</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;print_latex_fig_inclusion_code disabled for anonymous figures.&quot;</span><span class="p">)</span>
         
+        <span class="bp">self</span><span class="o">.</span><span class="n">generate_gnuplot_file</span><span class="p">()</span>
+
         <span class="n">latex_incl_statement</span> <span class="o">=</span> <span class="n">plot_helpers</span><span class="o">.</span><span class="n">latex_document_include_figure_statement</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">local_pdflatex_output</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.pdf&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="c1">#strips out extension</span>
             <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">folder_name</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">__local_tikz_output</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.pdf&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
             <span class="p">,</span> <span class="n">tikz_enabled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">terminals_enabled_by_default</span><span class="p">[</span><span class="s1">&#39;tikz&#39;</span><span class="p">][</span><span class="s1">&#39;is_enabled&#39;</span><span class="p">]</span>
         <span class="p">)</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="n">latex_incl_statement</span><span class="p">)</span></div></div>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span>
+            <span class="n">get_ipython</span>
+            <span class="n">highlight</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="c1"># jupyter seems not there..</span>
+            <span class="n">highlight</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="k">if</span> <span class="n">pygments_support_enabled</span> <span class="ow">and</span> <span class="n">highlight</span><span class="p">:</span>            
+            <span class="kn">from</span> <span class="nn">pygments</span> <span class="kn">import</span> <span class="n">highlight</span>
+            <span class="kn">from</span> <span class="nn">pygments.lexers</span> <span class="kn">import</span> <span class="n">TexLexer</span>
+            <span class="kn">from</span> <span class="nn">pygments.formatters</span> <span class="kn">import</span> <span class="n">HtmlFormatter</span>
+
+            <span class="kn">from</span> <span class="nn">pygments.styles</span> <span class="kn">import</span> <span class="n">get_style_by_name</span>
+
+            <span class="n">html__</span> <span class="o">=</span>  <span class="n">highlight</span><span class="p">(</span><span class="n">latex_incl_statement</span><span class="p">,</span>
+                                <span class="n">TexLexer</span><span class="p">(),</span>
+                                <span class="n">HtmlFormatter</span><span class="p">(</span><span class="n">style</span><span class="o">=</span><span class="s1">&#39;colorful&#39;</span><span class="p">,</span>
+                                              <span class="n">noclasses</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                                              <span class="n">linenos</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+            <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            &lt;style&gt;</span>
+<span class="s2">            </span><span class="si">{pygments_css}</span><span class="s2"></span>
+<span class="s2">            &lt;/style&gt;</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pygments_css</span><span class="o">=</span><span class="n">HtmlFormatter</span><span class="p">()</span><span class="o">.</span><span class="n">get_style_defs</span><span class="p">(</span><span class="s1">&#39;.highlight&#39;</span><span class="p">))))</span>
+            
+            <span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span> <span class="n">html__</span> <span class="p">)</span> <span class="p">)</span>
+            
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">latex_incl_statement</span><span class="p">)</span></div></div>
 
     
             
