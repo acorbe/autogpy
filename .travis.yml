@@ -6,7 +6,7 @@ install:
   - pip install -e ../autogpy/
 
 script:  
-  - pytest
+  - pytest --verbose
   # Use Sphinx to make the html docs
   - make -C doc/ html
   # Tell GitHub not to use jekyll to compile the docs 

@@ -1,4 +1,4 @@
-Content
+API reference
 =========
 
 .. autoclass:: autogpy.AutogpyFigure
