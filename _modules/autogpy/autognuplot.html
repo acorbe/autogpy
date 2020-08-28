@@ -40,6 +40,7 @@
 
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">autognuplot_terms</span>
@@ -53,13 +54,15 @@
 <span class="k">except</span><span class="p">:</span>
     <span class="n">pandas_support_enabled</span> <span class="o">=</span> <span class="kc">False</span>
 
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;once&#39;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
+
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">pygments</span>
     <span class="n">pygments_support_enabled</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="k">except</span><span class="p">:</span>
     <span class="n">pygments_support_enabled</span> <span class="o">=</span> <span class="kc">False</span>
 
-
+    
 <div class="viewcode-block" id="AutoGnuplotFigure"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure">[docs]</a><span class="k">class</span> <span class="nc">AutoGnuplotFigure</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Creates an AutoGnuplotFigure object which wraps one gnuplot figure.</span>
 
@@ -1323,8 +1326,18 @@
             <span class="n">proc</span><span class="o">.</span><span class="n">returncode</span> <span class="o">!=</span> <span class="mi">0</span>
         
         <span class="k">if</span> <span class="n">was_there_an_error</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: an error was intercepted.&quot;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;     stderr and stdout reported below.&quot;</span><span class="p">)</span>
+            
+            <span class="c1"># diagnosing pdflatex installation problem</span>
+            <span class="k">if</span> <span class="s2">&quot;pdflatex: command not found&quot;</span> <span class="ow">in</span> <span class="n">err</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: PDFLATEX is NOT installed.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="s2">&quot;gnuplot: command not found&quot;</span> <span class="ow">in</span> <span class="n">err</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: GNUPLOT is NOT installed.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: an error was intercepted.&quot;</span><span class="p">)</span>
+            
+            
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  stderr and stdout reported below for diagnostics.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
         
         
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
@@ -1338,9 +1351,10 @@
             <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;===== stdout =====&quot;</span><span class="p">)</span>
             <span class="nb">print</span> <span class="p">(</span><span class="n">output</span><span class="p">)</span>
             <span class="nb">print</span> <span class="p">(</span><span class="s2">&quot;=== stdout end ===&quot;</span><span class="p">)</span>
-            
-        <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
-        <span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span> <span class="n">image_to_display</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span>  <span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">was_there_an_error</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">display</span>
+            <span class="n">display</span><span class="p">(</span><span class="n">Image</span><span class="p">(</span> <span class="n">image_to_display</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span>  <span class="p">))</span>
 
     
 
