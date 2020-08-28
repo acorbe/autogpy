@@ -33,7 +33,7 @@
             
   <h1>Source code for autogpy.autognuplot</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">This file is part of autogpy.</span>
+<span class="sd">This file is part of Autognuplotpy, autogpy.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
@@ -1062,7 +1062,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">command_line</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="AutoGnuplotFigure.fplot"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.fplot">[docs]</a>    <span class="k">def</span> <span class="nf">fplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">foo</span><span class="p">,</span><span class="n">xsampling</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+<div class="viewcode-block" id="AutoGnuplotFigure.fplot"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.fplot">[docs]</a>    <span class="k">def</span> <span class="nf">fplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">foo</span><span class="p">,</span><span class="n">xsampling</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="n">xsampling_N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+              <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Mimicks matlab fplot function. </span>
 
 <span class="sd">        Matlab ref: https://www.mathworks.com/help/matlab/ref/fplot.html</span>
@@ -1079,7 +1081,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">xsampling</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">xsampling</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+            <span class="n">xsampling</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="n">xsampling_N</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">xsampling</span><span class="p">,</span><span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">xsampling</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">xsampling</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">xsampling</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">xsampling_N</span><span class="p">)</span>
 
         <span class="n">yval</span> <span class="o">=</span> <span class="p">[</span><span class="n">foo</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xsampling</span><span class="p">]</span>
 
@@ -1131,7 +1135,7 @@
 
     <span class="k">def</span> <span class="nf">__generate_gnuplot_file_content</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">redended_variables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__render_variables</span><span class="p">()</span>
-        <span class="n">parameters_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_plotting_parameters</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span>        
+        <span class="n">parameters_string</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_plotting_parameters</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>        
 
 
         <span class="n">plotting_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__generate_gnuplot_plotting_calls</span><span class="p">()</span>
@@ -1160,6 +1164,8 @@
             <span class="n">highlight</span> <span class="o">=</span> <span class="kc">False</span>
         
         <span class="k">if</span> <span class="n">highlight</span> <span class="ow">and</span> <span class="n">pygments_support_enabled</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;This function benefits from pygments when installed.&quot;</span><span class="p">)</span>
+            
             <span class="kn">from</span> <span class="nn">pygments</span> <span class="kn">import</span> <span class="n">highlight</span>
             <span class="kn">from</span> <span class="nn">pygments.lexers</span> <span class="kn">import</span> <span class="n">GnuplotLexer</span>
             <span class="kn">from</span> <span class="nn">pygments.formatters</span> <span class="kn">import</span> <span class="n">HtmlFormatter</span>
@@ -1541,14 +1547,17 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">get_folder_info</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="AutoGnuplotFigure.print_latex_fig_inclusion_code"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.print_latex_fig_inclusion_code">[docs]</a>    <span class="k">def</span> <span class="nf">print_latex_fig_inclusion_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">print_latex_fig_inclusion_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">print_latex_snippet</span><span class="p">()</span>
+
+<div class="viewcode-block" id="AutoGnuplotFigure.print_latex_snippet"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.print_latex_snippet">[docs]</a>    <span class="k">def</span> <span class="nf">print_latex_snippet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Propts latex code that can be used to include the figure.</span>
 <span class="sd">        </span>
 <span class="sd">        For the moment requires a call to self.generate_gnuplot_file()</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_anonymous</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;print_latex_fig_inclusion_code disabled for anonymous figures.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;print_latex_snippet disabled for anonymous figures.&quot;</span><span class="p">)</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">generate_gnuplot_file</span><span class="p">()</span>
 
