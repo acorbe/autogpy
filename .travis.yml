@@ -1,4 +1,8 @@
 language: python
+python:
+  - '3.6'
+  - '3.7'
+  - '3.8'
 
 install:
   ## current m2r fix from https://github.com/sphinx-doc/sphinx/issues/7420#issuecomment-610958327
