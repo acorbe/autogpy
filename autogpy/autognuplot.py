@@ -1028,6 +1028,35 @@ class AutoGnuplotFigure(object):
         """
         return self.plot(command_line,*args,**kw)
 
+    def fit(self,foo,modifiers,*args,**kw):
+
+        #modifiers = kw.get("modifiers","")
+        dataset_fname = self.file_identifier + self.datasetstring_template.format(            
+                DS_ID = self.__dataset_counter
+                , SPECS = "fit")
+
+        globalized_dataset_fname = self.globalize_fname(dataset_fname)
+
+        # this part needs to be refactored outputs
+        xyzt = list(map( lambda x : np.array(x), args  ))
+        # adding second dimension if needed, this is a feature to allow a for loop
+        xyzt = [  x[: , np.newaxis ] if len(x.shape) == 1 else x for x in xyzt]                   
+        
+        data = np.concatenate( xyzt , axis = 1 )
+        np.savetxt( globalized_dataset_fname ,  data)
+        
+        
+        to_append = {"dataset_fname" : dataset_fname
+                     , "plottype" : "gnuplotfit"
+                     , "gnuplot_opt" : ""
+                     , 'gnuplot_command_template' : '{FOO} "{{DS_FNAME}}" {MODS}'.format(FOO = foo, MODS=modifiers) }
+        
+        self.__append_to_multiplot_current_dataset(
+                to_append
+        )
+        self.__dataset_counter += 1
+    
+
     def fplot(self,foo,xsampling=None,
               xsampling_N=100,
               **kw):
@@ -1086,15 +1115,26 @@ class AutoGnuplotFigure(object):
                                         , self.datasets_to_plot):
             
             alterations_t = "\n".join( ["\n# this is multiplot idx: %d" % mp_count] + alterations + [""])
+
+            datasets_for_fit = filter( lambda x : x['plottype'] in ['gnuplotfit'], datasets )
+
+            
+            fit_call = "\n".join(
+                [ "fit " + x[ 'gnuplot_command_template' ].format( DS_FNAME= x[ 'dataset_fname'] )  for x in datasets_for_fit ] ) + "\n"
+            
+
+            datasets_for_plot = filter( lambda x : x['plottype'] in ['xyzt_gen', 'xy', 'expl_f']
+                                                  , datasets )
+
             plt_call = "p {ST}".format(ST = ",\\\n".join(
                 map( 
                     lambda x : x[ 'gnuplot_command_template' ].format( DS_FNAME = x[ 'dataset_fname' ] , OPTS =  x[ 'gnuplot_opt' ]  )
-                    , datasets
+                    , datasets_for_plot
                 )
             )
             )
-
-            calls.append(alterations_t + plt_call)
+            
+            calls.append(alterations_t + fit_call + plt_call)
             mp_count += 1
 
         return "\n".join(calls)
@@ -1290,11 +1330,12 @@ class AutoGnuplotFigure(object):
                       , stderr=_PIPE)
         output, err = proc.communicate()
 
+        #amending for the fit output
         was_there_an_error = \
             "error" in output or\
             "Error" in output or\
             "error" in err or\
-            "Error" in err or\
+            ("Error" in err and not "Standard Error" in err) or\
             proc.returncode != 0
         
         if was_there_an_error:
