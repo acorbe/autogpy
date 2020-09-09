@@ -63,13 +63,18 @@
 <li><p>Python 3</p></li>
 <li><p>Working latex distribution</p></li>
 <li><p>Gnuplot, optionally with tikz terminal</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">pdftoppm</span></code> or <code class="docutils literal notranslate"><span class="pre">imagemagick</span></code> to convert the output pdf figures in png for jupyter notebook embedding</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pdftoppm</span></code> (<code class="docutils literal notranslate"><span class="pre">poppler-utils</span></code>) or <code class="docutils literal notranslate"><span class="pre">imagemagick</span></code> to convert the output pdf figures in png for jupyter notebook embedding</p></li>
 </ul>
 </div>
 <div class="section" id="getting-autogpy">
 <h1>Getting autogpy<a class="headerlink" href="#getting-autogpy" title="Permalink to this headline">¶</a></h1>
 <p>Via <code class="docutils literal notranslate"><span class="pre">pip</span></code></p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install autogpy
+</pre></div>
+</div>
+<p>On Google Colab</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>!apt install gnuplot texlive poppler-utils ghostscript texlive-latex-extra
+!pip install autogpy
 </pre></div>
 </div>
 <p>From source</p>
