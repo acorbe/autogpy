@@ -34,7 +34,7 @@
 + Python 3
 + Working latex distribution
 + Gnuplot, optionally with tikz terminal
-+ `pdftoppm` or `imagemagick` to convert the output pdf figures in png for jupyter notebook embedding 
++ `pdftoppm` (`poppler-utils`) or `imagemagick` to convert the output pdf figures in png for jupyter notebook embedding 
 
 
 ### Getting autogpy
@@ -44,11 +44,20 @@ Via `pip`
 pip install autogpy
 
 ```
+
+On Google Colab
+```bash
+!apt install gnuplot texlive poppler-utils ghostscript texlive-latex-extra
+!pip install autogpy
+```
+
 From source
 ```bash
 git clone git@github.com:acorbe/autogpy.git
 pip install autogpy/
 ```
+
+
 
 ## In a nutshell
 
