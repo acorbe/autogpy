@@ -34,7 +34,7 @@
 + Python 3
 + Working latex distribution
 + Gnuplot, optionally with tikz terminal
-+ `pdftoppm` (`poppler-utils`) or `imagemagick` to convert the output pdf figures in png for jupyter notebook embedding 
++ `pdftoppm` (via [`poppler-utils`](https://command-not-found.com/pdftoppm)) or [`imagemagick`](https://command-not-found.com/convert) to convert the output pdf figures in png format for jupyter notebook preview 
 
 
 ### Getting autogpy
