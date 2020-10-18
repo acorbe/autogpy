@@ -28,7 +28,7 @@ try:
 except:
     pygments_support_enabled = False
 
-    
+
 class AutoGnuplotFigure(object):
     """Creates an AutoGnuplotFigure object which wraps one gnuplot figure.
 
@@ -159,8 +159,6 @@ class AutoGnuplotFigure(object):
 
         self.variables = OrderedDict()
 
-        
-
         self.terminals_enabled_by_default = {
             'latex' :
             {'type' : 'latex', 'is_enabled' : latex_enabled
@@ -171,8 +169,7 @@ class AutoGnuplotFigure(object):
         }
 
         
-
-
+        
         self.__Makefile_replacement_dict = { 
             'TAB' : "\t"  #ensure correct tab formatting
             , 'ALL_TARGETS' : "" + " ".join(
@@ -306,6 +303,7 @@ class AutoGnuplotFigure(object):
             args_with_set_in_front_txt = "\n".join(args_with_set_in_front)
         else:
             args_with_set_in_front_txt = ""
+            
 
         ## never needs autoescaping. The args branches is easy.
         self.set_parameters(args_with_set_in_front_txt)
@@ -579,7 +577,7 @@ class AutoGnuplotFigure(object):
                        , gnuplot_opt = ""
                        , fname_specs = ""
     ):
-        """Deprecated: Makes a x-y plot. Use `p_generic` instead.
+        """Deprecated: Makes a x-y plot. Use `plot` instead.
         """
 
         x = np.array(x)
@@ -602,6 +600,7 @@ class AutoGnuplotFigure(object):
 
         )
         self.__dataset_counter += 1
+
 
     def __hist_normalization_function(self
                                       , v_
@@ -1240,21 +1239,21 @@ class AutoGnuplotFigure(object):
         
         
         #### pdflatex terminal
-        self.local_pdflatex_output = self.file_identifier + "__.pdf"
-        self.pdflatex_output = self.globalize_fname( self.__local_jpg_output )
+        self.__local_pdflatex_output = self.file_identifier + "__.pdf"
+        self.__pdflatex_output = self.globalize_fname( self.__local_jpg_output )
 
         ##used to be a jpg, yet png is much better
-        self.local_pdflatex_output_jpg_convert = self.local_pdflatex_output + "_converted_to.png" 
-        self.pdflatex_output_jpg_convert = self.globalize_fname( self.local_pdflatex_output_jpg_convert )
+        self.__local_pdflatex_output_jpg_convert = self.__local_pdflatex_output + "_converted_to.png" 
+        self.__pdflatex_output_jpg_convert = self.globalize_fname( self.__local_pdflatex_output_jpg_convert )
         
 
-        self.local_pdflatex_gnuplot_file = self.file_identifier + "__.pdflatex.gnu"
-        self.pdflatex_gnuplot_file = self.globalize_fname(self.local_pdflatex_gnuplot_file)
+        self.__local_pdflatex_gnuplot_file = self.file_identifier + "__.pdflatex.gnu"
+        self.__pdflatex_gnuplot_file = self.globalize_fname(self.__local_pdflatex_gnuplot_file)
 
-        self.local_pdflatex_compilesh_gnuplot_file = self.file_identifier + "__.pdflatex_compile.sh"
-        self.pdflatex_compilesh_gnuplot_file = self.globalize_fname(self.local_pdflatex_compilesh_gnuplot_file)
+        self.__local_pdflatex_compilesh_gnuplot_file = self.file_identifier + "__.pdflatex_compile.sh"
+        self.__pdflatex_compilesh_gnuplot_file = self.globalize_fname(self.__local_pdflatex_compilesh_gnuplot_file)
         
-        with open( self.pdflatex_gnuplot_file, 'w'  ) as f:
+        with open( self.__pdflatex_gnuplot_file, 'w'  ) as f:
             f.write(
                 autognuplot_terms.LATEX_wrapper_file.format(
                     CORE = self.__local_core_gnuplot_file
@@ -1262,12 +1261,12 @@ class AutoGnuplotFigure(object):
                     )
             )
 
-        with open ( self.pdflatex_compilesh_gnuplot_file , 'w' ) as f:
+        with open ( self.__pdflatex_compilesh_gnuplot_file , 'w' ) as f:
             f.write(
                 autognuplot_terms.LATEX_compile_sh_template.format(
-                    LATEX_TARGET_GNU = self.local_pdflatex_gnuplot_file
-                    , FINAL_PDF_NAME = self.local_pdflatex_output
-                    , FINAL_PDF_NAME_jpg_convert = self.local_pdflatex_output_jpg_convert
+                    LATEX_TARGET_GNU = self.__local_pdflatex_gnuplot_file
+                    , FINAL_PDF_NAME = self.__local_pdflatex_output
+                    , FINAL_PDF_NAME_jpg_convert = self.__local_pdflatex_output_jpg_convert
                     , pdflatex_jpg_convert_density = self.pdflatex_jpg_convert_density
                     , pdflatex_jpg_convert_quality = self.pdflatex_jpg_convert_quality
                 )
@@ -1413,8 +1412,8 @@ class AutoGnuplotFigure(object):
         https://stackoverflow.com/a/52661288
         """
         self.__jupyter_show_generic(
-            [ "bash", self.local_pdflatex_compilesh_gnuplot_file  ]
-            , self.pdflatex_output_jpg_convert
+            [ "bash", self.__local_pdflatex_compilesh_gnuplot_file  ]
+            , self.__pdflatex_output_jpg_convert
             , height = height
             , width = width
             , show_stderr = show_stderr 
@@ -1569,7 +1568,7 @@ end
         self.generate_gnuplot_file()
 
         latex_incl_statement = plot_helpers.latex_document_include_figure_statement(
-            self.folder_name + '/' + self.local_pdflatex_output.replace(".pdf","") #strips out extension
+            self.folder_name + '/' + self.__local_pdflatex_output.replace(".pdf","") #strips out extension
             , self.folder_name + '/' + self.__local_tikz_output.replace(".pdf","")
             , tikz_enabled = self.terminals_enabled_by_default['tikz']['is_enabled']
         )
