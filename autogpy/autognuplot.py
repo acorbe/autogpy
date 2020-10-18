@@ -8,6 +8,8 @@ import os
 import numpy as np
 import warnings
 from collections import OrderedDict
+import re
+
 
 from . import autognuplot_terms
 from . import plot_helpers
@@ -1027,9 +1029,130 @@ class AutoGnuplotFigure(object):
         """
         return self.plot(command_line,*args,**kw)
 
-    def fit(self,foo,modifiers,*args,**kw):
+    def fit(self,foo, *args,**kw):
+        """Fitting method from gnuplot.
 
-        #modifiers = kw.get("modifiers","")
+        Arguments
+        -------------------------
+        foo: str
+             name of the function to fit (must be defined in set parameters)
+             if foo contains an `=` (as e.g. in `foo = "f(x)=a*x+b"), the function definition is automatically 
+             included in the preamble. Note everthing after `=` is ported. 
+             so far parses only scalar functions, like "`f(yy)=tt*yy`"
+
+        modfiers: str
+             ('auto_via') modifiers to the call, suited to include, e.g. the `via` specifier.
+             if `'auto'` the `via` parameter is inferred. [experimental]
+
+        *args: `list` or `np.array`
+             data to fit
+
+        do_not_fit: str or list(str)
+             when inferring which parameters to fit, those in `do_not_fit` are excluded
+
+        unicize_parameter_names: bool
+             (False) if `True`, the inferred parameter names are renamed to be unique. 
+             Experimental and buggy!
+        
+        """
+
+        if isinstance(args[0], str):
+            # the first argument is a modifier, need to add it to kw
+            kw["modifiers"] = args[0]
+            args = args[1:]
+        else:
+            # we need default condition on modifiers
+            kw["modifiers"] = kw.get("modifiers","auto_via")
+
+        modifiers = kw["modifiers"]
+        if self.verbose:
+            print("modifiers=",modifiers)
+            
+        do_not_fit_list = kw.get("do_not_fit",[])
+        if isinstance(do_not_fit_list,str):
+            do_not_fit_list = [do_not_fit_list]
+
+        unicize_parameter_names = kw.get("unicize_parameter_names",False)
+
+        # inferring the function syntax from 'foo'
+        if '=' in foo:
+            #we have a function definition here. Must be ported to the parameters
+            _any_f_name="[a-zA-z][a-zA-z0-9_]*"
+            _capture = lambda x : "(" + x + ")"
+
+            __function_definition_block_regex = "^.*?\s*" + _capture( _any_f_name + "\(.+\)\s*=.*" )
+            # 1. we extract the function definition block
+            foo_def_block_r = re.search(__function_definition_block_regex,foo)
+            foo_def_block_content = foo_def_block_r.group(1)
+
+
+            # 3. we strip the variable foo from the function definition, as required by gnuplot
+            foo = foo.split("=")[0]
+
+            # 4. we parse the function definition
+            __function_parts_regex = _capture( _any_f_name ) + "\s*\(" + _capture( _any_f_name ) + "\s*\)" + "\s*=.*"
+            __function_parts_r = re.search(__function_parts_regex, foo_def_block_content)
+            # 5. we extract the independent variables name
+            foo_function_name = __function_parts_r.group(1)
+            foo_independent_var_name = __function_parts_r.group(2)
+
+            do_not_fit_list.append(foo_independent_var_name)
+
+            print("[fit] inferred function name:", foo_function_name)
+            print("[fit] inferred independent variable name:", foo_independent_var_name)
+            print("[fit] names not for fitting", do_not_fit_list)
+
+           
+            if pygments_support_enabled and "auto_via" in modifiers:
+                if self.verbose:
+                    print("auto_via in modifiers, will proceed to infer the parameters to from the function definition")
+                from pygments.lexers import GnuplotLexer
+                from pygments.token import Token
+
+                inferred_parameter_names_to_fit = []                
+                loc_lexer = GnuplotLexer()
+
+                found_equal_token = False
+                for ch_idx, tk_type, val in loc_lexer.get_tokens_unprocessed(foo_def_block_content):
+                    # if self.verbose:                    
+                    #     print(type(tk_type), ch_idx, tk_type, val)
+
+                    if found_equal_token and tk_type is Token.Name:
+                        if val not in do_not_fit_list: # != foo_independent_var_name:
+                            inferred_parameter_names_to_fit.append(val)
+
+                    if not found_equal_token and tk_type is Token.Operator and val == "=":
+                        # if self.verbose:
+                        #     print("matched =")
+
+                        found_equal_token = True
+
+                print("[fit] inferred parameters to fit", inferred_parameter_names_to_fit)                
+                modifiers = modifiers.replace("auto_via", "via " + ",".join(inferred_parameter_names_to_fit))
+                
+            if unicize_parameter_names:
+                print("this feature is experimental and buggy")
+                import uuid
+                this_unique_name = "__" + str(uuid.uuid4().hex[:8])
+
+                for vname in inferred_parameter_names_to_fit:
+                    print(vname)
+                    modifiers = modifiers.replace(vname,vname+this_unique_name)
+                    foo_def_block_content = foo_def_block_content.replace(vname,vname+this_unique_name)
+            else:
+                this_unique_name = ""
+
+            # 2b. we add the function definition to the preamble
+            # print(foo_def_block_r.group(1))
+            self.set_parameters(foo_def_block_content)
+
+            # tentative for multiple arguments
+            # TODO: this regex has a bug: it does not capture intermediate
+            # variable arguments between the first and the last
+            # re.search("^.*?\s*([a-zA-z][a-zA-z0-9_]*)\(([a-zA-z][a-zA-z0-9_]*)"
+            #           "(,[a-zA-z][a-zA-z0-9_]*?)*\)=(.*)", )
+
+
         dataset_fname = self.file_identifier + self.datasetstring_template.format(            
                 DS_ID = self.__dataset_counter
                 , SPECS = "fit")
