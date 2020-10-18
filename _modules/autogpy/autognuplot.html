@@ -42,6 +42,8 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">autognuplot_terms</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">plot_helpers</span>
@@ -1061,9 +1063,130 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">command_line</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">foo</span><span class="p">,</span><span class="n">modifiers</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+<div class="viewcode-block" id="AutoGnuplotFigure.fit"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">foo</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fitting method from gnuplot.</span>
 
-        <span class="c1">#modifiers = kw.get(&quot;modifiers&quot;,&quot;&quot;)</span>
+<span class="sd">        Arguments</span>
+<span class="sd">        -------------------------</span>
+<span class="sd">        foo: str</span>
+<span class="sd">             name of the function to fit (must be defined in set parameters)</span>
+<span class="sd">             if foo contains an `=` (as e.g. in `foo = &quot;f(x)=a*x+b&quot;), the function definition is automatically </span>
+<span class="sd">             included in the preamble. Note everthing after `=` is ported. </span>
+<span class="sd">             so far parses only scalar functions, like &quot;`f(yy)=tt*yy`&quot;</span>
+
+<span class="sd">        modfiers: str</span>
+<span class="sd">             (&#39;auto_via&#39;) modifiers to the call, suited to include, e.g. the `via` specifier.</span>
+<span class="sd">             if `&#39;auto&#39;` the `via` parameter is inferred. [experimental]</span>
+
+<span class="sd">        *args: `list` or `np.array`</span>
+<span class="sd">             data to fit</span>
+
+<span class="sd">        do_not_fit: str or list(str)</span>
+<span class="sd">             when inferring which parameters to fit, those in `do_not_fit` are excluded</span>
+
+<span class="sd">        unicize_parameter_names: bool</span>
+<span class="sd">             (False) if `True`, the inferred parameter names are renamed to be unique. </span>
+<span class="sd">             Experimental and buggy!</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="c1"># the first argument is a modifier, need to add it to kw</span>
+            <span class="n">kw</span><span class="p">[</span><span class="s2">&quot;modifiers&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># we need default condition on modifiers</span>
+            <span class="n">kw</span><span class="p">[</span><span class="s2">&quot;modifiers&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;modifiers&quot;</span><span class="p">,</span><span class="s2">&quot;auto_via&quot;</span><span class="p">)</span>
+
+        <span class="n">modifiers</span> <span class="o">=</span> <span class="n">kw</span><span class="p">[</span><span class="s2">&quot;modifiers&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;modifiers=&quot;</span><span class="p">,</span><span class="n">modifiers</span><span class="p">)</span>
+            
+        <span class="n">do_not_fit_list</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;do_not_fit&quot;</span><span class="p">,[])</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">do_not_fit_list</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+            <span class="n">do_not_fit_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">do_not_fit_list</span><span class="p">]</span>
+
+        <span class="n">unicize_parameter_names</span> <span class="o">=</span> <span class="n">kw</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;unicize_parameter_names&quot;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># inferring the function syntax from &#39;foo&#39;</span>
+        <span class="k">if</span> <span class="s1">&#39;=&#39;</span> <span class="ow">in</span> <span class="n">foo</span><span class="p">:</span>
+            <span class="c1">#we have a function definition here. Must be ported to the parameters</span>
+            <span class="n">_any_f_name</span><span class="o">=</span><span class="s2">&quot;[a-zA-z][a-zA-z0-9_]*&quot;</span>
+            <span class="n">_capture</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+
+            <span class="n">__function_definition_block_regex</span> <span class="o">=</span> <span class="s2">&quot;^.*?\s*&quot;</span> <span class="o">+</span> <span class="n">_capture</span><span class="p">(</span> <span class="n">_any_f_name</span> <span class="o">+</span> <span class="s2">&quot;\(.+\)\s*=.*&quot;</span> <span class="p">)</span>
+            <span class="c1"># 1. we extract the function definition block</span>
+            <span class="n">foo_def_block_r</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">__function_definition_block_regex</span><span class="p">,</span><span class="n">foo</span><span class="p">)</span>
+            <span class="n">foo_def_block_content</span> <span class="o">=</span> <span class="n">foo_def_block_r</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+
+            <span class="c1"># 3. we strip the variable foo from the function definition, as required by gnuplot</span>
+            <span class="n">foo</span> <span class="o">=</span> <span class="n">foo</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># 4. we parse the function definition</span>
+            <span class="n">__function_parts_regex</span> <span class="o">=</span> <span class="n">_capture</span><span class="p">(</span> <span class="n">_any_f_name</span> <span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;\s*\(&quot;</span> <span class="o">+</span> <span class="n">_capture</span><span class="p">(</span> <span class="n">_any_f_name</span> <span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;\s*\)&quot;</span> <span class="o">+</span> <span class="s2">&quot;\s*=.*&quot;</span>
+            <span class="n">__function_parts_r</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">__function_parts_regex</span><span class="p">,</span> <span class="n">foo_def_block_content</span><span class="p">)</span>
+            <span class="c1"># 5. we extract the independent variables name</span>
+            <span class="n">foo_function_name</span> <span class="o">=</span> <span class="n">__function_parts_r</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">foo_independent_var_name</span> <span class="o">=</span> <span class="n">__function_parts_r</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+            <span class="n">do_not_fit_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">foo_independent_var_name</span><span class="p">)</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[fit] inferred function name:&quot;</span><span class="p">,</span> <span class="n">foo_function_name</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[fit] inferred independent variable name:&quot;</span><span class="p">,</span> <span class="n">foo_independent_var_name</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[fit] names not for fitting&quot;</span><span class="p">,</span> <span class="n">do_not_fit_list</span><span class="p">)</span>
+
+           
+            <span class="k">if</span> <span class="n">pygments_support_enabled</span> <span class="ow">and</span> <span class="s2">&quot;auto_via&quot;</span> <span class="ow">in</span> <span class="n">modifiers</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;auto_via in modifiers, will proceed to infer the parameters to from the function definition&quot;</span><span class="p">)</span>
+                <span class="kn">from</span> <span class="nn">pygments.lexers</span> <span class="kn">import</span> <span class="n">GnuplotLexer</span>
+                <span class="kn">from</span> <span class="nn">pygments.token</span> <span class="kn">import</span> <span class="n">Token</span>
+
+                <span class="n">inferred_parameter_names_to_fit</span> <span class="o">=</span> <span class="p">[]</span>                
+                <span class="n">loc_lexer</span> <span class="o">=</span> <span class="n">GnuplotLexer</span><span class="p">()</span>
+
+                <span class="n">found_equal_token</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">for</span> <span class="n">ch_idx</span><span class="p">,</span> <span class="n">tk_type</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">loc_lexer</span><span class="o">.</span><span class="n">get_tokens_unprocessed</span><span class="p">(</span><span class="n">foo_def_block_content</span><span class="p">):</span>
+                    <span class="c1"># if self.verbose:                    </span>
+                    <span class="c1">#     print(type(tk_type), ch_idx, tk_type, val)</span>
+
+                    <span class="k">if</span> <span class="n">found_equal_token</span> <span class="ow">and</span> <span class="n">tk_type</span> <span class="ow">is</span> <span class="n">Token</span><span class="o">.</span><span class="n">Name</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">val</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">do_not_fit_list</span><span class="p">:</span> <span class="c1"># != foo_independent_var_name:</span>
+                            <span class="n">inferred_parameter_names_to_fit</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">found_equal_token</span> <span class="ow">and</span> <span class="n">tk_type</span> <span class="ow">is</span> <span class="n">Token</span><span class="o">.</span><span class="n">Operator</span> <span class="ow">and</span> <span class="n">val</span> <span class="o">==</span> <span class="s2">&quot;=&quot;</span><span class="p">:</span>
+                        <span class="c1"># if self.verbose:</span>
+                        <span class="c1">#     print(&quot;matched =&quot;)</span>
+
+                        <span class="n">found_equal_token</span> <span class="o">=</span> <span class="kc">True</span>
+
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[fit] inferred parameters to fit&quot;</span><span class="p">,</span> <span class="n">inferred_parameter_names_to_fit</span><span class="p">)</span>                
+                <span class="n">modifiers</span> <span class="o">=</span> <span class="n">modifiers</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;auto_via&quot;</span><span class="p">,</span> <span class="s2">&quot;via &quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">inferred_parameter_names_to_fit</span><span class="p">))</span>
+                
+            <span class="k">if</span> <span class="n">unicize_parameter_names</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;this feature is experimental and buggy&quot;</span><span class="p">)</span>
+                <span class="kn">import</span> <span class="nn">uuid</span>
+                <span class="n">this_unique_name</span> <span class="o">=</span> <span class="s2">&quot;__&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">8</span><span class="p">])</span>
+
+                <span class="k">for</span> <span class="n">vname</span> <span class="ow">in</span> <span class="n">inferred_parameter_names_to_fit</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">vname</span><span class="p">)</span>
+                    <span class="n">modifiers</span> <span class="o">=</span> <span class="n">modifiers</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">vname</span><span class="p">,</span><span class="n">vname</span><span class="o">+</span><span class="n">this_unique_name</span><span class="p">)</span>
+                    <span class="n">foo_def_block_content</span> <span class="o">=</span> <span class="n">foo_def_block_content</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">vname</span><span class="p">,</span><span class="n">vname</span><span class="o">+</span><span class="n">this_unique_name</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">this_unique_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+            <span class="c1"># 2b. we add the function definition to the preamble</span>
+            <span class="c1"># print(foo_def_block_r.group(1))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_parameters</span><span class="p">(</span><span class="n">foo_def_block_content</span><span class="p">)</span>
+
+            <span class="c1"># tentative for multiple arguments</span>
+            <span class="c1"># TODO: this regex has a bug: it does not capture intermediate</span>
+            <span class="c1"># variable arguments between the first and the last</span>
+            <span class="c1"># re.search(&quot;^.*?\s*([a-zA-z][a-zA-z0-9_]*)\(([a-zA-z][a-zA-z0-9_]*)&quot;</span>
+            <span class="c1">#           &quot;(,[a-zA-z][a-zA-z0-9_]*?)*\)=(.*)&quot;, )</span>
+
+
         <span class="n">dataset_fname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_identifier</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">datasetstring_template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>            
                 <span class="n">DS_ID</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dataset_counter</span>
                 <span class="p">,</span> <span class="n">SPECS</span> <span class="o">=</span> <span class="s2">&quot;fit&quot;</span><span class="p">)</span>
@@ -1087,7 +1210,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__append_to_multiplot_current_dataset</span><span class="p">(</span>
                 <span class="n">to_append</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__dataset_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dataset_counter</span> <span class="o">+=</span> <span class="mi">1</span></div>
     
 
 <div class="viewcode-block" id="AutoGnuplotFigure.fplot"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.fplot">[docs]</a>    <span class="k">def</span> <span class="nf">fplot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">foo</span><span class="p">,</span><span class="n">xsampling</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>

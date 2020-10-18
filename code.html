@@ -244,6 +244,28 @@ Use gnuplot syntax. Raw strings are advised.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="autogpy.AutoGnuplotFigure.fit">
+<code class="sig-name descname">fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">foo</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kw</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fitting method from gnuplot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>foo</strong> (<em>str</em>) – name of the function to fit (must be defined in set parameters)
+if foo contains an <cite>=</cite> (as e.g. in <cite>foo = “f(x)=a*x+b”), the function definition is automatically
+included in the preamble. Note everthing after `=</cite> is ported.
+so far parses only scalar functions, like “<cite>f(yy)=tt*yy</cite>”</p></li>
+<li><p><strong>modfiers</strong> (<em>str</em>) – (‘auto_via’) modifiers to the call, suited to include, e.g. the <cite>via</cite> specifier.
+if <cite>‘auto’</cite> the <cite>via</cite> parameter is inferred. [experimental]</p></li>
+<li><p><strong>*args</strong> (<cite>list</cite> or <cite>np.array</cite>) – data to fit</p></li>
+<li><p><strong>do_not_fit</strong> (<em>str</em><em> or </em><em>list</em><em>(</em><em>str</em><em>)</em>) – when inferring which parameters to fit, those in <cite>do_not_fit</cite> are excluded</p></li>
+<li><p><strong>unicize_parameter_names</strong> (<em>bool</em>) – (False) if <cite>True</cite>, the inferred parameter names are renamed to be unique.
+Experimental and buggy!</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="autogpy.AutoGnuplotFigure.fplot">
 <code class="sig-name descname">fplot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">foo</span></em>, <em class="sig-param"><span class="n">xsampling</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">xsampling_N</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kw</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.fplot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.fplot" title="Permalink to this definition">¶</a></dt>
 <dd><p>Mimicks matlab fplot function.</p>
