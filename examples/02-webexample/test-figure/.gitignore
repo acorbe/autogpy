@@ -1,0 +1,11 @@
+
+*.aux
+*.dvi
+*.log
+*.ps
+*~
+*.tex
+**/fig.latex.nice/**
+**/fig.tikz.nice/**
+*converted*
+plot_out.eps
