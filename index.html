@@ -42,7 +42,9 @@
 <a class="reference external image-reference" href="https://img.shields.io/pypi/dm/autogpy"><img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/autogpy" /></a>
 <div class="section" id="which-problem-does-it-solve">
 <h1>Which problem does it solve?<a class="headerlink" href="#which-problem-does-it-solve" title="Permalink to this headline">¶</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">autogpy</span></code> eliminates annoying code and data duplications when employing python for data analysis and <a class="reference external" href="http://www.gnuplot.info/">gnuplot</a> for publication figures. Providing a gnuplot-like or a matplotlib-like syntax, <code class="docutils literal notranslate"><span class="pre">autogpy</span></code> automatically generates gnuplot scripts and dumps suitably the data.</p>
+<p><code class="docutils literal notranslate"><span class="pre">autogpy</span></code> eliminates annoying duplications of code and data when employing python for data analysis and <a class="reference external" href="http://www.gnuplot.info/">gnuplot</a> for figures. Providing a gnuplot-like or a matplotlib-like syntax, <code class="docutils literal notranslate"><span class="pre">autogpy</span></code> automatically generates gnuplot scripts and dumps suitably the data.</p>
+<a class="reference external image-reference" href="https://github.com/acorbe/autogpy/blob/master/doc/other/demo-animation.gif"><img alt="Autogpy-Demo" src="https://github.com/acorbe/autogpy/blob/master/doc/other/demo-animation.gif" /></a>
+<p>Links: [<a class="reference external" href="https://github.com/acorbe/autogpy/tree/master/examples/02-webexample/webmovie.ipynb">Source</a>] [<a class="reference external" href="https://github.com/acorbe/autogpy/tree/master/examples/02-webexample/test-figure">Output</a>]</p>
 </div>
 <div class="section" id="main-features">
 <h1>Main features<a class="headerlink" href="#main-features" title="Permalink to this headline">¶</a></h1>
@@ -120,15 +122,11 @@ fig__.tikz.gnu
 </pre></div>
 </div>
 <p>With <code class="docutils literal notranslate"><span class="pre">make</span></code> one can obtain jpg, epslatex, and tikz/pgfplot versions of the figure. Notice that the input data has been formatted automatically and dumped in the <code class="docutils literal notranslate"><span class="pre">.dat</span></code> files.</p>
-<p>Inspecting <code class="docutils literal notranslate"><span class="pre">fig__.pdflatex.gnu</span></code>, responsible of the epslatex version of the figure, one gets:</p>
+<p>Inspecting the <code class="docutils literal notranslate"><span class="pre">fig__.pdflatex.gnu</span></code>, responsible of the epslatex version of the figure, one gets:</p>
 <div class="highlight-gnuplot notranslate"><div class="highlight"><pre><span></span><span class="k">set</span> <span class="nb">terminal</span> <span class="n">epslatex</span> <span class="n">size</span> <span class="mf">9.9</span><span class="n">cm</span><span class="o">,</span><span class="mf">8.</span><span class="n">cm</span> <span class="n">color</span> <span class="n">colortext</span> <span class="n">standalone</span>      <span class="s">&#39;phv,12 &#39;</span>  <span class="n">linewidth</span> <span class="mi">2</span>
 <span class="k">set</span> <span class="nb">output</span> <span class="s">&#39;fig.latex.nice/plot_out.tex&#39;</span>
 
-<span class="k">load</span> <span class="s">&quot;fig__.core.gnu&quot;</span><span class="p">;</span>
-</pre></div>
-</div>
-<p>while <code class="docutils literal notranslate"><span class="pre">fig__.core.gnu</span></code> reads:</p>
-<div class="highlight-gnuplot notranslate"><div class="highlight"><pre><span></span><span class="k">p</span> <span class="s">&quot;fig__0__.dat&quot;</span> <span class="nb">with</span> <span class="n">lines</span> <span class="nb">t</span> <span class="s">&quot;sin&quot;</span><span class="o">,</span>\
+<span class="k">p</span> <span class="s">&quot;fig__0__.dat&quot;</span> <span class="nb">with</span> <span class="n">lines</span> <span class="nb">t</span> <span class="s">&quot;sin&quot;</span><span class="o">,</span>\
 <span class="s">&quot;fig__1__.dat&quot;</span> <span class="nb">u</span> <span class="mi">1</span><span class="o">:</span><span class="mi">2</span> <span class="nb">with</span> <span class="n">lines</span> <span class="nb">t</span> <span class="s">&quot;cos&quot;</span>
 </pre></div>
 </div>
