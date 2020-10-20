@@ -14,9 +14,10 @@
 
 ### Which problem does it solve?
 
-`autogpy` eliminates annoying code and data duplications when employing python for data analysis and [gnuplot](http://www.gnuplot.info/) for publication figures. Providing a gnuplot-like or a matplotlib-like syntax, `autogpy` automatically generates gnuplot scripts and dumps suitably the data.  
+`autogpy` eliminates annoying duplications of code and data when employing python for data analysis and [gnuplot](http://www.gnuplot.info/) for figures. Providing a gnuplot-like or a matplotlib-like syntax, `autogpy` automatically generates gnuplot scripts and dumps suitably the data.  
 
 ![Autogpy-Demo](https://github.com/acorbe/autogpy/blob/master/doc/other/demo-animation.gif)
+
 Links: [[Source](https://github.com/acorbe/autogpy/tree/master/examples/02-webexample/webmovie.ipynb)] [[Output](https://github.com/acorbe/autogpy/tree/master/examples/02-webexample/test-figure)]
 
 
@@ -105,18 +106,13 @@ fig__.tikz.gnu
 
 With `make` one can obtain jpg, epslatex, and tikz/pgfplot versions of the figure. Notice that the input data has been formatted automatically and dumped in the `.dat` files.
 
-Inspecting `fig__.pdflatex.gnu`, responsible of the epslatex version of the figure, one gets:
+Inspecting the `fig__.pdflatex.gnu`, responsible of the epslatex version of the figure, one gets:
 ```gnuplot
 set terminal epslatex size 9.9cm,8.cm color colortext standalone      'phv,12 '  linewidth 2
 set output 'fig.latex.nice/plot_out.tex'
 
-load "fig__.core.gnu"; 
-```
-while `fig__.core.gnu` reads:
-```gnuplot
 p "fig__0__.dat" with lines t "sin",\
-"fig__1__.dat" u 1:2 with lines t "cos"
-
+"fig__1__.dat" u 1:2 with lines t "cos" 
 ```
 
 **KWONW ISSUES**
