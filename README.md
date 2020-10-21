@@ -16,7 +16,7 @@
 
 `autogpy` eliminates annoying duplications of code and data when employing python for data analysis and [gnuplot](http://www.gnuplot.info/) for figures. Providing a gnuplot-like or a matplotlib-like syntax, `autogpy` automatically generates gnuplot scripts and dumps suitably the data.  
 
-![Autogpy-Demo](https://github.com/acorbe/autogpy/blob/master/doc/other/demo-animation.gif)
+![Autogpy-Demo](https://github.com/acorbe/autogpy/raw/master/doc/other/demo-animation.gif)
 
 Links: [[Source](https://github.com/acorbe/autogpy/tree/master/examples/02-webexample/webmovie.ipynb)] [[Output](https://github.com/acorbe/autogpy/tree/master/examples/02-webexample/test-figure)]
 
