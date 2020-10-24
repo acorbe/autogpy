@@ -315,7 +315,7 @@ class AutoGnuplotFigure(object):
 
         Examples
         ------------------
-        >>> figure.set('autoscale',xrange="[0:10]",xlabel__s='t',ylabel__e=f(t))
+        >>> figure.set('autoscale',xrange="[0:10]",xlabel__s='t',ylabel__e='f(t)')
 
         yields a gnuplot preamble
 
