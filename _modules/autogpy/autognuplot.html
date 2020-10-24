@@ -330,7 +330,37 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">alter_current_multiplot_parameters</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="AutoGnuplotFigure.set"><a class="viewcode-back" href="../../code.html#autogpy.AutoGnuplotFigure.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kw</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;expands to preamble param in each subplot, prepends the set command</span>
+        <span class="sd">&quot;&quot;&quot;expands to preamble param in each subplot, prepends the set command.</span>
+<span class="sd">        </span>
+<span class="sd">        Appending a kw name with `__s` or `__e` yields, respectively, </span>
+<span class="sd">        string (`&quot;... &quot;`) or an equation (`&quot;$...$ &quot;`) value.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------------</span>
+<span class="sd">        *args: castable to str</span>
+<span class="sd">            each args element is placed in a different line and </span>
+<span class="sd">            prepended with `set`</span>
+
+<span class="sd">        **kw: castable to str</span>
+<span class="sd">            each kw is placed in a different line, its argument follows</span>
+<span class="sd">            if the k ends with `__s` or `__e` the argument is treated as</span>
+<span class="sd">            string or equation.</span>
+
+
+<span class="sd">        Examples</span>
+<span class="sd">        ------------------</span>
+<span class="sd">        &gt;&gt;&gt; figure.set(&#39;autoscale&#39;,xrange=&quot;[0:10]&quot;,xlabel__s=&#39;t&#39;,ylabel__e=f(t))</span>
+
+<span class="sd">        yields a gnuplot preamble</span>
+
+<span class="sd">        &gt;&gt;&gt; set autoscale</span>
+<span class="sd">        &gt;&gt;&gt; set xrange [0:10]</span>
+<span class="sd">        &gt;&gt;&gt; set xlabel &#39;t&#39;</span>
+<span class="sd">        &gt;&gt;&gt; set ylabel &#39;$f(t)$&#39;</span>
+
+<span class="sd">        See also</span>
+<span class="sd">        -------------------</span>
+<span class="sd">        unset, set_multiplot, set_parameter</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">add_set_statement</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="s2">&quot;set &quot;</span> <span class="o">+</span> <span class="n">x</span>
@@ -699,6 +729,12 @@
 <span class="sd">        Returns</span>
 <span class="sd">        ------------</span>
 <span class="sd">        p_generic output</span>
+
+
+<span class="sd">        See also</span>
+<span class="sd">        -----------------------</span>
+<span class="sd">        hist_plthist</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">v_</span><span class="p">,</span> <span class="n">e_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="o">**</span><span class="n">hist_kw</span><span class="p">)</span>
@@ -763,6 +799,11 @@
 <span class="sd">             (True) prevents the inner `plt.hist` call to spawn an histogram figure</span>
 <span class="sd">        **kw: </span>
 <span class="sd">             `plt.hist` parameters</span>
+
+
+<span class="sd">        See also</span>
+<span class="sd">        -----------------------</span>
+<span class="sd">        hist_generic</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -1076,7 +1117,7 @@
 
 <span class="sd">        modfiers: str</span>
 <span class="sd">             (&#39;auto_via&#39;) modifiers to the call, suited to include, e.g. the `via` specifier.</span>
-<span class="sd">             if `&#39;auto&#39;` the `via` parameter is inferred. [experimental]</span>
+<span class="sd">             if `&#39;auto_via&#39;` the `via` parameter is inferred. [experimental]</span>
 
 <span class="sd">        *args: `list` or `np.array`</span>
 <span class="sd">             data to fit</span>
@@ -1087,6 +1128,11 @@
 <span class="sd">        unicize_parameter_names: bool</span>
 <span class="sd">             (False) if `True`, the inferred parameter names are renamed to be unique. </span>
 <span class="sd">             Experimental and buggy!</span>
+
+
+<span class="sd">        Examples</span>
+<span class="sd">        ----------------------------</span>
+<span class="sd">        &gt;&gt;&gt; figure.fit(&quot;g(x)=ax+b&quot;,xx,yy)</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 

@@ -255,7 +255,7 @@ if foo contains an <cite>=</cite> (as e.g. in <cite>foo = “f(x)=a*x+b”), the
 included in the preamble. Note everthing after `=</cite> is ported.
 so far parses only scalar functions, like “<cite>f(yy)=tt*yy</cite>”</p></li>
 <li><p><strong>modfiers</strong> (<em>str</em>) – (‘auto_via’) modifiers to the call, suited to include, e.g. the <cite>via</cite> specifier.
-if <cite>‘auto’</cite> the <cite>via</cite> parameter is inferred. [experimental]</p></li>
+if <cite>‘auto_via’</cite> the <cite>via</cite> parameter is inferred. [experimental]</p></li>
 <li><p><strong>*args</strong> (<cite>list</cite> or <cite>np.array</cite>) – data to fit</p></li>
 <li><p><strong>do_not_fit</strong> (<em>str</em><em> or </em><em>list</em><em>(</em><em>str</em><em>)</em>) – when inferring which parameters to fit, those in <cite>do_not_fit</cite> are excluded</p></li>
 <li><p><strong>unicize_parameter_names</strong> (<em>bool</em>) – (False) if <cite>True</cite>, the inferred parameter names are renamed to be unique.
@@ -263,6 +263,10 @@ Experimental and buggy!</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">figure</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="s2">&quot;g(x)=ax+b&quot;</span><span class="p">,</span><span class="n">xx</span><span class="p">,</span><span class="n">yy</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -327,6 +331,10 @@ Note the number of bins is specified in the hist_kw dict.</p></li>
 <dd class="field-odd"><p>p_generic output</p>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#autogpy.AutoGnuplotFigure.hist_plthist" title="autogpy.AutoGnuplotFigure.hist_plthist"><code class="xref py py-meth docutils literal notranslate"><span class="pre">hist_plthist()</span></code></a></p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -345,6 +353,10 @@ Note the number of bins is specified in the hist_kw dict.</p></li>
 </ul>
 </dd>
 </dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#autogpy.AutoGnuplotFigure.hist_generic" title="autogpy.AutoGnuplotFigure.hist_generic"><code class="xref py py-meth docutils literal notranslate"><span class="pre">hist_generic()</span></code></a></p>
+</div>
 </dd></dl>
 
 <dl class="py method">
@@ -486,7 +498,35 @@ Alternatively, can be a list or np.array containing data (see <a href="#id1"><sp
 <dl class="py method">
 <dt id="autogpy.AutoGnuplotFigure.set">
 <code class="sig-name descname">set</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kw</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/autogpy/autognuplot.html#AutoGnuplotFigure.set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#autogpy.AutoGnuplotFigure.set" title="Permalink to this definition">¶</a></dt>
-<dd><p>expands to preamble param in each subplot, prepends the set command</p>
+<dd><p>expands to preamble param in each subplot, prepends the set command.</p>
+<p>Appending a kw name with <cite>__s</cite> or <cite>__e</cite> yields, respectively,
+string (<cite>“… “</cite>) or an equation (<cite>“$…$ “</cite>) value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> (<em>castable to str</em>) – each args element is placed in a different line and
+prepended with <cite>set</cite></p></li>
+<li><p><strong>**kw</strong> (<em>castable to str</em>) – each kw is placed in a different line, its argument follows
+if the k ends with <cite>__s</cite> or <cite>__e</cite> the argument is treated as
+string or equation.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">figure</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s1">&#39;autoscale&#39;</span><span class="p">,</span><span class="n">xrange</span><span class="o">=</span><span class="s2">&quot;[0:10]&quot;</span><span class="p">,</span><span class="n">xlabel__s</span><span class="o">=</span><span class="s1">&#39;t&#39;</span><span class="p">,</span><span class="n">ylabel__e</span><span class="o">=</span><span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>yields a gnuplot preamble</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">set</span> <span class="n">autoscale</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">set</span> <span class="n">xrange</span> <span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">set</span> <span class="n">xlabel</span> <span class="s1">&#39;t&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">set</span> <span class="n">ylabel</span> <span class="s1">&#39;$f(t)$&#39;</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#autogpy.AutoGnuplotFigure.unset" title="autogpy.AutoGnuplotFigure.unset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">unset()</span></code></a>, <a class="reference internal" href="#autogpy.AutoGnuplotFigure.set_multiplot" title="autogpy.AutoGnuplotFigure.set_multiplot"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_multiplot()</span></code></a>, <code class="xref py py-meth docutils literal notranslate"><span class="pre">set_parameter()</span></code></p>
+</div>
 </dd></dl>
 
 <dl class="py method">
