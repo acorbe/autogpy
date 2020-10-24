@@ -296,7 +296,37 @@ class AutoGnuplotFigure(object):
         return self.alter_current_multiplot_parameters(*args,**kw)
 
     def set(self,*args,**kw):
-        """expands to preamble param in each subplot, prepends the set command
+        """expands to preamble param in each subplot, prepends the set command.
+        
+        Appending a kw name with `__s` or `__e` yields, respectively, 
+        string (`"... "`) or an equation (`"$...$ "`) value.
+
+        Parameters
+        ----------------
+        *args: castable to str
+            each args element is placed in a different line and 
+            prepended with `set`
+
+        **kw: castable to str
+            each kw is placed in a different line, its argument follows
+            if the k ends with `__s` or `__e` the argument is treated as
+            string or equation.
+
+
+        Examples
+        ------------------
+        >>> figure.set('autoscale',xrange="[0:10]",xlabel__s='t',ylabel__e=f(t))
+
+        yields a gnuplot preamble
+
+        >>> set autoscale
+        >>> set xrange [0:10]
+        >>> set xlabel 't'
+        >>> set ylabel '$f(t)$'
+
+        See also
+        -------------------
+        unset, set_multiplot, set_parameter
         """
 
         add_set_statement = lambda x : "set " + x
@@ -665,6 +695,12 @@ class AutoGnuplotFigure(object):
         Returns
         ------------
         p_generic output
+
+
+        See also
+        -----------------------
+        hist_plthist
+
         """
 
         v_, e_ = np.histogram(x,**hist_kw)
@@ -729,6 +765,11 @@ class AutoGnuplotFigure(object):
              (True) prevents the inner `plt.hist` call to spawn an histogram figure
         **kw: 
              `plt.hist` parameters
+
+
+        See also
+        -----------------------
+        hist_generic
         
         """
 
@@ -1042,7 +1083,7 @@ class AutoGnuplotFigure(object):
 
         modfiers: str
              ('auto_via') modifiers to the call, suited to include, e.g. the `via` specifier.
-             if `'auto'` the `via` parameter is inferred. [experimental]
+             if `'auto_via'` the `via` parameter is inferred. [experimental]
 
         *args: `list` or `np.array`
              data to fit
@@ -1053,6 +1094,11 @@ class AutoGnuplotFigure(object):
         unicize_parameter_names: bool
              (False) if `True`, the inferred parameter names are renamed to be unique. 
              Experimental and buggy!
+
+
+        Examples
+        ----------------------------
+        >>> figure.fit("g(x)=ax+b",xx,yy)
         
         """
 
