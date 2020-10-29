@@ -22,7 +22,7 @@ Links: [[Source](https://github.com/acorbe/autogpy/tree/master/examples/02-webex
 
 
 ### Main features
-+ [[Refernce](https://acorbe.github.io/autogpy/code.html#autogpy.AutoGnuplotFigure.plot)] [[Example 1](https://github.com/acorbe/autogpy/blob/master/examples/01-syntax/hybrid-python-gnuplot-syntax.ipynb) [2](https://github.com/acorbe/autogpy/blob/master/examples/01-syntax/pure-gnuplot-syntax.ipynb)] anything that be obtained by the gnuplot command `plot` can be produced
++ [[Reference](https://acorbe.github.io/autogpy/code.html#autogpy.AutoGnuplotFigure.plot)] [[Example 1](https://github.com/acorbe/autogpy/blob/master/examples/01-syntax/hybrid-python-gnuplot-syntax.ipynb) [2](https://github.com/acorbe/autogpy/blob/master/examples/01-syntax/pure-gnuplot-syntax.ipynb)] anything that be obtained by the gnuplot command `plot` can be produced
 + output figures are shipped in a folder which includes scripts, data and makefile
 + any gnuplot state modification can be achieved
 + terminals epslatex, tikz/pgfplot and jpg
