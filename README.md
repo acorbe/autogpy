@@ -12,7 +12,8 @@
 [![PyPI](https://img.shields.io/pypi/v/autogpy)](https://pypi.org/project/autogpy/) [![build status](https://travis-ci.org/acorbe/autogpy.svg?branch=master)](https://travis-ci.org/github/acorbe/autogpy) [![Downloads](https://pepy.tech/badge/autogpy)](https://pepy.tech/project/autogpy)![PyPI - Downloads](https://img.shields.io/pypi/dm/autogpy)
 
 
-### Which problem does it solve?
+### Which problem does it solve? [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/acorbe/autogpy/blob/master/examples/05-colab/Autogpy_colab_showcase.ipynb)
+
 
 `autogpy` eliminates annoying duplications of code and data when employing python for data analysis and [gnuplot](http://www.gnuplot.info/) for figures. Providing a gnuplot-like or a matplotlib-like syntax, `autogpy` automatically generates gnuplot scripts and dumps suitably the data.  
 
