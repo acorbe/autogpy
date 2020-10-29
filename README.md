@@ -38,7 +38,7 @@ Links: [[Source](https://github.com/acorbe/autogpy/tree/master/examples/02-webex
 + Working latex distribution
 + Gnuplot, optionally with tikz terminal (tikz terminal requires a working installation of luatex)
 + `pdftoppm` (via [`poppler-utils`](https://command-not-found.com/pdftoppm)) or [`imagemagick`](https://command-not-found.com/convert) to convert the output pdf figures in png format for jupyter notebook preview 
-+ **Note:** imagemagick offline conversions pdf to png must be enabled (`sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml`) [[Reference](https://stackoverflow.com/a/52661288)]
++ **Note:** in case `pdftoppm` is unavailable, `imagemagick` offline conversions pdf to png must be enabled (`sudo sed -i '/PDF/s/none/read|write/' /etc/ImageMagick-6/policy.xml`) [[Reference](https://stackoverflow.com/a/52661288)]
 
 
 ### Getting autogpy
