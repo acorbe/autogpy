@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Which problem does it solve? &#8212; Autogpy - AutoGnuplot.py  documentation</title>
+    <title>Main features &#8212; Autogpy - AutoGnuplot.py  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -40,16 +40,26 @@
 <a class="reference external image-reference" href="https://travis-ci.org/github/acorbe/autogpy"><img alt="build status" src="https://travis-ci.org/acorbe/autogpy.svg?branch=master" /></a>
 <a class="reference external image-reference" href="https://pepy.tech/project/autogpy"><img alt="Downloads" src="https://pepy.tech/badge/autogpy" /></a>
 <a class="reference external image-reference" href="https://img.shields.io/pypi/dm/autogpy"><img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/autogpy" /></a>
-<div class="section" id="which-problem-does-it-solve">
-<h1>Which problem does it solve?<a class="headerlink" href="#which-problem-does-it-solve" title="Permalink to this headline">¶</a></h1>
+<p>Which problem does it solve?
+.. image:: <a class="reference external" href="https://colab.research.google.com/assets/colab-badge.svg">https://colab.research.google.com/assets/colab-badge.svg</a></p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">target</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://colab.research.google.com/github/acorbe/autogpy/blob/master/examples/05-colab/Autogpy_colab_showcase.ipynb">https://colab.research.google.com/github/acorbe/autogpy/blob/master/examples/05-colab/Autogpy_colab_showcase.ipynb</a></p>
+</dd>
+<dt class="field-even">alt</dt>
+<dd class="field-even"><p>Open In Colab</p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
 <p><code class="docutils literal notranslate"><span class="pre">autogpy</span></code> eliminates annoying duplications of code and data when employing python for data analysis and <a class="reference external" href="http://www.gnuplot.info/">gnuplot</a> for figures. Providing a gnuplot-like or a matplotlib-like syntax, <code class="docutils literal notranslate"><span class="pre">autogpy</span></code> automatically generates gnuplot scripts and dumps suitably the data.</p>
 <a class="reference external image-reference" href="https://github.com/acorbe/autogpy/raw/master/doc/other/demo-animation.gif"><img alt="Autogpy-Demo" src="https://github.com/acorbe/autogpy/raw/master/doc/other/demo-animation.gif" /></a>
 <p>Links: [<a class="reference external" href="https://github.com/acorbe/autogpy/tree/master/examples/02-webexample/webmovie.ipynb">Source</a>] [<a class="reference external" href="https://github.com/acorbe/autogpy/tree/master/examples/02-webexample/test-figure">Output</a>]</p>
-</div>
 <div class="section" id="main-features">
 <h1>Main features<a class="headerlink" href="#main-features" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
-<li><p>anything that be obtained by the gnuplot command <code class="docutils literal notranslate"><span class="pre">plot</span></code> can be produced</p></li>
+<li><p>[<a class="reference external" href="https://acorbe.github.io/autogpy/code.html#autogpy.AutoGnuplotFigure.plot">Reference</a>] [<a class="reference external" href="https://github.com/acorbe/autogpy/blob/master/examples/01-syntax/hybrid-python-gnuplot-syntax.ipynb">Example 1</a> <a class="reference external" href="https://github.com/acorbe/autogpy/blob/master/examples/01-syntax/pure-gnuplot-syntax.ipynb">2</a>] anything that be obtained by the gnuplot command <code class="docutils literal notranslate"><span class="pre">plot</span></code> can be produced</p></li>
 <li><p>output figures are shipped in a folder which includes scripts, data and makefile</p></li>
 <li><p>any gnuplot state modification can be achieved</p></li>
 <li><p>terminals epslatex, tikz/pgfplot and jpg</p></li>
@@ -64,8 +74,9 @@
 <li><p>Linux/MacOs (could work on Windows, yet it has not been adjusted for)</p></li>
 <li><p>Python 3</p></li>
 <li><p>Working latex distribution</p></li>
-<li><p>Gnuplot, optionally with tikz terminal</p></li>
+<li><p>Gnuplot, optionally with tikz terminal (tikz terminal requires a working installation of luatex)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">pdftoppm</span></code> (via <cite>``poppler-utils`</cite> &lt;<a class="reference external" href="https://command-not-found.com/pdftoppm">https://command-not-found.com/pdftoppm</a>&gt;`_) or <cite>``imagemagick`</cite> &lt;<a class="reference external" href="https://command-not-found.com/convert">https://command-not-found.com/convert</a>&gt;`_ to convert the output pdf figures in png format for jupyter notebook preview</p></li>
+<li><p><strong>Note:</strong> in case <code class="docutils literal notranslate"><span class="pre">pdftoppm</span></code> is unavailable, <code class="docutils literal notranslate"><span class="pre">imagemagick</span></code> offline conversions pdf to png must be enabled (<code class="docutils literal notranslate"><span class="pre">sudo</span> <span class="pre">sed</span> <span class="pre">-i</span> <span class="pre">'/PDF/s/none/read|write/'</span> <span class="pre">/etc/ImageMagick-6/policy.xml</span></code>) [<a class="reference external" href="https://stackoverflow.com/a/52661288">Reference</a>]</p></li>
 </ul>
 </div>
 <div class="section" id="getting-autogpy">
